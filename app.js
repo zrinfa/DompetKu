@@ -223,34 +223,80 @@
          const amtEl = document.getElementById('transfer-amount');
          const amtRaw = amtEl ? amtEl.value.replace(/\./g, '') : '';
          const amt = Number(amtRaw) || 0;
-         // Highlight kartu arah terpilih via JS (class has-[:checked] tidak ada di build Tailwind).
+
          try {
              const optS = document.getElementById('transfer-opt-suntik');
              const optP = document.getElementById('transfer-opt-prive');
+             const iconS = document.getElementById('transfer-icon-suntik');
+             const iconP = document.getElementById('transfer-icon-prive');
              const v = selected ? selected.value : '';
-             if (optS) { optS.style.borderColor = v === 'SUNTIK_MODAL' ? '#10b981' : '#e2e8f0'; optS.style.background = v === 'SUNTIK_MODAL' ? '#ecfdf5' : '#fff'; }
-             if (optP) { optP.style.borderColor = v === 'PRIVE' ? '#f59e0b' : '#e2e8f0'; optP.style.background = v === 'PRIVE' ? '#fffbeb' : '#fff'; }
+
+             if (optS) {
+                 optS.style.borderColor = v === 'SUNTIK_MODAL' ? '#10b981' : '#cbd5e1';
+                 optS.style.background = v === 'SUNTIK_MODAL' ? '#ecfdf5' : '#ffffff';
+                 if (iconS) {
+                     iconS.className = v === 'SUNTIK_MODAL' ?
+                         'w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-sm transition-all' :
+                         'w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center transition-all';
+                 }
+             }
+             if (optP) {
+                 optP.style.borderColor = v === 'PRIVE' ? '#f59e0b' : '#cbd5e1';
+                 optP.style.background = v === 'PRIVE' ? '#fffbeb' : '#ffffff';
+                 if (iconP) {
+                     iconP.className = v === 'PRIVE' ?
+                         'w-10 h-10 rounded-full bg-amber-500 text-white flex items-center justify-center shadow-sm transition-all' :
+                         'w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center transition-all';
+                 }
+             }
          } catch (e) {}
-         if (selected && amt > 0) {
+
+         if (selected) {
              hiddenInput.value = selected.value;
-             submitBtn.className = 'w-full bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold py-3 rounded-2xl text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer';
          } else {
              hiddenInput.value = '';
-             submitBtn.className = 'w-full bg-slate-300 text-white font-extrabold py-3 rounded-2xl text-sm transition-all flex items-center justify-center gap-2 cursor-pointer';
+         }
+
+         if (submitBtn) {
+             submitBtn.className = 'w-full bg-emerald-500 hover:bg-emerald-600 active:scale-98 text-white font-extrabold py-3.5 rounded-2xl text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer';
          }
      }
 
      // --- FUNGSI TOGGLE SUBMIT TRANSAKSI ---
      function toggleTransactionSubmit() {
          const selectedType = document.querySelector('input[name="tx-type"]:checked');
-         const amountRaw = document.getElementById('tx-amount').value.replace(/\./g, '');
-         const amount = Number(amountRaw) || 0;
          const submitBtn = document.getElementById('tx-submit-btn');
+         const lblIn = document.getElementById('tx-type-lbl-in');
+         const lblOut = document.getElementById('tx-type-lbl-out');
 
-         if (selectedType && amount > 0) {
-             submitBtn.className = 'w-full bg-emerald-500 hover:bg-emerald-600 active:scale-[0.99] text-white font-extrabold py-3 rounded-2xl text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer';
-         } else {
-             submitBtn.className = 'w-full bg-slate-300 text-white font-extrabold py-3 rounded-2xl text-sm flex items-center justify-center gap-2 transition-all cursor-pointer';
+         if (lblIn && lblOut) {
+             const typeVal = selectedType ? selectedType.value : '';
+             if (typeVal === 'PEMASUKAN') {
+                 lblIn.className = 'flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-xs font-black cursor-pointer transition-all bg-emerald-500 text-white shadow-sm border-2 border-emerald-600 active:scale-98';
+                 const iIn = lblIn.querySelector('i');
+                 if (iIn) iIn.className = 'fa-solid fa-circle-arrow-down text-white text-sm';
+                 lblOut.className = 'flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-xs font-semibold cursor-pointer transition-all bg-white text-slate-600 border-2 border-slate-200 active:scale-98';
+                 const iOut = lblOut.querySelector('i');
+                 if (iOut) iOut.className = 'fa-solid fa-circle-arrow-up text-rose-500 text-sm';
+             } else if (typeVal === 'PENGELUARAN') {
+                 lblOut.className = 'flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-xs font-black cursor-pointer transition-all bg-rose-500 text-white shadow-sm border-2 border-rose-600 active:scale-98';
+                 const iOut = lblOut.querySelector('i');
+                 if (iOut) iOut.className = 'fa-solid fa-circle-arrow-up text-white text-sm';
+                 lblIn.className = 'flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-xs font-semibold cursor-pointer transition-all bg-white text-slate-600 border-2 border-slate-200 active:scale-98';
+                 const iIn = lblIn.querySelector('i');
+                 if (iIn) iIn.className = 'fa-solid fa-circle-arrow-down text-emerald-500 text-sm';
+             } else {
+                 lblIn.className = 'flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-xs font-semibold cursor-pointer transition-all bg-white text-slate-700 border-2 border-slate-200 active:scale-98';
+                 const iIn = lblIn.querySelector('i');
+                 if (iIn) iIn.className = 'fa-solid fa-circle-arrow-down text-emerald-500 text-sm';
+                 lblOut.className = 'flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-xs font-semibold cursor-pointer transition-all bg-white text-slate-700 border-2 border-slate-200 active:scale-98';
+                 const iOut = lblOut.querySelector('i');
+                 if (iOut) iOut.className = 'fa-solid fa-circle-arrow-up text-rose-500 text-sm';
+             }
+         }
+
+         if (submitBtn) {
+             submitBtn.className = 'w-full bg-emerald-500 hover:bg-emerald-600 active:scale-98 text-white font-extrabold py-3.5 rounded-2xl text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer';
          }
      }
      function nudgeTxType() {
@@ -2028,17 +2074,15 @@
      // --- PANDUAN TUR APLIKASI (GUIDED TOUR, spotlight 4 sisi) ---
      const GUIDE_STEPS = [
          { tab: 'tab-dashboard', sel: null, title: 'Selamat Datang di DompetKu',
-           desc: 'Catat keuangan usaha dan pribadi dalam dua kantong terpisah. Ikuti tur singkat 9 langkah untuk mengenal aplikasi.' },
+           desc: 'Catat keuangan usaha dan pribadi dalam dua kantong terpisah. Ikuti tur singkat 8 langkah untuk mengenal aplikasi.' },
          { tab: 'tab-dashboard', sel: '#btn-wallet-usaha', title: 'Kantong Usaha',
            desc: 'Klik kartu hijau ini untuk mencatat pemasukan atau pengeluaran usaha, sekaligus melihat riwayatnya.' },
          { tab: 'tab-dashboard', sel: '#btn-wallet-pribadi', title: 'Kantong Pribadi',
            desc: 'Kartu gelap ini khusus uang pribadi. Memisahkan keduanya membuat laba usaha terlihat jelas.' },
          { tab: 'tab-dashboard', sel: '#btn-transfer-home', title: 'Transfer Saldo',
            desc: 'Pindahkan uang antar kantong: Suntik Modal (pribadi ke usaha) atau Penarikan Prive (usaha ke pribadi).' },
-         { tab: 'tab-dashboard', sel: '#ai-fab', title: 'Catat dengan AI',
-           desc: 'Ketuk tombol AI melayang ini. Tulis atau ucapkan transaksi seperti bicara biasa, AI mengisi form otomatis dan tinggal simpan.' },
-         { tab: 'tab-dashboard', sel: '#ai-fab', title: 'AI: Foto Struk & Telepon',
-           desc: 'Di dalam popup AI ada 2 mode lain: tab \u201CFoto Struk\u201D untuk jepret struk, dan tombol \u201CTelepon Live\u201D untuk dicatat otomatis sambil bicara.' },
+         { tab: 'tab-dashboard', sel: '#ai-fab', title: 'Catat Cepat dengan AI',
+           desc: 'Ketuk tombol AI melayang untuk mencatat via ketikan, suara, foto struk, atau telepon AI. Semua otomatis terisi!' },
          { tab: 'tab-transaksi', sel: '#nav-tab-transaksi', title: 'Riwayat Transaksi',
            desc: 'Semua catatan ada di sini. Pakai kolom cari dan filter entitas atau arus kas. Ikon pensil untuk mengedit.' },
          { tab: 'tab-laporan', sel: '#period-btn-bulanan', title: 'Laporan & Grafik',

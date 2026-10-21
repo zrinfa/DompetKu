@@ -426,7 +426,7 @@
                         </div>
                         <div id="card-saldo-usaha" class="text-base sm:text-lg font-black tracking-tight mt-1 truncate">Rp 0</div>
                         <span class="mt-1.5 inline-flex items-center gap-1 text-[10px] font-bold bg-white/15 rounded-lg px-2 py-1 w-fit">
-                            <i class="fa-solid fa-circle-plus"></i> Catat / Lihat
+                            <i class="fa-solid fa-circle-plus"></i> Catat Transaksi
                         </span>
                     </button>
 
@@ -442,7 +442,7 @@
                         </div>
                         <div id="card-saldo-pribadi" class="text-base sm:text-lg font-black tracking-tight mt-1 truncate">Rp 0</div>
                         <span class="mt-1.5 inline-flex items-center gap-1 text-[10px] font-bold bg-white/15 rounded-lg px-2 py-1 w-fit">
-                            <i class="fa-solid fa-circle-plus"></i> Catat / Lihat
+                            <i class="fa-solid fa-circle-plus"></i> Catat Transaksi
                         </span>
                     </button>
                 </div>
@@ -622,20 +622,11 @@
 
                     <!-- FOOTER AKUNTANSI (hanya cetak) -->
                     <div class="hidden print:block mt-4" style="page-break-inside:avoid;">
-                        <div style="display:flex;justify-content:space-between;gap:16px;margin-top:8px;">
-                            <div style="flex:1;font-size:10px;color:#475569;line-height:1.6;">
-                                <p style="margin:0;font-weight:700;color:#0f172a;">Catatan:</p>
-                                <p style="margin:0;">1. Prive adalah bagian laba usaha yang diambil pemilik.</p>
-                                <p style="margin:0;">2. Penarikan selama modal pribadi belum kembali dicatat sebagai pengembalian modal.</p>
-                                <p style="margin:0;">3. Laporan ini dibuat otomatis oleh DompetKu berdasarkan catatan transaksi.</p>
-                            </div>
-                            <div style="width:200px;text-align:center;font-size:11px;color:#0f172a;flex-shrink:0;">
-                                <p style="margin:0;">Mengetahui,</p>
-                                <p style="margin:0;color:#64748b;font-size:10px;" id="print-sign-date">-</p>
-                                <div style="height:56px;"></div>
-                                <p style="margin:0;font-weight:800;text-decoration:underline;" id="print-sign-name">Pemilik Usaha</p>
-                                <p style="margin:0;font-size:10px;color:#64748b;">Pemilik / Pengelola</p>
-                            </div>
+                        <div style="font-size:10px;color:#475569;line-height:1.6;border-top:1px solid #e2e8f0;padding-top:8px;">
+                            <p style="margin:0;font-weight:700;color:#0f172a;">Catatan:</p>
+                            <p style="margin:0;">1. Prive adalah bagian laba usaha yang diambil pemilik.</p>
+                            <p style="margin:0;">2. Penarikan selama modal pribadi belum kembali dicatat sebagai pengembalian modal.</p>
+                            <p style="margin:0;">3. Laporan ini dibuat otomatis oleh DompetKu berdasarkan catatan transaksi.</p>
                         </div>
                     </div>
                 </div>
@@ -973,14 +964,14 @@
                 <form onsubmit="handleSaveTransaction(event)" class="space-y-3">
                     <input type="hidden" id="tx-entity" value="USAHA">
 
-                    <div id="tx-type-group" class="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl">
-                        <label class="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-bold cursor-pointer transition-all has-[:checked]:bg-emerald-500 has-[:checked]:text-white has-[:checked]:shadow-sm text-slate-600 border-2 border-transparent has-[:checked]:border-emerald-400">
+                    <div id="tx-type-group" class="grid grid-cols-2 gap-2.5 p-1 bg-slate-100 rounded-2xl">
+                        <label id="tx-type-lbl-in" class="flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-xs font-bold cursor-pointer transition-all border-2 border-slate-200 bg-white text-slate-700 active:scale-98">
                             <input type="radio" name="tx-type" value="PEMASUKAN" onchange="toggleTransactionSubmit(); updateCategories();" class="hidden">
-                            <i class="fa-solid fa-circle-arrow-down text-xs"></i><span>Pemasukan</span>
+                            <i class="fa-solid fa-circle-arrow-down text-emerald-500 text-sm"></i><span>Pemasukan</span>
                         </label>
-                        <label class="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-bold cursor-pointer transition-all has-[:checked]:bg-rose-500 has-[:checked]:text-white has-[:checked]:shadow-sm text-slate-600 border-2 border-transparent has-[:checked]:border-rose-400">
+                        <label id="tx-type-lbl-out" class="flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-xs font-bold cursor-pointer transition-all border-2 border-slate-200 bg-white text-slate-700 active:scale-98">
                             <input type="radio" name="tx-type" value="PENGELUARAN" onchange="toggleTransactionSubmit(); updateCategories();" class="hidden">
-                            <i class="fa-solid fa-circle-arrow-up text-xs"></i><span>Pengeluaran</span>
+                            <i class="fa-solid fa-circle-arrow-up text-rose-500 text-sm"></i><span>Pengeluaran</span>
                         </label>
                     </div>
 
@@ -1048,7 +1039,7 @@
                         </div>
                     </details>
 
-                    <button type="submit" id="tx-submit-btn" class="w-full bg-slate-300 text-white font-extrabold py-3 rounded-2xl text-sm transition-all flex items-center justify-center gap-2">
+                    <button type="submit" id="tx-submit-btn" class="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-98 text-white font-extrabold py-3.5 rounded-2xl text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer">
                         <i class="fa-solid fa-floppy-disk"></i> Simpan Transaksi
                     </button>
                 </form>
@@ -1082,22 +1073,22 @@
             <form onsubmit="handleSaveTransfer(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">Arah Transfer</label>
-                    <div id="transfer-type-group" class="grid grid-cols-2 gap-2 rounded-2xl">
-                        <label id="transfer-opt-suntik" class="flex flex-col items-center gap-1 p-3 bg-white rounded-2xl border-2 border-slate-200 cursor-pointer transition-all text-center">
+                    <div id="transfer-type-group" class="grid grid-cols-2 gap-2.5 rounded-2xl">
+                        <label id="transfer-opt-suntik" class="flex flex-col items-center justify-center gap-1.5 p-3.5 bg-white rounded-2xl border-2 border-slate-200 cursor-pointer transition-all text-center active:scale-98">
                             <input type="radio" name="transfer-type-radio" value="SUNTIK_MODAL" onchange="toggleTransferSubmit(); updateTransferPreview();" class="hidden">
-                            <span class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
-                                <i class="fa-solid fa-arrow-right text-sm"></i>
+                            <span id="transfer-icon-suntik" class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center transition-all">
+                                <i class="fa-solid fa-circle-arrow-right text-base"></i>
                             </span>
-                            <span class="text-xs font-extrabold text-slate-800 mt-1">Suntik Modal</span>
-                            <span class="text-[10px] text-slate-500 leading-tight">Pribadi &rarr; Usaha</span>
+                            <span class="text-xs font-black text-slate-800 mt-0.5">Suntik Modal</span>
+                            <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-2 py-0.5 leading-tight">Pribadi &rarr; Usaha</span>
                         </label>
-                        <label id="transfer-opt-prive" class="flex flex-col items-center gap-1 p-3 bg-white rounded-2xl border-2 border-slate-200 cursor-pointer transition-all text-center">
+                        <label id="transfer-opt-prive" class="flex flex-col items-center justify-center gap-1.5 p-3.5 bg-white rounded-2xl border-2 border-slate-200 cursor-pointer transition-all text-center active:scale-98">
                             <input type="radio" name="transfer-type-radio" value="PRIVE" onchange="toggleTransferSubmit(); updateTransferPreview();" class="hidden">
-                            <span class="w-9 h-9 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center">
-                                <i class="fa-solid fa-arrow-left text-sm"></i>
+                            <span id="transfer-icon-prive" class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center transition-all">
+                                <i class="fa-solid fa-circle-arrow-left text-base"></i>
                             </span>
-                            <span class="text-xs font-extrabold text-slate-800 mt-1">Penarikan Prive</span>
-                            <span class="text-[10px] text-slate-500 leading-tight">Usaha &rarr; Pribadi</span>
+                            <span class="text-xs font-black text-slate-800 mt-0.5">Penarikan Prive</span>
+                            <span class="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-2 py-0.5 leading-tight">Usaha &rarr; Pribadi</span>
                         </label>
                     </div>
                     <input type="hidden" id="transfer-type" value="">
