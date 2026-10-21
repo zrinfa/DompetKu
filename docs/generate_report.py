@@ -1,13 +1,9 @@
-import docx
 from docx import Document
 from docx.shared import Inches, Pt, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.enum.table import WD_TABLE_ALIGNMENT, WD_ALIGN_VERTICAL
+from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.oxml import OxmlElement, parse_xml
 from docx.oxml.ns import nsdecls, qn
-
-def create_element(name):
-    return OxmlElement(name)
 
 def set_cell_background(cell, fill_hex):
     tcPr = cell._tc.get_or_add_tcPr()
@@ -419,7 +415,7 @@ def build_document():
     rr1.font.size = Pt(10)
     rr1.font.color.rgb = RGBColor(30, 41, 59)
 
-    output_filename = "Laporan_Hasil_Blackbox_Testing_DompetKu.docx"
+    output_filename = "docs/Laporan_Hasil_Blackbox_Testing_DompetKu.docx"
     doc.save(output_filename)
     print(f"Dokumen berhasil dibuat: {output_filename}")
 
