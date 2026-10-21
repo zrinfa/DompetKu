@@ -1,0 +1,4 @@
+generate_report.py
+*.docx
+*.bak
+"favicon.png bak"
