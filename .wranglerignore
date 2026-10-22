@@ -1,0 +1,8 @@
+.git
+.gitignore
+*.sql
+*.log
+*.py
+backend/
+favicon.png bak
+server.log

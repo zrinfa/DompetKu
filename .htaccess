@@ -1,4 +1,10 @@
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME}.php -f
-RewriteRule ^(.*?)/?$ $1.html [L]
+Options -Indexes
+
+<IfModule mod_headers.c>
+    <Files "sw.js">
+        Header set Cache-Control "no-cache"
+    </Files>
+    <FilesMatch "\.(png|webmanifest)$">
+        Header set Cache-Control "public, max-age=86400"
+    </FilesMatch>
+</IfModule>
