@@ -1,12 +1,17 @@
 <?php
 // DompetKu Telemetry - Konfigurasi Database MySQL
 //
-// Kredensial TIDAK disimpan di file ini agar aman saat repo dipublikasikan.
-// Isi kredensial di backend/config.local.php (lihat config.example.php).
+// Kredensial TIDAK disimpan di file ini agar aman saat repo dipublikasikan.// Isi kredensial di backend/config.local.php (lihat config.example.php).
 // File config.local.php di-.gitignore dan tidak ikut deploy GitHub Pages.
 //
 // Alternatif: set environment variable DOMPETKU_DB_HOST, DOMPETKU_DB_USER,
 // DOMPETKU_DB_PASS, DOMPETKU_DB_NAME, DOMPETKU_ADMIN_KEY.
+
+// Tolak akses langsung lewat browser bila .htaccess tidak aktif.
+if (isset($_SERVER['SCRIPT_FILENAME']) && basename($_SERVER['SCRIPT_FILENAME']) === basename(__FILE__)) {
+    http_response_code(404);
+    exit;
+}
 
 $__local = __DIR__ . '/config.local.php';
 if (is_file($__local)) {
