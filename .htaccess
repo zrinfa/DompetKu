@@ -1,4 +1,31 @@
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME}.php -f
-RewriteRule ^(.*?)/?$ $1.html [L]
+Options -Indexes
+DirectoryIndex index.html
+
+# Jangan pernah menyajikan folder .git bila ada
+RedirectMatch 404 /\.git
+
+<IfModule mod_headers.c>
+    <Files "sw.js">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+    </Files>
+    <Files "index.html">
+        Header set Cache-Control "no-cache"
+    </Files>
+    <FilesMatch "\.(png|webmanifest|css|js|woff2|woff|jpg|jpeg|svg)$">
+        Header set Cache-Control "public, max-age=86400"
+    </FilesMatch>
+    <FilesMatch "\.(sql|bak|log|md|yml|yaml|jsonc|ini|sh)$">
+        Header set X-Robots-Tag "noindex, nofollow"
+    </FilesMatch>
+</IfModule>
+
+# Blokir file sensitif / bukan untuk publik (dump SQL, backup, dokumentasi deploy)
+<FilesMatch "\.(sql|bak|log|md|yml|yaml|jsonc|ini|sh)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>

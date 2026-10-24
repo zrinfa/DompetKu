@@ -1,0 +1,17 @@
+Options -Indexes
+
+<IfModule mod_headers.c>
+    Header set X-Robots-Tag "noindex, nofollow"
+</IfModule>
+
+# Hanya track.php dan report.php yang boleh diakses lewat web.
+# config.php tetap bisa di-require oleh PHP, tapi tidak bisa dibuka langsung.
+<FilesMatch "^(config\.php|config\.local\.php|config\.example\.php|.*\.sql|.*\.md|.*\.log|.*\.bak)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>

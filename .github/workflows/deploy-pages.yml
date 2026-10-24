@@ -1,0 +1,67 @@
+name: Deploy DompetKu to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Hanya file frontend yang dipublikasikan.
+      # backend/ (password DB), dump SQL, dan file dev TIDAK ikut ke GitHub Pages.
+      - name: Susun _site (frontend saja)
+        run: |
+          mkdir -p _site
+          rsync -a \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='backend' \
+            --exclude='_site' \
+            --exclude='dist' \
+            --exclude='*.sql' \
+            --exclude='*.bak' \
+            --exclude='* bak' \
+            --exclude='*.log' \
+            --exclude='*.zip' \
+            --exclude='.htaccess' \
+            --exclude='wrangler.jsonc' \
+            --exclude='.wranglerignore' \
+            --exclude='_config.yml' \
+            --exclude='DEPLOY.md' \
+            --exclude='node_modules' \
+            ./ _site/
+          touch _site/.nojekyll
+          echo "Isi _site:" && find _site -maxdepth 2 -type f | sort
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,13 @@
+# Pengaman tambahan: dipakai Jekyll HANYA jika GitHub Pages tak sengaja
+# di-set ke "Deploy from a branch". Deploy normal memakai GitHub Actions.
+exclude:
+  - backend
+  - "*.sql"
+  - "*.bak"
+  - "* bak"
+  - "*.log"
+  - .github
+  - wrangler.jsonc
+  - .wranglerignore
+  - DEPLOY.md
+  - dist

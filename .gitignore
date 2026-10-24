@@ -1,0 +1,21 @@
+# Kredensial & data sensitif
+backend/config.local.php
+*.sql
+!backend/schema.sql
+!backend/migrate_origin.sql
+*.bak
+* bak
+*.log
+server.log
+
+# Build / deploy
+_site/
+dist/
+*.zip
+node_modules/
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
