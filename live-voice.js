@@ -55,7 +55,17 @@
     try {
       if (typeof getAiConfig === 'function') return (getAiConfig().key || '').trim();
     } catch (e) {}
-    try { return (localStorage.getItem('dompetku_ai_key') || '').trim(); } catch (e) { return ''; }
+    try {
+      if (typeof getRemoteAiKey === 'function') {
+        var rk = (getRemoteAiKey() || '').trim();
+        if (rk) return rk;
+      }
+    } catch (e) {}
+    try {
+      var k = (localStorage.getItem('dompetku_ai_key') || '').trim();
+      if (k && k.indexOf('Ab8RN6Llow') !== -1) return '';
+      return k;
+    } catch (e) { return ''; }
   }
 
   function readLiveModel() { return 'models/gemini-3.8-live'; }
@@ -674,12 +684,19 @@
     log('<b>Server [' + esc(keys) + ']:</b> ' + esc(raw), 'bg-amber-50 border-amber-300 text-amber-800');
   }
 
-  function startLiveCall() {
+  async function startLiveCall() {
     if (S.live) { stopLiveCall('Ditutup.'); return; }
     var key = getKey();
+    if (!key && typeof fetchRemoteAiKey === 'function') {
+      setStatus('Menyiapkan koneksi AI...', 'bg-amber-400');
+      try {
+        await fetchRemoteAiKey();
+        key = getKey();
+      } catch (e) {}
+    }
     if (!key) {
-      if (typeof showToast === 'function') showToast('Isi API key Gemini dulu (sama seperti Catat Cepat AI).', 'warning');
-      log('API key kosong. Isi dulu di Pengaturan / Catat Cepat.', 'bg-amber-50 border-amber-300 text-amber-800', 'err');
+      if (typeof showToast === 'function') showToast('Kunci API AI belum siap, silakan coba lagi beberapa saat.', 'warning');
+      log('API key kosong. Pastikan backend cPanel terhubung.', 'bg-amber-50 border-amber-300 text-amber-800', 'err');
       return;
     }
     if (!window.isSecureContext && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {

@@ -1522,7 +1522,51 @@
      }
 
      // --- AI CATAT CEPAT (teks/suara/foto struk via Gemini, fallback parser lokal) ---
-     const DEFAULT_AI_KEY = 'AQ.Ab8RN6Llow_RsJGpupXFiDstrRKKaPvIf4aLXc2ziPZLzQWfgg';
+     const DEFAULT_AI_KEY = '';
+     let remoteAiKey = '';
+     let isFetchingAiKey = false;
+     let aiKeyPromise = null;
+
+     function resolveAiEndpoint() {
+         try {
+             if (window.DOMPKU_AI_ENDPOINT) return String(window.DOMPKU_AI_ENDPOINT);
+         } catch (e) {}
+         var isCsproject = false;
+         try {
+             var h = String(location.hostname || '').toLowerCase();
+             isCsproject = h === 'csproject.org' || /(^|\.)csproject\.org$/.test(h);
+         } catch (e) {}
+         return isCsproject ? './backend/ai.php' : 'https://dompetku.csproject.org/backend/ai.php';
+     }
+
+     async function fetchRemoteAiKey() {
+         if (remoteAiKey) return remoteAiKey;
+         if (isFetchingAiKey && aiKeyPromise) return aiKeyPromise;
+         isFetchingAiKey = true;
+         aiKeyPromise = (async () => {
+             try {
+                 const ep = resolveAiEndpoint();
+                 const url = ep + (ep.includes('?') ? '&' : '?') + 'action=key';
+                 const res = await fetch(url);
+                 if (res.ok) {
+                     const data = await res.json();
+                     if (data && data.key) {
+                         remoteAiKey = data.key;
+                         return remoteAiKey;
+                     }
+                 }
+             } catch (e) {
+                 console.warn('Gagal memuat API key AI dari server:', e);
+             } finally {
+                 isFetchingAiKey = false;
+             }
+             return '';
+         })();
+         return aiKeyPromise;
+     }
+     window.fetchRemoteAiKey = fetchRemoteAiKey;
+     window.getRemoteAiKey = function() { return remoteAiKey; };
+
      let aiMode = 'text';
      let aiPhotoDataUrl = null;
      let aiBusy = false;
@@ -1533,14 +1577,22 @@
 
      function getAiConfig() {
          try {
+             let key = (localStorage.getItem('dompetku_ai_key') || '').trim();
+             if (key && key.indexOf('Ab8RN6Llow') !== -1) {
+                 key = '';
+                 try { localStorage.removeItem('dompetku_ai_key'); } catch (e) {}
+             }
+             if (!key) key = remoteAiKey || DEFAULT_AI_KEY || '';
              return {
-                 key: localStorage.getItem('dompetku_ai_key') || DEFAULT_AI_KEY || '',
-                 model: (localStorage.getItem('dompetku_ai_model') || '').trim() || 'gemini-3.5-flash-lite'
+                 key: key,
+                 model: (localStorage.getItem('dompetku_ai_model') || '').trim() || 'gemini-2.5-flash'
              };
-         } catch (e) { return { key: DEFAULT_AI_KEY || '', model: 'gemini-3.5-flash-lite' }; }
+         } catch (e) { return { key: remoteAiKey || DEFAULT_AI_KEY || '', model: 'gemini-2.5-flash' }; }
      }
+     window.getAiConfig = getAiConfig;
 
      function openAiSheet() {
+         try { fetchRemoteAiKey(); } catch (e) {}
          aiPhotoDataUrl = null;
          const inp = document.getElementById('ai-input');
          if (inp) inp.value = '';
@@ -1668,10 +1720,13 @@
      }
 
      async function callGemini(parts, maxTokens) {
-         const cfg = getAiConfig();
-         if (!cfg.key) throw { code: 'NO_KEY', message: 'Isi kunci API Gemini di Pengaturan.' };
+         let cfg = getAiConfig();
+         if (!cfg.key) {
+             await fetchRemoteAiKey();
+             cfg = getAiConfig();
+         }
          const models = [];
-         [cfg.model, 'gemini-3.5-flash-lite', 'gemini-3.5-flash'].forEach(m => {
+         [cfg.model, 'gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.5-flash'].forEach(m => {
              if (m && !models.includes(m)) models.push(m);
          });
          let lastErr = null;
@@ -1680,15 +1735,17 @@
                  return await callGeminiOnce(cfg.key, model, parts, maxTokens);
              } catch (e) {
                  lastErr = e;
-                 if (!e || (e.code !== 'LIMIT' && e.retryable !== true)) throw e;
+                 if (!e || (e.code !== 'LIMIT' && e.retryable !== true && e.code !== 'BAD_MODEL')) throw e;
              }
          }
          throw lastErr || { code: 'API', message: 'AI tidak merespons.' };
      }
 
      async function callGeminiOnce(key, model, parts, maxTokens) {
-         const url = 'https://generativelanguage.googleapis.com/v1beta/models/'
-             + encodeURIComponent(model) + ':generateContent?key=' + encodeURIComponent(key);
+         const ep = resolveAiEndpoint();
+         const url = key
+             ? ('https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent?key=' + encodeURIComponent(key))
+             : (ep + (ep.includes('?') ? '&' : '?') + 'model=' + encodeURIComponent(model));
          let res;
          try {
              res = await fetch(url, {
@@ -1705,7 +1762,7 @@
          let data = null;
          try { data = await res.json(); } catch (e) {}
          if (!res.ok) {
-             const msg = (data && data.error && data.error.message) || ('HTTP ' + res.status);
+             const msg = (data && data.error && (typeof data.error === 'string' ? data.error : data.error.message)) || ('HTTP ' + res.status);
              if (res.status === 400 || res.status === 401) throw { code: 'BAD_KEY', message: 'Kunci ditolak / permintaan salah. Cek kunci & batasan referrer.' };
              if (res.status === 403) throw { code: 'FORBIDDEN', message: 'Akses ditolak (403). Cek batasan kunci di AI Studio.' };
              if (res.status === 404) throw { code: 'BAD_MODEL', message: 'Model tidak ditemukan. Cek nama model di Pengaturan.' };
@@ -3747,6 +3804,7 @@
     document.addEventListener('DOMContentLoaded', async function() {
         applyTheme();
         updateNetworkStatus();
+        try { fetchRemoteAiKey(); } catch (e) {}
 
         try {
             await initDB();

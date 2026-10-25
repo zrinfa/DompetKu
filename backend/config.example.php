@@ -11,3 +11,4 @@ define('DB_USER', 'xfag9686_dompetku_user');
 define('DB_PASS', 'GANTI_DENGAN_PASSWORD_DB');
 define('DB_NAME', 'xfag9686_dompetku_user');
 define('ADMIN_KEY', 'GANTI_DENGAN_KUNCI_RAHASIA');
+define('GEMINI_API_KEY', 'GANTI_DENGAN_GEMINI_API_KEY');

@@ -5,16 +5,18 @@ Proyek ini terdiri dari dua bagian:
 | Bagian | Isi | Hosting |
 |---|---|---|
 | Frontend | `index.html`, `app.js`, `live-voice.js`, `telemetry.js`, `sw.js`, `manifest.webmanifest`, `assets/`, `icons/` | GitHub Pages (`dompetku.is-local.org`) **dan** cPanel (`dompetku.csproject.org`) |
-| Backend | `backend/track.php`, `backend/report.php`, `backend/config*.php` | **Hanya cPanel** (PHP + MySQL). GitHub Pages tidak menjalankan PHP |
+| Backend | `backend/track.php`, `backend/report.php`, `backend/ai.php`, `backend/config*.php` | **Hanya cPanel** (PHP + MySQL). GitHub Pages tidak menjalankan PHP |
 
-Frontend di GitHub Pages otomatis mengirim telemetry ke:
+Frontend di GitHub Pages otomatis mengirim telemetry dan request token/proxy AI ke:
 
 ```
 https://dompetku.csproject.org/backend/track.php
+https://dompetku.csproject.org/backend/ai.php
 ```
 
-Saat dibuka dari `dompetku.csproject.org`, telemetry memakai endpoint same-origin
-`./backend/track.php` (tanpa CORS).
+Saat dibuka dari `dompetku.csproject.org`, telemetry dan AI memakai endpoint same-origin
+`./backend/track.php` dan `./backend/ai.php` (tanpa CORS).
+Hal ini menjaga API key Gemini AI Studio tetap aman di cPanel tanpa pernah ter-commit ke GitHub.
 
 ---
 
@@ -72,6 +74,7 @@ Gunakan file `dompetku-cpanel-upload.zip` (sudah disiapkan di folder ini).
    define('DB_PASS', 'PASSWORD_DB_ANDA');
    define('DB_NAME', 'xfag9686_dompetku_user');
    define('ADMIN_KEY', 'KUNCI_LAPORAN_RAHASIA');
+   define('GEMINI_API_KEY', 'KUNCI_API_GEMINI_ANDA');
    ```
 5. Jalankan migrasi database (sekali saja) lewat **phpMyAdmin → Import**:
    `backend/migrate_origin.sql`.

@@ -24,6 +24,7 @@ if (!defined('DB_USER')) define('DB_USER', getenv('DOMPETKU_DB_USER') ?: '');
 if (!defined('DB_PASS')) define('DB_PASS', getenv('DOMPETKU_DB_PASS') ?: '');
 if (!defined('DB_NAME')) define('DB_NAME', getenv('DOMPETKU_DB_NAME') ?: '');
 if (!defined('ADMIN_KEY')) define('ADMIN_KEY', getenv('DOMPETKU_ADMIN_KEY') ?: '');
+if (!defined('GEMINI_API_KEY')) define('GEMINI_API_KEY', getenv('DOMPETKU_GEMINI_KEY') ?: '');
 
 function db_connect() {
     mysqli_report(MYSQLI_REPORT_OFF);
