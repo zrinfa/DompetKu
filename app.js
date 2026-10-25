@@ -1706,7 +1706,7 @@
          try { data = await res.json(); } catch (e) {}
          if (!res.ok) {
              const msg = (data && data.error && data.error.message) || ('HTTP ' + res.status);
-             if (res.status === 400) throw { code: 'BAD_KEY', message: 'Kunci ditolak / permintaan salah. Cek kunci & batasan referrer.' };
+             if (res.status === 400 || res.status === 401) throw { code: 'BAD_KEY', message: 'Kunci ditolak / permintaan salah. Cek kunci & batasan referrer.' };
              if (res.status === 403) throw { code: 'FORBIDDEN', message: 'Akses ditolak (403). Cek batasan kunci di AI Studio.' };
              if (res.status === 404) throw { code: 'BAD_MODEL', message: 'Model tidak ditemukan. Cek nama model di Pengaturan.' };
              if (res.status === 429 || res.status === 503 || (res.status >= 500 && res.status < 600)) {
@@ -1808,7 +1808,7 @@
                  try {
                      result = await callGemini([{ text: buildAiPrompt() + '\n\nPerintah: ' + cmd }], 300);
                  } catch (e) {
-                     if (e && (e.code === 'NO_KEY' || e.code === 'NETWORK')) {
+                     if (e && (e.code === 'NO_KEY' || e.code === 'NETWORK' || e.code === 'BAD_KEY' || e.code === 'FORBIDDEN')) {
                          result = { items: parseLocalMulti(cmd) };
                          localNote = true;
                      } else throw e;
