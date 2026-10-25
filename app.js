@@ -1522,7 +1522,7 @@
      }
 
      // --- AI CATAT CEPAT (teks/suara/foto struk via Gemini, fallback parser lokal) ---
-     const DEFAULT_AI_KEY = '';
+     const DEFAULT_AI_KEY = 'AQ.Ab8RN6Ixp38wu2WcC8o_L1fPCqsAdCUaXeridLOJzpswZ1ovKg';
      let aiMode = 'text';
      let aiPhotoDataUrl = null;
      let aiBusy = false;

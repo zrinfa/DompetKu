@@ -1,7 +1,8 @@
 <?php
 // DompetKu Telemetry - Konfigurasi Database MySQL
 //
-// Kredensial TIDAK disimpan di file ini agar aman saat repo dipublikasikan.// Isi kredensial di backend/config.local.php (lihat config.example.php).
+// Kredensial TIDAK disimpan di file ini agar aman saat repo dipublikasikan.
+// Isi kredensial di backend/config.local.php (lihat config.example.php).
 // File config.local.php di-.gitignore dan tidak ikut deploy GitHub Pages.
 //
 // Alternatif: set environment variable DOMPETKU_DB_HOST, DOMPETKU_DB_USER,
@@ -22,7 +23,7 @@ if (!defined('DB_HOST')) define('DB_HOST', getenv('DOMPETKU_DB_HOST') ?: 'localh
 if (!defined('DB_USER')) define('DB_USER', getenv('DOMPETKU_DB_USER') ?: '');
 if (!defined('DB_PASS')) define('DB_PASS', getenv('DOMPETKU_DB_PASS') ?: '');
 if (!defined('DB_NAME')) define('DB_NAME', getenv('DOMPETKU_DB_NAME') ?: '');
-if (!defined('ADMIN_KEY')) define('ADMIN_KEY', getenv('DOMPETKU_ADMIN_KEY') ?: 'DOMPETKU_LAPORAN_2026');
+if (!defined('ADMIN_KEY')) define('ADMIN_KEY', getenv('DOMPETKU_ADMIN_KEY') ?: '');
 
 function db_connect() {
     mysqli_report(MYSQLI_REPORT_OFF);
