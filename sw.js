@@ -1,4 +1,4 @@
-const CACHE = "dompetku-pwa-v63";
+const CACHE = "dompetku-pwa-v64";
 // Semua path dihitung relatif terhadap lokasi sw.js, jadi tetap benar
 // baik di root domain (GitHub Pages/cPanel) maupun di subfolder.
 const BASE = self.registration.scope;

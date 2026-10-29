@@ -258,7 +258,7 @@
          }
 
          if (submitBtn) {
-             submitBtn.className = 'w-full bg-emerald-500 hover:bg-emerald-600 active:scale-98 text-white font-extrabold py-3.5 rounded-2xl text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer';
+             submitBtn.className = 'w-full bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-white font-extrabold py-3.5 rounded-2xl text-sm shadow-md transition-all flex shrink-0 min-h-[44px] items-center justify-center gap-2 cursor-pointer';
          }
      }
 
@@ -272,31 +272,31 @@
          if (lblIn && lblOut) {
              const typeVal = selectedType ? selectedType.value : '';
              if (typeVal === 'PEMASUKAN') {
-                 lblIn.className = 'flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-xs font-black cursor-pointer transition-all bg-emerald-500 text-white shadow-sm border-2 border-emerald-600 active:scale-98';
+                 lblIn.className = 'flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-xs font-black cursor-pointer transition-all bg-emerald-500 text-white shadow-sm border-2 border-emerald-600 active:scale-[0.98]';
                  const iIn = lblIn.querySelector('i');
                  if (iIn) iIn.className = 'fa-solid fa-circle-arrow-down text-white text-sm';
-                 lblOut.className = 'flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-xs font-semibold cursor-pointer transition-all bg-white text-slate-600 border-2 border-slate-200 active:scale-98';
+                 lblOut.className = 'flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-xs font-semibold cursor-pointer transition-all bg-white text-slate-600 border-2 border-slate-200 active:scale-[0.98]';
                  const iOut = lblOut.querySelector('i');
                  if (iOut) iOut.className = 'fa-solid fa-circle-arrow-up text-rose-500 text-sm';
              } else if (typeVal === 'PENGELUARAN') {
-                 lblOut.className = 'flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-xs font-black cursor-pointer transition-all bg-rose-500 text-white shadow-sm border-2 border-rose-600 active:scale-98';
+                 lblOut.className = 'flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-xs font-black cursor-pointer transition-all bg-rose-500 text-white shadow-sm border-2 border-rose-600 active:scale-[0.98]';
                  const iOut = lblOut.querySelector('i');
                  if (iOut) iOut.className = 'fa-solid fa-circle-arrow-up text-white text-sm';
-                 lblIn.className = 'flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-xs font-semibold cursor-pointer transition-all bg-white text-slate-600 border-2 border-slate-200 active:scale-98';
+                 lblIn.className = 'flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-xs font-semibold cursor-pointer transition-all bg-white text-slate-600 border-2 border-slate-200 active:scale-[0.98]';
                  const iIn = lblIn.querySelector('i');
                  if (iIn) iIn.className = 'fa-solid fa-circle-arrow-down text-emerald-500 text-sm';
              } else {
-                 lblIn.className = 'flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-xs font-semibold cursor-pointer transition-all bg-white text-slate-700 border-2 border-slate-200 active:scale-98';
+                 lblIn.className = 'flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-xs font-semibold cursor-pointer transition-all bg-white text-slate-700 border-2 border-slate-200 active:scale-[0.98]';
                  const iIn = lblIn.querySelector('i');
                  if (iIn) iIn.className = 'fa-solid fa-circle-arrow-down text-emerald-500 text-sm';
-                 lblOut.className = 'flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-xs font-semibold cursor-pointer transition-all bg-white text-slate-700 border-2 border-slate-200 active:scale-98';
+                 lblOut.className = 'flex items-center justify-center gap-2 py-3 px-3 rounded-xl text-xs font-semibold cursor-pointer transition-all bg-white text-slate-700 border-2 border-slate-200 active:scale-[0.98]';
                  const iOut = lblOut.querySelector('i');
                  if (iOut) iOut.className = 'fa-solid fa-circle-arrow-up text-rose-500 text-sm';
              }
          }
 
          if (submitBtn) {
-             submitBtn.className = 'w-full bg-emerald-500 hover:bg-emerald-600 active:scale-98 text-white font-extrabold py-3.5 rounded-2xl text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer';
+             submitBtn.className = 'w-full bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-white font-extrabold py-3.5 rounded-2xl text-sm shadow-md transition-all flex shrink-0 min-h-[44px] items-center justify-center gap-2 cursor-pointer';
          }
      }
      function nudgeTxType() {
