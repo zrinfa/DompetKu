@@ -227,28 +227,9 @@
          try {
              const optS = document.getElementById('transfer-opt-suntik');
              const optP = document.getElementById('transfer-opt-prive');
-             const iconS = document.getElementById('transfer-icon-suntik');
-             const iconP = document.getElementById('transfer-icon-prive');
              const v = selected ? selected.value : '';
-
-             if (optS) {
-                 optS.style.borderColor = v === 'SUNTIK_MODAL' ? '#10b981' : '#cbd5e1';
-                 optS.style.background = v === 'SUNTIK_MODAL' ? '#ecfdf5' : '#ffffff';
-                 if (iconS) {
-                     iconS.className = v === 'SUNTIK_MODAL' ?
-                         'w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-sm transition-all' :
-                         'w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center transition-all';
-                 }
-             }
-             if (optP) {
-                 optP.style.borderColor = v === 'PRIVE' ? '#f59e0b' : '#cbd5e1';
-                 optP.style.background = v === 'PRIVE' ? '#fffbeb' : '#ffffff';
-                 if (iconP) {
-                     iconP.className = v === 'PRIVE' ?
-                         'w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center shadow-sm transition-all' :
-                         'w-8 h-8 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center transition-all';
-                 }
-             }
+             if (optS) optS.classList.toggle('is-on', v === 'SUNTIK_MODAL');
+             if (optP) optP.classList.toggle('is-on', v === 'PRIVE');
          } catch (e) {}
 
          if (selected) {
@@ -258,7 +239,11 @@
          }
 
          if (submitBtn) {
-             submitBtn.className = 'w-full bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-white font-extrabold py-3.5 rounded-2xl text-sm shadow-md transition-all flex shrink-0 min-h-[44px] items-center justify-center gap-2 cursor-pointer';
+             const siap = !!hiddenInput.value && amt > 0;
+             submitBtn.className = (siap
+                 ? 'flex-1 shrink-0 min-h-[44px] bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-white shadow-md'
+                 : 'flex-1 shrink-0 min-h-[44px] bg-slate-300 text-white')
+                 + ' font-extrabold py-3 rounded-2xl text-sm transition-all flex items-center justify-center gap-2 cursor-pointer';
          }
      }
 
@@ -2325,6 +2310,7 @@
          input.value = result === 0 ? '' : result.toLocaleString('id-ID');
          toggleTransferSubmit();
          updateTransferPreview();
+         try { input.focus({ preventScroll: true }); } catch (e) { input.focus(); }
      }
 
      function updateTransferPreview() {
@@ -2364,6 +2350,7 @@
          if (result > 1000000000000) { showToast('Nominal maksimal Rp 1 triliun.', 'warning'); result = 1000000000000; }
          input.value = result === 0 ? '' : result.toLocaleString('id-ID');
          toggleTransactionSubmit();
+         try { input.focus({ preventScroll: true }); } catch (e) { input.focus(); }
      }
 
      function openModal(id) {
@@ -2376,9 +2363,13 @@
              document.getElementById('transfer-amount').value = '';
              document.getElementById('transfer-note').value = '';
              document.querySelectorAll('input[name="transfer-type-radio"]').forEach(el => el.checked = false);
+             document.querySelectorAll('#modal-transfer .dk-field').forEach(el => el.classList.add('dk-closed'));
+             dkCollapsedByKeyboard = [];
              toggleTransferSubmit();
              refreshTransferHeader();
              updateTransferPreview();
+             dkSyncTransferSummary();
+             setTimeout(() => { try { document.getElementById('transfer-amount').focus({ preventScroll: true }); } catch (e) {} }, 120);
          }
          document.getElementById(id).classList.remove('hidden');
      }
@@ -2505,6 +2496,179 @@
              if (e.key !== 'Escape' || e.ctrlKey || e.metaKey || e.altKey) return;
              if (dkOpenOrder.length || dkCurrentTab() !== 'dashboard') { e.preventDefault(); history.back(); }
          });
+     }
+
+     // --- SHEET vs KEYBOARD VIRTUAL ---
+     // Keyboard virtual membuat panel sheet jauh lebih pendek dari kontennya, sementara
+     // sticky header dan sticky footer tetap menempel. Kalau field yang sedang diketik
+     // tidak dijaga, tombol "Proses Transfer" yang menutupi nominal.
+     const DK_SHEET_IDS = ['modal-transfer', 'modal-transaction', 'modal-ai'];
+
+     let dkCollapsedByKeyboard = [];
+
+     function dkSheetPanels() {
+         const out = [];
+         DK_SHEET_IDS.forEach((id) => {
+             const modal = document.getElementById(id);
+             const panel = modal ? modal.firstElementChild : null;
+             if (panel && !modal.classList.contains('hidden')) out.push({ modal, panel });
+         });
+         return out;
+     }
+
+     function dkSheetOf(el) {
+         let n = el;
+         while (n && n !== document.body) {
+             if (DK_SHEET_IDS.indexOf(n.id) !== -1) return n.firstElementChild;
+             n = n.parentElement;
+         }
+         return null;
+     }
+
+     function dkKeyboardHeight() {
+         const vv = window.visualViewport;
+         if (!vv) return 0;
+         return Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop));
+     }
+
+     // Area yang benar-benar terlihat: di bawah sticky header, di atas sticky footer.
+     function dkUsableBox(panel) {
+         const pr = panel.getBoundingClientRect();
+         const head = panel.firstElementChild;
+         const foot = panel.querySelector('.sticky.bottom-0');
+         const top = pr.top + (head && head.classList.contains('sticky') ? head.offsetHeight : 0);
+         const bottom = pr.bottom - (foot ? foot.offsetHeight : 0);
+         return { top, bottom, height: Math.max(0, bottom - top) };
+     }
+
+     function dkRevealActiveField() {
+         const active = document.activeElement;
+         if (!active || !active.closest || !/^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName)) return;
+         const panel = dkSheetOf(active);
+         if (!panel) return;
+         const anchor = active.closest('.dk-reveal-anchor') || active;
+         if (!panel.contains(anchor)) return;
+         const box = dkUsableBox(panel);
+         const ar = anchor.getBoundingClientRect();
+         if (ar.top >= box.top - 0.5 && ar.bottom <= box.bottom + 0.5) return;
+         panel.scrollTop += ar.top - (box.top + Math.max(8, (box.height - ar.height) / 2));
+     }
+
+     function dkCollapseHiddenGroups(panel, keepGroup) {
+         const box = dkUsableBox(panel);
+         const newly = [];
+         panel.querySelectorAll('.dk-field').forEach((g) => {
+             if (g === keepGroup || g.classList.contains('dk-closed')) return;
+             if (g.getBoundingClientRect().bottom <= box.top + 1) {
+                 g.classList.add('dk-closed');
+                 newly.push(g);
+             }
+         });
+         return newly;
+     }
+
+     function dkRestoreGroups() {
+         dkCollapsedByKeyboard.forEach((g) => g.classList.remove('dk-closed'));
+         dkCollapsedByKeyboard = [];
+     }
+
+     function dkAdjustSheet() {
+         const kb = dkKeyboardHeight();
+         dkSheetPanels().forEach((s) => {
+             if (kb > 60) {
+                 const h = window.innerHeight - kb;
+                 s.modal.style.height = h + 'px';
+                 s.panel.style.maxHeight = Math.max(180, h - 16) + 'px';
+             } else {
+                 s.modal.style.height = '';
+                 s.panel.style.maxHeight = '';
+             }
+             // Panel pendek = keyboard sedang naik: pakai header ringkas.
+             s.panel.classList.toggle('dk-compact', s.panel.clientHeight < 420);
+         });
+         const active = document.activeElement;
+         const panel = active && active.closest ? dkSheetOf(active) : null;
+         if (!panel) { dkRestoreGroups(); return; }
+         dkCollapsedByKeyboard = dkCollapsedByKeyboard.concat(dkCollapseHiddenGroups(panel, active.closest('.dk-field')));
+         requestAnimationFrame(dkRevealActiveField);
+     }
+
+     function dkInitKeyboardFit() {
+         let queued = false;
+         const schedule = () => {
+             if (queued) return;
+             queued = true;
+             requestAnimationFrame(() => { queued = false; dkAdjustSheet(); });
+         };
+         document.addEventListener('focusin', (e) => {
+             const el = e.target;
+             if (!el || !el.closest || !/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) return;
+             if (!dkSheetOf(el)) return;
+             dkRestoreGroups();
+             dkAdjustSheet();
+             setTimeout(dkAdjustSheet, 320);
+         });
+         document.addEventListener('focusout', (e) => {
+             const next = e.relatedTarget;
+             if (next && next.closest && dkSheetOf(next)) return;
+             setTimeout(dkRestoreGroups, 80);
+         });
+         // Isi sheet bisa bertambah tinggi setelah fokus (pratinjau saldo, daftar
+         // riwayat), dan itu mendorong field keluar dari area terlihat.
+         const obs = new MutationObserver(schedule);
+         DK_SHEET_IDS.forEach((id) => {
+             const modal = document.getElementById(id);
+             const panel = modal ? modal.firstElementChild : null;
+             if (panel) obs.observe(panel, { childList: true, subtree: true, characterData: true });
+         });
+         window.addEventListener('resize', dkAdjustSheet);
+         if (window.visualViewport) {
+             window.visualViewport.addEventListener('resize', dkAdjustSheet);
+             window.visualViewport.addEventListener('scroll', dkRevealActiveField, { passive: true });
+         }
+     }
+
+     function dkToggleField(bar) {
+         const group = bar.closest('.dk-field');
+         if (!group) return;
+         const willOpen = group.classList.contains('dk-closed');
+         group.classList.toggle('dk-closed', !willOpen);
+         dkCollapsedByKeyboard = dkCollapsedByKeyboard.filter((g) => g !== group);
+         if (willOpen) {
+             const ctrl = group.querySelector('input, textarea, select');
+             if (ctrl && !/^(datetime-local|date|time|month|week)$/.test(ctrl.type)) {
+                 try { ctrl.focus(); } catch (e) {}
+             }
+         }
+         requestAnimationFrame(dkRevealActiveField);
+     }
+
+     function dkDateTimeSummary(v) {
+         if (!v) return 'Sekarang';
+         const dt = new Date(v);
+         if (isNaN(dt.getTime())) return 'Sekarang';
+         const pad = (n) => String(n).padStart(2, '0');
+         const time = pad(dt.getHours()) + ':' + pad(dt.getMinutes());
+         const today = new Date(); today.setHours(0, 0, 0, 0);
+         const that = new Date(dt); that.setHours(0, 0, 0, 0);
+         const diff = Math.round((that - today) / 86400000);
+         if (diff === 0) return 'Hari ini ' + time;
+         if (diff === -1) return 'Kemarin ' + time;
+         if (diff === 1) return 'Besok ' + time;
+         const hari = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+         return hari[dt.getDay()] + ' ' + pad(dt.getDate()) + '/' + pad(dt.getMonth() + 1) + ' ' + time;
+     }
+
+     function dkSyncTransferSummary() {
+         const dEl = document.getElementById('transfer-datetime');
+         const dSum = document.getElementById('transfer-datetime-summary');
+         if (dEl && dSum) dSum.textContent = dkDateTimeSummary(dEl.value);
+         const nEl = document.getElementById('transfer-note');
+         const nSum = document.getElementById('transfer-note-summary');
+         if (nEl && nSum) {
+             const txt = nEl.value.trim().replace(/\s+/g, ' ');
+             nSum.textContent = txt ? (txt.length > 24 ? txt.slice(0, 24) + '…' : txt) : 'Tambahkan catatan';
+         }
      }
 
      function toggleCategoriesEnabled(enabled) {
@@ -2809,6 +2973,7 @@
          document.getElementById('transfer-amount').value = '';
          document.getElementById('transfer-note').value = '';
          toggleTransferSubmit();
+         dkSyncTransferSummary();
      }
 
      function editTransaction(id) {
@@ -3917,6 +4082,7 @@
         }
 
         dkInitBackstack();
+        dkInitKeyboardFit();
 
         const txAmount = document.getElementById('tx-amount');
         if (txAmount) {

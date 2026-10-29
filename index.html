@@ -356,6 +356,63 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
+
+        /* --- Sheet vs keyboard virtual (form transfer & transaksi) --- */
+        .dk-seg {
+            display: flex; gap: 5px; padding: 5px; border-radius: 9999px;
+            background: #f1f5f9; border: 1px solid #e2e8f0;
+        }
+        .dk-seg-pill {
+            flex: 1 1 0; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 7px;
+            border-radius: 9999px; padding: 7px 6px; font-size: 12px; font-weight: 800; color: #64748b;
+            cursor: pointer; touch-action: manipulation;
+            transition: background .15s ease, color .15s ease, box-shadow .15s ease;
+        }
+        .dk-seg-pill:has(input:checked), .dk-seg-pill.is-on {
+            background: #ffffff; color: #0f172a; box-shadow: 0 1px 3px rgba(15, 23, 42, .2);
+        }
+        .dk-seg-dot {
+            width: 22px; height: 22px; border-radius: 9999px; display: flex; align-items: center;
+            justify-content: center; flex-shrink: 0; color: #fff; font-size: 11px; background: #94a3b8;
+            transition: background .15s ease;
+        }
+        .dk-seg-pill:has(input:checked) .dk-seg-dot[data-dir="masuk"], .dk-seg-pill.is-on .dk-seg-dot[data-dir="masuk"] { background: #10b981; }
+        .dk-seg-pill:has(input:checked) .dk-seg-dot[data-dir="keluar"], .dk-seg-pill.is-on .dk-seg-dot[data-dir="keluar"] { background: #f59e0b; }
+        html[data-theme="dark"] .dk-seg { background: #16233c; border-color: #1f2d47; }
+        html[data-theme="dark"] .dk-seg-pill { color: #94a3b8; }
+        html[data-theme="dark"] .dk-seg-pill:has(input:checked), html[data-theme="dark"] .dk-seg-pill.is-on {
+            background: #24344f; color: #f8fafc; box-shadow: none;
+        }
+
+        .dk-field-bar {
+            width: 100%; display: flex; align-items: center; gap: 8px; padding: 9px 11px; border-radius: 14px;
+            background: #f1f5f9; border: 1px solid #e2e8f0; font-size: 11px; font-weight: 800; color: #475569;
+            text-transform: uppercase; letter-spacing: .04em; cursor: pointer; touch-action: manipulation;
+        }
+        .dk-field-val {
+            margin-left: auto; min-width: 0; font-size: 11px; font-weight: 700; color: #0f172a;
+            text-transform: none; letter-spacing: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .dk-field-chev { font-size: 10px; color: #94a3b8; flex-shrink: 0; transition: transform .18s ease; }
+        .dk-field-body {
+            padding-top: 6px; max-height: 300px; overflow: hidden; opacity: 1;
+            transition: max-height .18s ease, opacity .15s ease, padding .18s ease;
+        }
+        .dk-field.dk-closed > .dk-field-body { max-height: 0; opacity: 0; padding-top: 0; }
+        .dk-field.dk-closed .dk-field-chev { transform: rotate(-90deg); }
+        html[data-theme="dark"] .dk-field-bar { background: #16233c; border-color: #1f2d47; color: #94a3b8; }
+        html[data-theme="dark"] .dk-field-val { color: #f1f5f9; }
+
+        /* Panel pendek berarti keyboard virtual sedang naik, jadi header dipangkas. */
+        .dk-compact .dk-head-chips { display: none; }
+        .dk-chip-row { display: flex; gap: 6px; }
+        .dk-chip {
+            flex: 1 1 0; min-width: 0; font-size: 11px; font-weight: 800; padding: 7px 2px; border-radius: 10px;
+            background: #f1f5f9; color: #334155; cursor: pointer; touch-action: manipulation;
+        }
+        .dk-chip-reset { background: #fff1f2; color: #e11d48; }
+        html[data-theme="dark"] .dk-chip { background: #1b2a45; color: #cbd5e1; }
+        html[data-theme="dark"] .dk-chip-reset { background: #2b1622; color: #fda4af; }
     </style>
 </head>
 <body class="bg-slate-900 h-[100dvh] w-full overflow-hidden flex items-center justify-center sm:py-4 font-sans text-slate-800 antialiased">
@@ -1059,7 +1116,7 @@
                         <i class="fa-solid fa-xmark text-sm"></i>
                     </button>
                 </div>
-                <div class="grid grid-cols-2 gap-2 mt-2">
+                <div class="grid grid-cols-2 gap-2 mt-2 dk-head-chips">
                     <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:5px 10px;min-width:0">
                         <p style="margin:0;font-size:9px;font-weight:800;letter-spacing:.12em;color:rgba(255,255,255,.55)">PRIBADI</p>
                         <p id="transfer-head-pribadi" style="margin:2px 0 0;font-size:13px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Rp 0</p>
@@ -1075,53 +1132,68 @@
             <form onsubmit="handleSaveTransfer(event)" class="space-y-3">
                 <div>
                     <label class="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">Arah Transfer</label>
-                    <div id="transfer-type-group" class="grid grid-cols-2 gap-2.5 rounded-2xl">
-                        <label id="transfer-opt-suntik" class="flex flex-col items-center justify-center gap-1 p-2.5 bg-white rounded-2xl border-2 border-slate-200 cursor-pointer transition-all text-center active:scale-[0.98]">
-                            <input type="radio" name="transfer-type-radio" value="SUNTIK_MODAL" onchange="toggleTransferSubmit(); updateTransferPreview();" class="hidden">
-                            <span id="transfer-icon-suntik" class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center transition-all">
-                                <i class="fa-solid fa-circle-arrow-right text-sm"></i>
-                            </span>
-                            <span class="text-xs font-black text-slate-800">Suntik Modal</span>
-                            <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-2 py-0.5 leading-tight">Pribadi &rarr; Usaha</span>
-                        </label>
-                        <label id="transfer-opt-prive" class="flex flex-col items-center justify-center gap-1 p-2.5 bg-white rounded-2xl border-2 border-slate-200 cursor-pointer transition-all text-center active:scale-[0.98]">
-                            <input type="radio" name="transfer-type-radio" value="PRIVE" onchange="toggleTransferSubmit(); updateTransferPreview();" class="hidden">
-                            <span id="transfer-icon-prive" class="w-8 h-8 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center transition-all">
-                                <i class="fa-solid fa-circle-arrow-left text-sm"></i>
-                            </span>
-                            <span class="text-xs font-black text-slate-800">Penarikan Prive</span>
-                            <span class="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-2 py-0.5 leading-tight">Usaha &rarr; Pribadi</span>
-                        </label>
+                    <div id="transfer-type-group">
+                        <div class="dk-seg">
+                            <label id="transfer-opt-suntik" class="dk-seg-pill">
+                                <input type="radio" name="transfer-type-radio" value="SUNTIK_MODAL" onchange="toggleTransferSubmit(); updateTransferPreview();" class="hidden">
+                                <span id="transfer-icon-suntik" class="dk-seg-dot" data-dir="masuk"><i class="fa-solid fa-arrow-right"></i></span>
+                                <span>Suntik Modal</span>
+                            </label>
+                            <label id="transfer-opt-prive" class="dk-seg-pill">
+                                <input type="radio" name="transfer-type-radio" value="PRIVE" onchange="toggleTransferSubmit(); updateTransferPreview();" class="hidden">
+                                <span id="transfer-icon-prive" class="dk-seg-dot" data-dir="keluar"><i class="fa-solid fa-arrow-left"></i></span>
+                                <span>Penarikan Prive</span>
+                            </label>
+                        </div>
                     </div>
                     <input type="hidden" id="transfer-type" value="">
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wide">Nominal</label>
-                    <div class="relative">
+                    <div class="dk-reveal-anchor relative">
                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-sm">Rp</span>
                         <input type="text" id="transfer-amount" min="1" required inputmode="numeric" placeholder="0" oninput="formatNumberInput(this); toggleTransferSubmit(); updateTransferPreview();" class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-10 pr-3 py-3 text-xl font-black text-slate-900 focus:outline-none focus:border-emerald-500 focus:bg-white">
                     </div>
-
+                    <div class="dk-chip-row" style="margin-top:8px">
+                        <button type="button" class="dk-chip" onclick="addTransferQuick(10000)">+10rb</button>
+                        <button type="button" class="dk-chip" onclick="addTransferQuick(50000)">+50rb</button>
+                        <button type="button" class="dk-chip" onclick="addTransferQuick(100000)">+100rb</button>
+                        <button type="button" class="dk-chip dk-chip-reset" onclick="addTransferQuick(0)">Reset</button>
+                    </div>
                 </div>
 
-                <div id="transfer-preview" class="bg-slate-50 border border-slate-200 rounded-2xl p-2.5 text-xs text-slate-500 leading-snug">Pilih arah &amp; nominal untuk melihat pratinjau saldo sesudah transfer.</div>
+                <div id="transfer-preview" class="dk-reveal-anchor bg-slate-50 border border-slate-200 rounded-2xl p-2.5 text-xs text-slate-500 leading-snug">Pilih arah &amp; nominal untuk melihat pratinjau saldo sesudah transfer.</div>
 
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wide">Waktu Transfer</label>
-                    <input type="datetime-local" id="transfer-datetime" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
+                <div class="dk-field dk-closed">
+                    <button type="button" class="dk-field-bar" onclick="dkToggleField(this)">
+                        <i class="fa-solid fa-clock"></i>
+                        <span>Waktu</span>
+                        <span class="dk-field-val" id="transfer-datetime-summary">Sekarang</span>
+                        <i class="fa-solid fa-chevron-down dk-field-chev"></i>
+                    </button>
+                    <div class="dk-field-body">
+                        <input type="datetime-local" id="transfer-datetime" required onchange="dkSyncTransferSummary()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wide">Keterangan <span class="normal-case font-medium text-slate-500">(opsional)</span></label>
-                    <textarea id="transfer-note" rows="2" maxlength="120" placeholder="Contoh: Tambahan modal bahan, Ambil dividen (Enter untuk baris baru)" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500 resize-none"></textarea>
+                <div class="dk-field dk-closed">
+                    <button type="button" class="dk-field-bar" onclick="dkToggleField(this)">
+                        <i class="fa-solid fa-note-sticky"></i>
+                        <span>Keterangan</span>
+                        <span class="dk-field-val" id="transfer-note-summary">Tambahkan catatan</span>
+                        <i class="fa-solid fa-chevron-down dk-field-chev"></i>
+                    </button>
+                    <div class="dk-field-body">
+                        <textarea id="transfer-note" rows="2" maxlength="120" placeholder="Contoh: Tambahan modal bahan, Ambil dividen (Enter untuk baris baru)" oninput="dkSyncTransferSummary()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500 resize-none"></textarea>
+                    </div>
                 </div>
 
-                <div class="sticky bottom-0 z-10 bg-white space-y-2 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]" style="margin-left:-1rem;margin-right:-1rem;padding-left:1rem;padding-right:1rem;box-shadow:0 -8px 12px -8px rgba(15,23,42,.18)">
-                    <button type="submit" id="transfer-submit-btn" class="w-full bg-slate-300 text-white font-extrabold py-3 rounded-2xl text-sm transition-all flex shrink-0 min-h-[44px] items-center justify-center gap-2 cursor-pointer">
+                <div class="sticky bottom-0 z-10 bg-white flex items-center" style="margin-left:-1rem;margin-right:-1rem;padding:8px 1rem max(0.5rem,env(safe-area-inset-bottom));gap:8px;box-shadow:0 -8px 12px -8px rgba(15,23,42,.18)">
+                    <button type="button" onclick="closeModal('modal-transfer')" class="shrink-0 min-h-[44px] px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl text-xs cursor-pointer">Batal</button>
+                    <button type="submit" id="transfer-submit-btn" class="flex-1 min-h-[44px] shrink-0 bg-slate-300 text-white font-extrabold py-3 rounded-2xl text-sm transition-all flex items-center justify-center gap-2 cursor-pointer">
                         <i class="fa-solid fa-arrow-right-arrow-left"></i> Proses Transfer
                     </button>
-                    <button type="button" onclick="closeModal('modal-transfer')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs">Batal</button>
                 </div>
             </form>
             </div>
