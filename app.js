@@ -2418,6 +2418,95 @@
          }
      }
 
+     // --- BACK-STACK PWA ---
+     // Navigasi app hanya men-toggle class `hidden`, jadi PWA standalone tidak punya
+     // entri riwayat untuk di-pop dan tombol back perangkat langsung menutup app.
+     // Solusi: jaga satu "guard" entri. Back ditahan, satu level ditutup, guard dipasang
+     // lagi; saat tidak ada yang bisa ditutup, back diteruskan agar app memang keluar.
+     const DK_CLOSERS = {
+         'modal-transaction': () => closeModal('modal-transaction'),
+         'modal-transfer': () => closeModal('modal-transfer'),
+         'modal-confirm': () => { dkHide('modal-confirm'); pendingConfirmCallback = null; },
+         'modal-photo': () => closePhotoViewer(),
+         'modal-gdrive-nudge': () => dismissGDriveNudge(),
+         'modal-ai': () => {
+             if (aiRecog) { try { aiRecog.abort(); } catch (e) {} }
+             closeModal('modal-ai');
+         },
+         'modal-live': () => {
+             if (typeof window.backFromLive === 'function') window.backFromLive();
+             else dkHide('modal-live');
+         },
+         'guide-overlay': () => {
+             if (guideIdx > 0) { guideIdx--; renderGuideStep(); } else { skipGuideTour(); }
+         }
+     };
+     // modal-auth tidak didaftarkan: layar pilih profil memang tidak bisa ditutup.
+
+     const dkOpenOrder = [];
+
+     function dkHide(id) {
+         const el = document.getElementById(id);
+         if (el) el.classList.add('hidden');
+     }
+
+     function dkIsVisible(id) {
+         const el = document.getElementById(id);
+         return !!el && !el.classList.contains('hidden');
+     }
+
+     const DK_TABS = ['dashboard', 'transaksi', 'laporan', 'pengaturan'];
+
+     function dkCurrentTab() {
+         return DK_TABS.find((t) => dkIsVisible('view-' + t)) || 'dashboard';
+     }
+
+     function dkGuardEntry() {
+         try { history.pushState({ dkGuard: true }, '', location.href); } catch (e) {}
+     }
+
+     // Urutan buka dilacak dari DOM, bukan dari panggilan openModal, karena overlay
+     // dibuka lewat banyak jalur (openWallet, openAiSheet, openLiveSheet, raw classList).
+     function dkTrackOpenOrder() {
+         const obs = new MutationObserver((records) => {
+             records.forEach((rec) => {
+                 const id = rec.target.id;
+                 if (!DK_CLOSERS[id]) return;
+                 const at = dkOpenOrder.indexOf(id);
+                 if (dkIsVisible(id)) { if (at === -1) dkOpenOrder.push(id); }
+                 else if (at !== -1) dkOpenOrder.splice(at, 1);
+             });
+         });
+         Object.keys(DK_CLOSERS).forEach((id) => {
+             const el = document.getElementById(id);
+             if (el) obs.observe(el, { attributes: true, attributeFilter: ['class'] });
+             if (dkIsVisible(id)) dkOpenOrder.push(id);
+         });
+     }
+
+     function dkUnwindOne() {
+         for (let i = dkOpenOrder.length - 1; i >= 0; i--) {
+             if (!dkIsVisible(dkOpenOrder[i])) { dkOpenOrder.splice(i, 1); continue; }
+             DK_CLOSERS[dkOpenOrder[i]]();
+             return true;
+         }
+         if (dkCurrentTab() !== 'dashboard') { switchTab('tab-dashboard'); return true; }
+         return false;
+     }
+
+     function dkInitBackstack() {
+         dkTrackOpenOrder();
+         dkGuardEntry();
+         window.addEventListener('popstate', () => {
+             if (dkUnwindOne()) dkGuardEntry();
+             else history.back();
+         });
+         window.addEventListener('keydown', (e) => {
+             if (e.key !== 'Escape' || e.ctrlKey || e.metaKey || e.altKey) return;
+             if (dkOpenOrder.length || dkCurrentTab() !== 'dashboard') { e.preventDefault(); history.back(); }
+         });
+     }
+
      function toggleCategoriesEnabled(enabled) {
          state.categoriesEnabled = !!enabled;
          saveAppData();
@@ -3826,6 +3915,8 @@
         } catch (err) {
             console.error('Initialization error:', err);
         }
+
+        dkInitBackstack();
 
         const txAmount = document.getElementById('tx-amount');
         if (txAmount) {
