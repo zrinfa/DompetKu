@@ -236,8 +236,8 @@
                  optS.style.background = v === 'SUNTIK_MODAL' ? '#ecfdf5' : '#ffffff';
                  if (iconS) {
                      iconS.className = v === 'SUNTIK_MODAL' ?
-                         'w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-sm transition-all' :
-                         'w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center transition-all';
+                         'w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-sm transition-all' :
+                         'w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center transition-all';
                  }
              }
              if (optP) {
@@ -245,8 +245,8 @@
                  optP.style.background = v === 'PRIVE' ? '#fffbeb' : '#ffffff';
                  if (iconP) {
                      iconP.className = v === 'PRIVE' ?
-                         'w-10 h-10 rounded-full bg-amber-500 text-white flex items-center justify-center shadow-sm transition-all' :
-                         'w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center transition-all';
+                         'w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center shadow-sm transition-all' :
+                         'w-8 h-8 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center transition-all';
                  }
              }
          } catch (e) {}
@@ -2341,10 +2341,9 @@
          const pAfter = isSuntik ? bal.saldoPribadi - amount : bal.saldoPribadi + amount;
          const uAfter = isSuntik ? bal.saldoUsaha + amount : bal.saldoUsaha - amount;
          const neg = (v) => v < 0 ? 'text-rose-600' : 'text-emerald-600';
-         box.innerHTML = '<span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Pratinjau sesudah transfer</span>'
-             + '<span class="flex items-center justify-between gap-2"><span>Pribadi</span>'
+         box.innerHTML = '<span class="flex items-center justify-between gap-2"><span>Pribadi</span>'
              + '<span class="font-bold text-slate-700">' + formatRp(bal.saldoPribadi) + ' &rarr; <b class="' + neg(pAfter) + '">' + formatRp(pAfter) + '</b></span></span>'
-             + '<span class="flex items-center justify-between gap-2"><span>Usaha</span>'
+             + '<span class="flex items-center justify-between gap-2 mt-0.5"><span>Usaha</span>'
              + '<span class="font-bold text-slate-700">' + formatRp(bal.saldoUsaha) + ' &rarr; <b class="' + neg(uAfter) + '">' + formatRp(uAfter) + '</b></span></span>'
              + ((pAfter < 0 || uAfter < 0) ? '<span class="block mt-1 font-semibold text-rose-600">Perhatian: salah satu saldo akan minus.</span>' : '');
      }

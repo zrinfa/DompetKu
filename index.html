@@ -1039,9 +1039,11 @@
                         </div>
                     </details>
 
-                    <button type="submit" id="tx-submit-btn" class="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-white font-extrabold py-3.5 rounded-2xl text-sm shadow-md transition-all flex shrink-0 min-h-[44px] items-center justify-center gap-2 cursor-pointer">
-                        <i class="fa-solid fa-floppy-disk"></i> Simpan Transaksi
-                    </button>
+                    <div class="sticky bottom-0 z-10 bg-white pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]" style="margin-left:-1rem;margin-right:-1rem;padding-left:1rem;padding-right:1rem;box-shadow:0 -8px 12px -8px rgba(15,23,42,.18)">
+                        <button type="submit" id="tx-submit-btn" class="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-white font-extrabold py-3.5 rounded-2xl text-sm shadow-md transition-all flex shrink-0 min-h-[44px] items-center justify-center gap-2 cursor-pointer">
+                            <i class="fa-solid fa-floppy-disk"></i> Simpan Transaksi
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -1050,44 +1052,44 @@
     <!-- MODAL 3: INTER-WALLET TRANSFER -->
     <div id="modal-transfer" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-end sm:items-center justify-center z-50 hidden transition-opacity">
         <div class="bg-white w-full max-w-md sm:max-w-lg rounded-t-3xl sm:rounded-2xl max-h-[92vh] overflow-y-auto">
-            <div class="sticky top-0 z-10 p-4 rounded-t-3xl sm:rounded-t-2xl bg-gradient-to-br from-navy-800 to-navy-900 text-white">
-                <div class="flex items-start justify-between gap-2">
-                    <p class="text-[11px] uppercase tracking-wider font-bold text-white/70 pt-2">Transfer Antar Kantong</p>
+            <div class="sticky top-0 z-10 p-3 rounded-t-3xl sm:rounded-t-2xl bg-gradient-to-br from-navy-800 to-navy-900 text-white">
+                <div class="flex items-center justify-between gap-2">
+                    <p class="text-[11px] uppercase tracking-wider font-bold text-white/70">Transfer Antar Kantong</p>
                     <button onclick="closeModal('modal-transfer')" class="w-9 h-9 rounded-full bg-white/15 text-white flex items-center justify-center shrink-0">
                         <i class="fa-solid fa-xmark text-sm"></i>
                     </button>
                 </div>
-                <div class="grid grid-cols-2 gap-2 mt-2.5">
-                    <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:8px 10px;min-width:0">
+                <div class="grid grid-cols-2 gap-2 mt-2">
+                    <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:5px 10px;min-width:0">
                         <p style="margin:0;font-size:9px;font-weight:800;letter-spacing:.12em;color:rgba(255,255,255,.55)">PRIBADI</p>
                         <p id="transfer-head-pribadi" style="margin:2px 0 0;font-size:13px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Rp 0</p>
                     </div>
-                    <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:8px 10px;min-width:0">
+                    <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:5px 10px;min-width:0">
                         <p style="margin:0;font-size:9px;font-weight:800;letter-spacing:.12em;color:rgba(255,255,255,.55)">USAHA</p>
                         <p id="transfer-head-usaha" style="margin:2px 0 0;font-size:13px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Rp 0</p>
                     </div>
                 </div>
             </div>
 
-            <div class="p-4 space-y-4">
-            <form onsubmit="handleSaveTransfer(event)" class="space-y-4">
+            <div class="p-4">
+            <form onsubmit="handleSaveTransfer(event)" class="space-y-3">
                 <div>
                     <label class="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">Arah Transfer</label>
                     <div id="transfer-type-group" class="grid grid-cols-2 gap-2.5 rounded-2xl">
-                        <label id="transfer-opt-suntik" class="flex flex-col items-center justify-center gap-1.5 p-3.5 bg-white rounded-2xl border-2 border-slate-200 cursor-pointer transition-all text-center active:scale-[0.98]">
+                        <label id="transfer-opt-suntik" class="flex flex-col items-center justify-center gap-1 p-2.5 bg-white rounded-2xl border-2 border-slate-200 cursor-pointer transition-all text-center active:scale-[0.98]">
                             <input type="radio" name="transfer-type-radio" value="SUNTIK_MODAL" onchange="toggleTransferSubmit(); updateTransferPreview();" class="hidden">
-                            <span id="transfer-icon-suntik" class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center transition-all">
-                                <i class="fa-solid fa-circle-arrow-right text-base"></i>
+                            <span id="transfer-icon-suntik" class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center transition-all">
+                                <i class="fa-solid fa-circle-arrow-right text-sm"></i>
                             </span>
-                            <span class="text-xs font-black text-slate-800 mt-0.5">Suntik Modal</span>
+                            <span class="text-xs font-black text-slate-800">Suntik Modal</span>
                             <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-2 py-0.5 leading-tight">Pribadi &rarr; Usaha</span>
                         </label>
-                        <label id="transfer-opt-prive" class="flex flex-col items-center justify-center gap-1.5 p-3.5 bg-white rounded-2xl border-2 border-slate-200 cursor-pointer transition-all text-center active:scale-[0.98]">
+                        <label id="transfer-opt-prive" class="flex flex-col items-center justify-center gap-1 p-2.5 bg-white rounded-2xl border-2 border-slate-200 cursor-pointer transition-all text-center active:scale-[0.98]">
                             <input type="radio" name="transfer-type-radio" value="PRIVE" onchange="toggleTransferSubmit(); updateTransferPreview();" class="hidden">
-                            <span id="transfer-icon-prive" class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center transition-all">
-                                <i class="fa-solid fa-circle-arrow-left text-base"></i>
+                            <span id="transfer-icon-prive" class="w-8 h-8 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center transition-all">
+                                <i class="fa-solid fa-circle-arrow-left text-sm"></i>
                             </span>
-                            <span class="text-xs font-black text-slate-800 mt-0.5">Penarikan Prive</span>
+                            <span class="text-xs font-black text-slate-800">Penarikan Prive</span>
                             <span class="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-2 py-0.5 leading-tight">Usaha &rarr; Pribadi</span>
                         </label>
                     </div>
@@ -1103,7 +1105,7 @@
 
                 </div>
 
-                <div id="transfer-preview" class="bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs text-slate-500 leading-relaxed" style="min-height:56px">Pilih arah &amp; nominal untuk melihat pratinjau saldo sesudah transfer.</div>
+                <div id="transfer-preview" class="bg-slate-50 border border-slate-200 rounded-2xl p-2.5 text-xs text-slate-500 leading-snug">Pilih arah &amp; nominal untuk melihat pratinjau saldo sesudah transfer.</div>
 
                 <div>
                     <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wide">Waktu Transfer</label>
@@ -1115,7 +1117,7 @@
                     <input type="text" id="transfer-note" placeholder="Contoh: Tambahan modal bahan, Ambil dividen" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs focus:outline-none focus:border-emerald-500">
                 </div>
 
-                <div class="space-y-2 pt-1">
+                <div class="sticky bottom-0 z-10 bg-white space-y-2 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]" style="margin-left:-1rem;margin-right:-1rem;padding-left:1rem;padding-right:1rem;box-shadow:0 -8px 12px -8px rgba(15,23,42,.18)">
                     <button type="submit" id="transfer-submit-btn" class="w-full bg-slate-300 text-white font-extrabold py-3 rounded-2xl text-sm transition-all flex shrink-0 min-h-[44px] items-center justify-center gap-2 cursor-pointer">
                         <i class="fa-solid fa-arrow-right-arrow-left"></i> Proses Transfer
                     </button>
