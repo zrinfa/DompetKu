@@ -241,8 +241,8 @@
          if (submitBtn) {
              const siap = !!hiddenInput.value && amt > 0;
              submitBtn.className = (siap
-                 ? 'flex-1 shrink-0 min-h-[44px] bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-white shadow-md'
-                 : 'flex-1 shrink-0 min-h-[44px] bg-slate-300 text-white')
+                 ? 'w-full shrink-0 min-h-[44px] bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-white shadow-md'
+                 : 'w-full shrink-0 min-h-[44px] bg-slate-300 text-white')
                  + ' font-extrabold py-3 rounded-2xl text-sm transition-all flex items-center justify-center gap-2 cursor-pointer';
          }
      }
