@@ -199,6 +199,10 @@
         html[data-theme="dark"] #modal-transfer .bg-slate-100,
         html[data-theme="dark"] #modal-confirm .bg-slate-100 { background-color: #334155 !important; }
         html[data-theme="dark"] #app-shell .bg-slate-200 { background-color: #475569 !important; }
+        /* Tombol navy: di mode gelap latarnya sama dengan shell sehingga tampak bukan tombol */
+        html[data-theme="dark"] #app-shell .bg-navy-900 { background-color: #1e293b !important; }
+        html[data-theme="dark"] #app-shell button.bg-navy-900 { background-color: #334155 !important; border: 1px solid #475569; }
+        html[data-theme="dark"] #app-shell .hover\:bg-navy-800:hover { background-color: #475569 !important; }
         html[data-theme="dark"] #modal-auth .bg-slate-200,
         html[data-theme="dark"] #modal-transaction .bg-slate-200,
         html[data-theme="dark"] #modal-transfer .bg-slate-200,
@@ -209,24 +213,29 @@
         html[data-theme="dark"] #modal-transaction .text-slate-800,
         html[data-theme="dark"] #modal-transfer .text-slate-800,
         html[data-theme="dark"] #modal-confirm .text-slate-800,
-        ,
-        ,
-        ,
         html[data-theme="dark"] #app-shell .text-slate-600,
         html[data-theme="dark"] #app-shell .text-slate-500 { color: #cbd5e1 !important; }
         html[data-theme="dark"] #modal-auth .text-slate-600,
         html[data-theme="dark"] #modal-transaction .text-slate-600,
         html[data-theme="dark"] #modal-transfer .text-slate-600,
         html[data-theme="dark"] #modal-confirm .text-slate-600,
-        ,
-        ,
-        ,
         html[data-theme="dark"] #app-shell .text-slate-400 { color: #94a3b8 !important; }
         html[data-theme="dark"] #modal-auth .text-slate-400,
         html[data-theme="dark"] #modal-transaction .text-slate-400,
         html[data-theme="dark"] #modal-transfer .text-slate-400,
         html[data-theme="dark"] #modal-confirm .text-slate-400 { color: #94a3b8 !important; }
         html[data-theme="dark"] #app-shell .text-emerald-600 { color: #34d399 !important; }
+        /* Teks emas/rose tua di atas kartu putih yang jadi gelap */
+        html[data-theme="dark"] #app-shell .bg-white .text-emerald-700,
+        html[data-theme="dark"] #app-shell .bg-white.text-emerald-700,
+        html[data-theme="dark"] #modal-ai .bg-white .text-emerald-700,
+        html[data-theme="dark"] #modal-ai .bg-white.text-emerald-700,
+        html[data-theme="dark"] #modal-transfer .bg-white .text-emerald-700,
+        html[data-theme="dark"] #modal-transaction .bg-white .text-emerald-700 { color: #34d399 !important; }
+        html[data-theme="dark"] #app-shell .bg-white .text-rose-700,
+        html[data-theme="dark"] #app-shell .bg-white.text-rose-700,
+        html[data-theme="dark"] #modal-transfer .bg-white .text-rose-700,
+        html[data-theme="dark"] #modal-transaction .bg-white .text-rose-700 { color: #fb7185 !important; }
         html[data-theme="dark"] #modal-auth .text-emerald-600,
         html[data-theme="dark"] #modal-transaction .text-emerald-600,
         html[data-theme="dark"] #modal-transfer .text-emerald-600,
@@ -252,9 +261,6 @@
         html[data-theme="dark"] #modal-transaction .border-slate-200,
         html[data-theme="dark"] #modal-transfer .border-slate-200,
         html[data-theme="dark"] #modal-confirm .border-slate-200,
-        ,
-        ,
-        ,
         html[data-theme="dark"] #app-shell .divide-slate-100 > :not([hidden]) ~ :not([hidden]) { border-color: #334155 !important; }
         html[data-theme="dark"] #modal-auth .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
         html[data-theme="dark"] #modal-transaction .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
@@ -266,9 +272,6 @@
         html[data-theme="dark"] #modal-transaction input,
         html[data-theme="dark"] #modal-transfer input,
         html[data-theme="dark"] #modal-confirm input,
-        ,
-        ,
-        ,
         html[data-theme="dark"] #app-shell input::placeholder { color: #64748b !important; }
         html[data-theme="dark"] #modal-auth input::placeholder,
         html[data-theme="dark"] #modal-transaction input::placeholder,
@@ -359,30 +362,69 @@
 
         /* --- Sheet vs keyboard virtual (form transfer & transaksi) --- */
         .dk-seg {
-            display: flex; gap: 5px; padding: 5px; border-radius: 9999px;
+            display: flex; gap: 6px; padding: 5px; border-radius: 9999px;
             background: #f1f5f9; border: 1px solid #e2e8f0;
         }
         .dk-seg-pill {
             flex: 1 1 0; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 7px;
-            border-radius: 9999px; padding: 7px 6px; font-size: 12px; font-weight: 800; color: #64748b;
+            border-radius: 9999px; padding: 6px; font-size: 12px; font-weight: 800;
+            background: #ffffff; border: 2px solid #e2e8f0; color: #475569;
             cursor: pointer; touch-action: manipulation;
-            transition: background .15s ease, color .15s ease, box-shadow .15s ease;
+            transition: background .15s ease, color .15s ease, border-color .15s ease, box-shadow .15s ease, transform .1s ease;
         }
-        .dk-seg-pill:has(input:checked), .dk-seg-pill.is-on {
-            background: #ffffff; color: #0f172a; box-shadow: 0 1px 3px rgba(15, 23, 42, .2);
-        }
+        .dk-seg-pill:active { transform: scale(.98); }
         .dk-seg-dot {
             width: 22px; height: 22px; border-radius: 9999px; display: flex; align-items: center;
-            justify-content: center; flex-shrink: 0; color: #fff; font-size: 11px; background: #94a3b8;
-            transition: background .15s ease;
+            justify-content: center; flex-shrink: 0; font-size: 11px;
+            transition: background .15s ease, color .15s ease;
         }
-        .dk-seg-pill:has(input:checked) .dk-seg-dot[data-dir="masuk"], .dk-seg-pill.is-on .dk-seg-dot[data-dir="masuk"] { background: #10b981; }
-        .dk-seg-pill:has(input:checked) .dk-seg-dot[data-dir="keluar"], .dk-seg-pill.is-on .dk-seg-dot[data-dir="keluar"] { background: #f59e0b; }
+        /* Layar sempit: jaga label tetap satu baris */
+        @media (max-width: 340px) {
+            .dk-seg-pill { font-size: 11px; gap: 5px; padding: 6px 4px; }
+        }
+        /* Belum dipilih: tetap berwarna, versi lembut */
+        .dk-seg-dot[data-dir="masuk"] { background: #d1fae5; color: #059669; }
+        .dk-seg-dot[data-dir="keluar"] { background: #fef3c7; color: #b45309; }
+        /* Dipilih: latar penuh, teks & ikon putih, seperti kartu arah di modal transaksi */
+        .dk-seg-pill:has(input:checked), .dk-seg-pill.is-on { color: #fff; }
+        .dk-seg-pill[data-kind="suntik"]:has(input:checked), .dk-seg-pill[data-kind="suntik"].is-on {
+            background: #10b981; border-color: #059669; box-shadow: 0 2px 6px rgba(5, 150, 105, .28);
+        }
+        .dk-seg-pill[data-kind="prive"]:has(input:checked), .dk-seg-pill[data-kind="prive"].is-on {
+            background: #f59e0b; border-color: #d97706; box-shadow: 0 2px 6px rgba(217, 119, 6, .28);
+        }
+        .dk-seg-pill:has(input:checked) .dk-seg-dot, .dk-seg-pill.is-on .dk-seg-dot {
+            background: rgba(255, 255, 255, .22); color: #ffffff;
+        }
         html[data-theme="dark"] .dk-seg { background: #16233c; border-color: #1f2d47; }
-        html[data-theme="dark"] .dk-seg-pill { color: #94a3b8; }
-        html[data-theme="dark"] .dk-seg-pill:has(input:checked), html[data-theme="dark"] .dk-seg-pill.is-on {
-            background: #24344f; color: #f8fafc; box-shadow: none;
+        html[data-theme="dark"] .dk-seg-pill { background: #1e293b; border-color: #334155; color: #cbd5e1; }
+        html[data-theme="dark"] .dk-seg-dot[data-dir="masuk"] { background: #064e3b; color: #34d399; }
+        html[data-theme="dark"] .dk-seg-dot[data-dir="keluar"] { background: #451a03; color: #fbbf24; }
+        html[data-theme="dark"] .dk-seg-pill[data-kind="suntik"]:has(input:checked), html[data-theme="dark"] .dk-seg-pill[data-kind="suntik"].is-on {
+            background: #059669; border-color: #10b981; color: #ffffff; box-shadow: none;
         }
+        html[data-theme="dark"] .dk-seg-pill[data-kind="prive"]:has(input:checked), html[data-theme="dark"] .dk-seg-pill[data-kind="prive"].is-on {
+            background: #d97706; border-color: #f59e0b; color: #ffffff; box-shadow: none;
+        }
+        html[data-theme="dark"] .dk-seg-pill:has(input:checked) .dk-seg-dot, html[data-theme="dark"] .dk-seg-pill.is-on .dk-seg-dot {
+            background: rgba(255,255,255,.22); color: #ffffff;
+        }
+
+        /* Chip berwarna: teksnya sudah diterangkan, jadi latarnya juga dijadikan tint gelap */
+        html[data-theme="dark"] #app-shell .bg-emerald-50.text-emerald-600,
+        html[data-theme="dark"] #modal-transaction .bg-emerald-50.text-emerald-600,
+        html[data-theme="dark"] #modal-transfer .bg-emerald-50.text-emerald-600,
+        html[data-theme="dark"] #modal-ai .bg-emerald-50.text-emerald-600 { background-color: rgba(16, 185, 129, .16) !important; }
+        html[data-theme="dark"] #app-shell .bg-rose-50.text-rose-600,
+        html[data-theme="dark"] #modal-transaction .bg-rose-50.text-rose-600,
+        html[data-theme="dark"] #modal-transfer .bg-rose-50.text-rose-600,
+        html[data-theme="dark"] #modal-ai .bg-rose-50.text-rose-600 { background-color: rgba(244, 63, 94, .16) !important; }
+        html[data-theme="dark"] #app-shell .bg-amber-50.text-amber-600,
+        html[data-theme="dark"] #modal-transaction .bg-amber-50.text-amber-600,
+        html[data-theme="dark"] #modal-transfer .bg-amber-50.text-amber-600,
+        html[data-theme="dark"] #modal-ai .bg-amber-50.text-amber-600 { background-color: rgba(245, 158, 11, .16) !important; }
+        html[data-theme="dark"] #app-shell .bg-blue-50.text-blue-600,
+        html[data-theme="dark"] #modal-transaction .bg-blue-50.text-blue-600 { background-color: rgba(59, 130, 246, .16) !important; }
 
         .dk-field-bar {
             width: 100%; display: flex; align-items: center; gap: 8px; padding: 9px 11px; border-radius: 14px;
@@ -1134,12 +1176,12 @@
                     <label class="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">Arah Transfer</label>
                     <div id="transfer-type-group">
                         <div class="dk-seg">
-                            <label id="transfer-opt-suntik" class="dk-seg-pill">
+                            <label id="transfer-opt-suntik" class="dk-seg-pill" data-kind="suntik">
                                 <input type="radio" name="transfer-type-radio" value="SUNTIK_MODAL" onchange="toggleTransferSubmit(); updateTransferPreview();" class="hidden">
                                 <span id="transfer-icon-suntik" class="dk-seg-dot" data-dir="masuk"><i class="fa-solid fa-arrow-right"></i></span>
                                 <span>Suntik Modal</span>
                             </label>
-                            <label id="transfer-opt-prive" class="dk-seg-pill">
+                            <label id="transfer-opt-prive" class="dk-seg-pill" data-kind="prive">
                                 <input type="radio" name="transfer-type-radio" value="PRIVE" onchange="toggleTransferSubmit(); updateTransferPreview();" class="hidden">
                                 <span id="transfer-icon-prive" class="dk-seg-dot" data-dir="keluar"><i class="fa-solid fa-arrow-left"></i></span>
                                 <span>Penarikan Prive</span>
