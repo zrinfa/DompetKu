@@ -27,11 +27,9 @@ DompetKu adalah aplikasi pencatatan keuangan berbasis web (Progressive Web App/P
 
 ---
 
-## Tentang Proyek
+## Informasi Pengembangan
 
-Proyek aplikasi **DompetKu** dikembangkan dalam rangka Program Magang Berdampak oleh mahasiswa Program Studi S1 Pendidikan Teknologi Informasi, Universitas Negeri Surabaya bekerja sama dengan Rumah BUMN BNI Ngawi.
-
-| Informasi | Keterangan |
+| Parameter | Keterangan |
 | :--- | :--- |
 | **Nama Pengembang** | Fazrin Mauza Dwi Zuhudi |
 | **NIM** | 24050974090 |
@@ -40,57 +38,121 @@ Proyek aplikasi **DompetKu** dikembangkan dalam rangka Program Magang Berdampak 
 | **Perguruan Tinggi** | Universitas Negeri Surabaya |
 | **Mitra Instansi** | Rumah BUMN BNI Ngawi |
 | **Program** | Program Magang Berdampak Semester Gasal 2026/2027 |
-| **Waktu Pelaksanaan** | 03 Agustus 2026 – 03 Desember 2026 |
+| **Periode Pelaksanaan** | 03 Agustus 2026 sampai dengan 03 Desember 2026 |
 
 ---
 
-## Fitur Utama Kecerdasan Buatan (AI)
+## Arsitektur dan Landasan Teknis
 
-DompetKu mengintegrasikan teknologi AI untuk mempermudah dan mempercepat proses input transaksi tanpa pengisian formulir manual yang rumit:
+Sistem dikembangkan dengan berlandaskan pada prinsip rekayasa perangkat lunak untuk menjamin skalabilitas, efisiensi operasional, dan kepatuhan privasi data pengguna:
 
-1. **Pemindaian Foto Struk**
-   Pengguna cukup mengunggah atau memotret struk belanja, nota, atau tagihan. AI secara otomatis mengekstraksi nilai transaksi, tanggal, serta mengklasifikasikan kategori transaksi dan menyimpannya bersama lampiran foto bukti transaksi.
+1. **Penyimpanan Lokal Mandiri (Local-First Architecture)**
+   Seluruh data transaksi dan entitas finansial disimpan langsung pada basis data lokal peramban klien menggunakan IndexedDB. Pendekatan ini mengeliminasi ketergantungan pada basis data peladen terpusat yang berbayar serta menjamin fungsionalitas penuh saat perangkat berada dalam kondisi luring (offline).
 
-2. **Input Teks Bahasa Alami**
-   Pencatatan transaksi dapat dilakukan layaknya berkirim pesan singkat. AI mengenali konteks bahasa sehari-hari (contoh: *"Beli bahan baku kue 150 ribu uang usaha"*), lalu memetakan nominal, kategori, jenis arus kas, dan kantong yang sesuai secara otomatis.
+2. **Sinkronisasi Terdesentralisasi Google Drive**
+   Untuk mitigasi risiko kehilangan data lokal, sistem mengimplementasikan mekanisme pencadangan dan pemulihan data mandiri langsung ke media penyimpanan awan Google Drive milik pengguna melalui protokol OAuth 2.0 tanpa perantara pihak ketiga.
 
-3. **Telepon Live (Voice AI)**
-   Interaksi suara dua arah secara real-time yang memungkinkan pengguna mencatat keuangan secara verbal layaknya berkomunikasi langsung dengan asisten pribadi.
+3. **Pemisahan Entitas Keuangan Usaha dan Pribadi**
+   Mengadopsi prinsip akuntansi dasar UMKM dengan memisahkan kas operasional usaha dari kas konsumtif pribadi. Aliran kas antar-kantong dicatat melalui mekanisme penambahan modal (Suntik Modal) dan penarikan ekuitas pemilik (Prive).
 
----
-
-## Fitur Fungsional Keuangan & Sistem
-
-- **Pemisahan Kantong Usaha & Pribadi:** Memisahkan catatan dan saldo kas usaha dari kas pribadi untuk mencegah percampuran dana bisnis dan rumah tangga.
-- **Manajemen Modal & Prive:** Mendukung pencatatan transfer antar-kantong melalui mekanisme Suntik Modal (pribadi ke usaha) dan Prive (penarikan dana usaha untuk keperluan pribadi).
-- **Arsitektur Local-First (Offline-First):** Seluruh data disimpan langsung pada perangkat pengguna menggunakan IndexedDB, sehingga aplikasi dapat berjalan lancar tanpa ketergantungan koneksi internet konstan.
-- **Pencadangan Mandiri Google Drive:** Fasilitas *backup and restore* data secara aman langsung ke akun Google Drive pribadi pengguna tanpa pihak ketiga.
-- **Laporan & Analitik Keuangan:** Visualisasi grafik dan tabel komprehensif untuk memantau laba bersih, akumulasi prive, tren arus kas, serta rekapitulasi berkala.
-- **Ekspor Data:** Dukungan unduh data transaksi dalam format CSV dan JSON untuk dokumentasi, pembukuan lanjutan, atau arsip mandiri.
+4. **Pemrosesan Kecerdasan Buatan Multi-Modal**
+   Pemanfaatan antarmuka pemrograman aplikasi Google Gemini memungkinkan konversi data tidak terstruktur (teks percakapan bebas, berkas citra nota, dan masukan suara) menjadi entri transaksi terstruktur secara otomatis.
 
 ---
 
-## Tampilan Antarmuka
+## Implementasi Antarmuka Pengguna
 
-Aplikasi DompetKu dirancang dengan antarmuka yang bersih, responsif, dan adaptif untuk perangkat seluler maupun desktop (Mobile-First Responsive Design).
+Pengembangan antarmuka pengguna mengadopsi pendekatan Mobile-First Responsive Design untuk menjamin kemudahan interaksi pada perangkat seluler. Pengujian fungsionalitas sistem mencakup 12 tampilan antarmuka utama sebagai berikut:
 
-### Dashboard Utama & Manajemen Transaksi
+<table>
+  <tr>
+    <td width="33%" align="center" valign="top">
+      <img src="assets/ui/01b_tampilan_awal_pilih_profil.png" alt="Layar 01" width="220" />
+      <br><br><strong>Gambar 1.</strong><br>Pemilihan Profil Kas (Entitas Usaha dan Pribadi)
+    </td>
+    <td width="33%" align="center" valign="top">
+      <img src="assets/ui/02_form_pendaftaran_profil_usaha.png" alt="Layar 02" width="220" />
+      <br><br><strong>Gambar 2.</strong><br>Formulir Registrasi Entitas Usaha
+    </td>
+    <td width="33%" align="center" valign="top">
+      <img src="assets/ui/03_panduan_tur_aplikasi.png" alt="Layar 03" width="220" />
+      <br><br><strong>Gambar 3.</strong><br>Panduan Orientasi Fitur Aplikasi
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" align="center" valign="top">
+      <img src="assets/ui/04_tampilan_home_dashboard.png" alt="Layar 04" width="220" />
+      <br><br><strong>Gambar 4.</strong><br>Dasbor Utama Saldo dan Arus Kas
+    </td>
+    <td width="33%" align="center" valign="top">
+      <img src="assets/ui/05_tampilan_form_transaksi.png" alt="Layar 05" width="220" />
+      <br><br><strong>Gambar 5.</strong><br>Formulir Pencatatan Transaksi Keuangan
+    </td>
+    <td width="33%" align="center" valign="top">
+      <img src="assets/ui/06_tampilan_form_transfer_prive.png" alt="Layar 06" width="220" />
+      <br><br><strong>Gambar 6.</strong><br>Formulir Transfer Modal dan Penarikan Prive
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" align="center" valign="top">
+      <img src="assets/ui/07_tampilan_riwayat_transaksi.png" alt="Layar 07" width="220" />
+      <br><br><strong>Gambar 7.</strong><br>Riwayat Mutasi dan Log Transaksi Terinci
+    </td>
+    <td width="33%" align="center" valign="top">
+      <img src="assets/ui/08_tampilan_laporan_keuangan.png" alt="Layar 08" width="220" />
+      <br><br><strong>Gambar 8.</strong><br>Rekapitulasi Laba Bersih dan Grafik Keuangan
+    </td>
+    <td width="33%" align="center" valign="top">
+      <img src="assets/ui/09_tampilan_menu_ai_catat_cepat.png" alt="Layar 09" width="220" />
+      <br><br><strong>Gambar 9.</strong><br>Ekstraksi Transaksi melalui Bahasa Alami (NLP)
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" align="center" valign="top">
+      <img src="assets/ui/10_tampilan_menu_ai_foto_struk.png" alt="Layar 10" width="220" />
+      <br><br><strong>Gambar 10.</strong><br>Pemindaian Bukti Fisik Struk Belanja (Vision AI)
+    </td>
+    <td width="33%" align="center" valign="top">
+      <img src="assets/ui/11_tampilan_telepon_live_ai.png" alt="Layar 11" width="220" />
+      <br><br><strong>Gambar 11.</strong><br>Interaksi Panggilan Suara Dua Arah (Telepon Live)
+    </td>
+    <td width="33%" align="center" valign="top">
+      <img src="assets/ui/12_tampilan_pengaturan.png" alt="Layar 12" width="220" />
+      <br><br><strong>Gambar 12.</strong><br>Konfigurasi Sistem, Kategori, dan Cadangan
+    </td>
+  </tr>
+</table>
+
+---
+
+## Analisis Fungsional Antarmuka
+
+Berikut merupakan deskripsi teknis dari setiap komponen antarmuka yang diimplementasikan pada sistem:
+
+### 1. Inisialisasi dan Konfigurasi Pengguna (Gambar 1, Gambar 2, Gambar 3)
+- **Pemilihan Profil Kas (Gambar 1):** Berfungsi sebagai gerbang pemisah antara pembukuan usaha mikro dan pengelolaan keuangan personal. Pengguna dapat berganti konteks secara terisolasi tanpa mencampuradukkan saldo rekening.
+- **Registrasi Profil Usaha (Gambar 2):** Menampung data legalitas dan identitas usaha, seperti nama usaha, sektor usaha, saldo kas awal, serta preferensi dasar pembukuan.
+- **Panduan Pengenalan Sistem (Gambar 3):** Modul interaktif terpadu yang memandu pengguna baru dalam memahami tata cara operasional pencatatan, pemisahan kantong kas, serta pemanfaatan fitur automasi.
+
+### 2. Manajemen Transaksi dan Mutasi Kas (Gambar 4, Gambar 5, Gambar 6)
+- **Dasbor Utama (Gambar 4):** Menampilkan ringkasan total saldo kas usaha aktif, saldo kas pribadi, total akumulasi pemasukan dan pengeluaran bulan berjalan, serta pintasan cepat menuju modul pencatatan.
+- **Pencatatan Transaksi Manual (Gambar 5):** Formulir standar untuk mencatat arus masuk maupun keluar kas yang dilengkapi penentuan kategori transaksi, metode pembayaran, tanggal transaksi, catatan keterangan, dan penentuan alokasi kantong kas.
+- **Transfer Modal dan Penarikan Prive (Gambar 6):** Fasilitas pencatatan mutasi internal antara kas usaha dan kas pribadi, mencakup transfer Suntik Modal (penambahan modal dari dana pribadi ke kas usaha) dan Prive (penarikan kas usaha untuk kebutuhan pribadi), sehingga akurasi perhitungan laba bersih usaha tetap terjaga.
+
+### 3. Pemantauan Riwayat dan Pelaporan (Gambar 7, Gambar 8)
+- **Riwayat Mutasi Transaksi (Gambar 7):** Modul penelusuran seluruh catatan transaksi historis yang dilengkapi fitur penyaringan berdasarkan rentang tanggal, jenis arus kas, kategori transaksi, maupun kata kunci pencarian.
+- **Laporan dan Analitik Keuangan (Gambar 8):** Penyajian rekapitulasi kinerja finansial berbasis periode tertentu. Menghitung secara otomatis selisih pendapatan dan beban operasional untuk menghasilkan laba atau rugi bersih, disertai visualisasi grafik tren yang dapat diekspor ke dalam format CSV dan JSON.
+
+### 4. Otomasi Berbasis Kecerdasan Buatan (Gambar 9, Gambar 10, Gambar 11)
+- **Pencatatan Bahasa Alami / NLP (Gambar 9):** Memfasilitasi pengguna untuk memasukkan keterangan transaksi dalam bahasa percakapan sehari-hari. Model AI mengekstraksi nominal, entitas kantong, jenis arus kas, serta klasifikasi kategori transaksi secara otomatis tanpa pengisian formulir manual.
+- **Pemindaian Bukti Fisik Struk (Gambar 10):** Fitur pemrosesan citra nota atau struk belanja menggunakan Optical Character Recognition (OCR) dan penalaran multimodal untuk mendeteksi tanggal transaksi, nama rekanan dagang, dan total nominal tagihan secara tepat.
+- **Panggilan Suara Real-Time Telepon Live (Gambar 11):** Antarmuka interaksi suara dua arah yang memproses masukan audio pengguna secara langsung, mengekstraksi data finansial yang dibicarakan, dan mencatatkannya ke dalam sistem pembukuan secara langsung.
+
+### 5. Konfigurasi Sistem dan Keamanan Data (Gambar 12)
+- **Pengaturan Preferensi dan Sinkronisasi (Gambar 12):** Fasilitas untuk mengatur hierarki kategori transaksi kustom, mengelola autentikasi Google Drive untuk keperluan pencadangan (backup) dan pemulihan (restore) berkas basis data, serta mengelola preferensi operasional aplikasi.
+
+---
+
 <div align="center">
-  <img src="assets/screenshots/dashboard.png" alt="Dashboard Utama DompetKu" width="300" style="border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);" />
-</div>
-
-<br>
-
-### Fitur AI: Input Cerdas & Telepon Live
-<div align="center">
-  <img src="assets/screenshots/ai-modal.png" alt="Modal Fitur AI DompetKu" width="280" style="margin-right: 16px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);" />
-  <img src="assets/screenshots/live-call.png" alt="Telepon Live AI DompetKu" width="280" style="border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);" />
-</div>
-
-<br>
-
----
-
-<div align="center">
-  <p>Dikembangkan oleh <strong>Fazrin Mauza Dwi Zuhudi</strong><br>Program Magang Berdampak 2026 — Universitas Negeri Surabaya & Rumah BUMN BNI Ngawi</p>
+  <p>Dikembangkan oleh <strong>Fazrin Mauza Dwi Zuhudi</strong> (NIM: 24050974090)<br>Program Magang Berdampak 2026: Universitas Negeri Surabaya dan Rumah BUMN BNI Ngawi</p>
 </div>
