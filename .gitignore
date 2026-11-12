@@ -1,8 +1,6 @@
-# Kredensial & data sensitif
-backend/config.local.php
+# Backend & data sensitif
+backend/
 *.sql
-!backend/schema.sql
-!backend/migrate_origin.sql
 *.bak
 * bak
 *.log
