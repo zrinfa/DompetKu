@@ -62,7 +62,9 @@ Sistem dikembangkan dengan berlandaskan pada prinsip rekayasa perangkat lunak un
 
 ## Implementasi Antarmuka Pengguna
 
-Pengembangan antarmuka pengguna mengadopsi pendekatan Mobile-First Responsive Design untuk menjamin kemudahan interaksi pada perangkat seluler. Pengujian fungsionalitas sistem mencakup 12 tampilan antarmuka utama sebagai berikut:
+Pengembangan antarmuka pengguna mengadopsi pendekatan Mobile-First Responsive Design untuk menjamin kemudahan interaksi pada perangkat seluler. Pengujian fungsionalitas sistem mencakup 13 tampilan antarmuka utama yang dikelompokkan ke dalam 5 modul operasional sebagai berikut:
+
+### 1. Inisialisasi dan Konfigurasi Profil
 
 <table>
   <tr>
@@ -79,46 +81,74 @@ Pengembangan antarmuka pengguna mengadopsi pendekatan Mobile-First Responsive De
       <br><br><strong>Gambar 3.</strong><br>Panduan Orientasi Fitur Aplikasi
     </td>
   </tr>
+</table>
+
+### 2. Manajemen Transaksi dan Alur Kas
+
+<table>
   <tr>
-    <td width="33%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <img src="assets/ui/04_tampilan_home_dashboard.png" alt="Layar 04" width="220" />
       <br><br><strong>Gambar 4.</strong><br>Dasbor Utama Saldo dan Arus Kas
     </td>
-    <td width="33%" align="center" valign="top">
+    <td width="50%" align="center" valign="top">
       <img src="assets/ui/05_tampilan_form_transaksi.png" alt="Layar 05" width="220" />
-      <br><br><strong>Gambar 5.</strong><br>Formulir Pencatatan Transaksi Keuangan
-    </td>
-    <td width="33%" align="center" valign="top">
-      <img src="assets/ui/06_tampilan_form_transfer_prive.png" alt="Layar 06" width="220" />
-      <br><br><strong>Gambar 6.</strong><br>Formulir Transfer Modal dan Penarikan Prive
+      <br><br><strong>Gambar 5.</strong><br>Formulir Pencatatan Transaksi Kas Usaha
     </td>
   </tr>
   <tr>
-    <td width="33%" align="center" valign="top">
-      <img src="assets/ui/07_tampilan_riwayat_transaksi.png" alt="Layar 07" width="220" />
-      <br><br><strong>Gambar 7.</strong><br>Riwayat Mutasi dan Log Transaksi Terinci
+    <td width="50%" align="center" valign="top">
+      <img src="assets/ui/05c_tampilan_form_transaksi_pribadi.png" alt="Layar 06" width="220" />
+      <br><br><strong>Gambar 6.</strong><br>Formulir Pencatatan Transaksi Kas Pribadi
     </td>
-    <td width="33%" align="center" valign="top">
-      <img src="assets/ui/08_tampilan_laporan_keuangan.png" alt="Layar 08" width="220" />
-      <br><br><strong>Gambar 8.</strong><br>Rekapitulasi Laba Bersih dan Grafik Keuangan
-    </td>
-    <td width="33%" align="center" valign="top">
-      <img src="assets/ui/09_tampilan_menu_ai_catat_cepat.png" alt="Layar 09" width="220" />
-      <br><br><strong>Gambar 9.</strong><br>Ekstraksi Transaksi melalui Bahasa Alami (NLP)
+    <td width="50%" align="center" valign="top">
+      <img src="assets/ui/06_tampilan_form_transfer_prive.png" alt="Layar 07" width="220" />
+      <br><br><strong>Gambar 7.</strong><br>Formulir Transfer Modal dan Penarikan Prive
     </td>
   </tr>
+</table>
+
+### 3. Monitoring Riwayat dan Laporan Finansial
+
+<table>
+  <tr>
+    <td width="50%" align="center" valign="top">
+      <img src="assets/ui/07_tampilan_riwayat_transaksi.png" alt="Layar 08" width="220" />
+      <br><br><strong>Gambar 8.</strong><br>Riwayat Mutasi dan Log Transaksi Terinci
+    </td>
+    <td width="50%" align="center" valign="top">
+      <img src="assets/ui/08_tampilan_laporan_keuangan.png" alt="Layar 09" width="220" />
+      <br><br><strong>Gambar 9.</strong><br>Rekapitulasi Laba Bersih dan Grafik Keuangan
+    </td>
+  </tr>
+</table>
+
+### 4. Otomasi Berbasis Kecerdasan Buatan (AI)
+
+<table>
   <tr>
     <td width="33%" align="center" valign="top">
-      <img src="assets/ui/10_tampilan_menu_ai_foto_struk.png" alt="Layar 10" width="220" />
-      <br><br><strong>Gambar 10.</strong><br>Pemindaian Bukti Fisik Struk Belanja (Vision AI)
+      <img src="assets/ui/09_tampilan_menu_ai_catat_cepat.png" alt="Layar 10" width="220" />
+      <br><br><strong>Gambar 10.</strong><br>Ekstraksi Transaksi melalui Bahasa Alami (NLP)
     </td>
     <td width="33%" align="center" valign="top">
-      <img src="assets/ui/11_tampilan_telepon_live_ai.png" alt="Layar 11" width="220" />
-      <br><br><strong>Gambar 11.</strong><br>Interaksi Panggilan Suara Dua Arah (Telepon Live)
+      <img src="assets/ui/10_tampilan_menu_ai_foto_struk.png" alt="Layar 11" width="220" />
+      <br><br><strong>Gambar 11.</strong><br>Pemindaian Bukti Fisik Struk Belanja (Vision AI)
     </td>
     <td width="33%" align="center" valign="top">
-      <img src="assets/ui/12_tampilan_pengaturan.png" alt="Layar 12" width="220" />
-      <br><br><strong>Gambar 12.</strong><br>Konfigurasi Sistem, Kategori, dan Cadangan
+      <img src="assets/ui/11_tampilan_telepon_live_ai.png" alt="Layar 12" width="220" />
+      <br><br><strong>Gambar 12.</strong><br>Interaksi Panggilan Suara Dua Arah (Telepon Live)
+    </td>
+  </tr>
+</table>
+
+### 5. Konfigurasi Sistem dan Keamanan Data
+
+<table>
+  <tr>
+    <td width="100%" align="center" valign="top">
+      <img src="assets/ui/12_tampilan_pengaturan.png" alt="Layar 13" width="220" />
+      <br><br><strong>Gambar 13.</strong><br>Konfigurasi Sistem, Kategori, dan Cadangan Google Drive
     </td>
   </tr>
 </table>
@@ -134,22 +164,23 @@ Berikut merupakan deskripsi teknis dari setiap komponen antarmuka yang diimpleme
 - **Registrasi Profil Usaha (Gambar 2):** Menampung data legalitas dan identitas usaha, seperti nama usaha, sektor usaha, saldo kas awal, serta preferensi dasar pembukuan.
 - **Panduan Pengenalan Sistem (Gambar 3):** Modul interaktif terpadu yang memandu pengguna baru dalam memahami tata cara operasional pencatatan, pemisahan kantong kas, serta pemanfaatan fitur automasi.
 
-### 2. Manajemen Transaksi dan Mutasi Kas (Gambar 4, Gambar 5, Gambar 6)
+### 2. Manajemen Transaksi dan Mutasi Kas (Gambar 4, Gambar 5, Gambar 6, Gambar 7)
 - **Dasbor Utama (Gambar 4):** Menampilkan ringkasan total saldo kas usaha aktif, saldo kas pribadi, total akumulasi pemasukan dan pengeluaran bulan berjalan, serta pintasan cepat menuju modul pencatatan.
-- **Pencatatan Transaksi Manual (Gambar 5):** Formulir standar untuk mencatat arus masuk maupun keluar kas yang dilengkapi penentuan kategori transaksi, metode pembayaran, tanggal transaksi, catatan keterangan, dan penentuan alokasi kantong kas.
-- **Transfer Modal dan Penarikan Prive (Gambar 6):** Fasilitas pencatatan mutasi internal antara kas usaha dan kas pribadi, mencakup transfer Suntik Modal (penambahan modal dari dana pribadi ke kas usaha) dan Prive (penarikan kas usaha untuk kebutuhan pribadi), sehingga akurasi perhitungan laba bersih usaha tetap terjaga.
+- **Pencatatan Transaksi Kas Usaha (Gambar 5):** Formulir pencatatan operasional bisnis untuk merekam kas masuk maupun kas keluar yang terikat langsung pada pos akun usaha, lengkap dengan klasifikasi kategori beban atau omzet, metode pembayaran, tanggal transaksi, dan keterangan transaksi.
+- **Pencatatan Transaksi Kas Pribadi (Gambar 6):** Formulir pencatatan kebutuhan personal yang terisolasi dari pembukuan bisnis, memastikan pencatatan pengeluaran konsumtif dan pendapatan non-usaha tidak mendistorsi perhitungan laba bersih usaha.
+- **Transfer Modal dan Penarikan Prive (Gambar 7):** Fasilitas pencatatan mutasi internal antara kas usaha dan kas pribadi, mencakup transfer Suntik Modal (penambahan modal dari dana pribadi ke kas usaha) dan Prive (penarikan kas usaha untuk kebutuhan pribadi), sehingga akurasi perhitungan laba bersih usaha dan posisi kas riil tetap terjaga.
 
-### 3. Pemantauan Riwayat dan Pelaporan (Gambar 7, Gambar 8)
-- **Riwayat Mutasi Transaksi (Gambar 7):** Modul penelusuran seluruh catatan transaksi historis yang dilengkapi fitur penyaringan berdasarkan rentang tanggal, jenis arus kas, kategori transaksi, maupun kata kunci pencarian.
-- **Laporan dan Analitik Keuangan (Gambar 8):** Penyajian rekapitulasi kinerja finansial berbasis periode tertentu. Menghitung secara otomatis selisih pendapatan dan beban operasional untuk menghasilkan laba atau rugi bersih, disertai visualisasi grafik tren yang dapat diekspor ke dalam format CSV dan JSON.
+### 3. Pemantauan Riwayat dan Pelaporan (Gambar 8, Gambar 9)
+- **Riwayat Mutasi Transaksi (Gambar 8):** Modul penelusuran seluruh catatan transaksi historis yang dilengkapi fitur penyaringan berdasarkan rentang tanggal, jenis arus kas, kategori transaksi, maupun kata kunci pencarian.
+- **Laporan dan Analitik Keuangan (Gambar 9):** Penyajian rekapitulasi kinerja finansial berbasis periode tertentu. Menghitung secara otomatis selisih pendapatan dan beban operasional untuk menghasilkan laba atau rugi bersih, disertai visualisasi grafik tren yang dapat diekspor ke dalam format CSV dan JSON.
 
-### 4. Otomasi Berbasis Kecerdasan Buatan (Gambar 9, Gambar 10, Gambar 11)
-- **Pencatatan Bahasa Alami / NLP (Gambar 9):** Memfasilitasi pengguna untuk memasukkan keterangan transaksi dalam bahasa percakapan sehari-hari. Model AI mengekstraksi nominal, entitas kantong, jenis arus kas, serta klasifikasi kategori transaksi secara otomatis tanpa pengisian formulir manual.
-- **Pemindaian Bukti Fisik Struk (Gambar 10):** Fitur pemrosesan citra nota atau struk belanja menggunakan Optical Character Recognition (OCR) dan penalaran multimodal untuk mendeteksi tanggal transaksi, nama rekanan dagang, dan total nominal tagihan secara tepat.
-- **Panggilan Suara Real-Time Telepon Live (Gambar 11):** Antarmuka interaksi suara dua arah yang memproses masukan audio pengguna secara langsung, mengekstraksi data finansial yang dibicarakan, dan mencatatkannya ke dalam sistem pembukuan secara langsung.
+### 4. Otomasi Berbasis Kecerdasan Buatan (Gambar 10, Gambar 11, Gambar 12)
+- **Pencatatan Bahasa Alami / NLP (Gambar 10):** Memfasilitasi pengguna untuk memasukkan keterangan transaksi dalam bahasa percakapan sehari-hari. Model AI mengekstraksi nominal, entitas kantong, jenis arus kas, serta klasifikasi kategori transaksi secara otomatis tanpa pengisian formulir manual.
+- **Pemindaian Bukti Fisik Struk (Gambar 11):** Fitur pemrosesan citra nota atau struk belanja menggunakan Optical Character Recognition (OCR) dan penalaran multimodal untuk mendeteksi tanggal transaksi, nama rekanan dagang, dan total nominal tagihan secara tepat.
+- **Panggilan Suara Real-Time Telepon Live (Gambar 12):** Antarmuka interaksi suara dua arah yang memproses masukan audio pengguna secara langsung, mengekstraksi data finansial yang dibicarakan, dan mencatatkannya ke dalam sistem pembukuan secara langsung.
 
-### 5. Konfigurasi Sistem dan Keamanan Data (Gambar 12)
-- **Pengaturan Preferensi dan Sinkronisasi (Gambar 12):** Fasilitas untuk mengatur hierarki kategori transaksi kustom, mengelola autentikasi Google Drive untuk keperluan pencadangan (backup) dan pemulihan (restore) berkas basis data, serta mengelola preferensi operasional aplikasi.
+### 5. Konfigurasi Sistem dan Keamanan Data (Gambar 13)
+- **Pengaturan Preferensi dan Sinkronisasi (Gambar 13):** Fasilitas untuk mengatur hierarki kategori transaksi kustom, mengelola autentikasi Google Drive untuk keperluan pencadangan (backup) dan pemulihan (restore) berkas basis data, serta mengelola preferensi operasional aplikasi.
 
 ---
 
