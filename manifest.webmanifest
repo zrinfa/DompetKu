@@ -1,7 +1,7 @@
 {
-  "name": "DompetKu - Keuangan Usaha & Pribadi",
+  "name": "DompetKu - Aplikasi Pencatatan Keuangan UMKM Terintegrasi Kecerdasan Buatan",
   "short_name": "DompetKu",
-  "description": "Aplikasi pencatatan keuangan usaha & pribadi, offline dengan backup Google Drive.",
+  "description": "DompetKu membantu pelaku UMKM mencatat keuangan usaha dan pribadi dengan lebih mudah dan rapi. Transaksi cukup diketik dengan bahasa sehari-hari, difoto struk belanjanya, atau diucapkan langsung melalui Telepon Live bersama asisten AI. Aplikasi akan mencatatnya secara otomatis, dan Anda tinggal memeriksanya sebelum disimpan.",
   "id": "./",
   "start_url": "./index.html",
   "scope": "./",
