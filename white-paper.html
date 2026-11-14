@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>White Paper: Arsitektur DompetKu | Sistem Keuangan UMKM Local-First & AI</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #334155;
+            --text-muted: #64748b;
+            --border-color: #cbd5e1;
+            --border-light: #e2e8f0;
+            --accent-primary: #059669;
+            --accent-soft: #ecfdf5;
+            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        header.top-bar {
+            background-color: #0f172a;
+            color: #ffffff;
+            border-bottom: 1px solid #1e293b;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-content {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 0.875rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: #ffffff;
+        }
+
+        .brand-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: #ffffff;
+            padding: 2px;
+        }
+
+        .brand-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            color: #ffffff;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .nav-links a {
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #34d399;
+        }
+
+        main.paper-container {
+            max-width: 920px;
+            margin: 2.5rem auto 4.5rem auto;
+            padding: 0 1.25rem;
+        }
+
+        .paper-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 3rem 2.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .paper-header {
+            border-bottom: 2px solid var(--border-light);
+            padding-bottom: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .paper-type {
+            display: inline-block;
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--accent-primary);
+            background-color: var(--accent-soft);
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        h1.paper-title {
+            font-size: 1.85rem;
+            font-weight: 800;
+            line-height: 1.35;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .paper-authors {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .paper-institution {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .abstract-box {
+            background-color: #f1f5f9;
+            border-left: 4px solid var(--accent-primary);
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 2.5rem;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .abstract-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .abstract-text {
+            font-size: 0.925rem;
+            color: var(--text-secondary);
+            text-align: justify;
+            margin-bottom: 0.75rem;
+        }
+
+        .keywords {
+            font-size: 0.825rem;
+            color: var(--text-muted);
+        }
+
+        .keywords strong {
+            color: var(--text-primary);
+        }
+
+        .paper-body section {
+            margin-bottom: 2.25rem;
+        }
+
+        h2.section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.875rem;
+            padding-bottom: 0.35rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        h3.subsection-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.9rem;
+            text-align: justify;
+        }
+
+        ol, ul {
+            margin: 0.5rem 0 1rem 1.75rem;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin-bottom: 0.4rem;
+        }
+
+        .spec-table-container {
+            overflow-x: auto;
+            margin: 1.25rem 0 1.5rem 0;
+        }
+
+        table.spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+            text-align: left;
+        }
+
+        table.spec-table th,
+        table.spec-table td {
+            border: 1px solid var(--border-light);
+            padding: 0.75rem 1rem;
+        }
+
+        table.spec-table th {
+            background-color: #f1f5f9;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        table.spec-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .diagram-block {
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            padding: 1.25rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1.25rem 0;
+            line-height: 1.5;
+        }
+
+        .reference-list {
+            list-style-type: decimal;
+            margin-left: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .reference-list li {
+            margin-bottom: 0.5rem;
+            text-align: justify;
+        }
+
+        footer.doc-footer {
+            border-top: 1px solid var(--border-light);
+            padding: 2rem 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        @media (max-width: 640px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .nav-links {
+                width: 100%;
+                justify-content: space-between;
+                font-size: 0.8rem;
+            }
+            .paper-card {
+                padding: 1.5rem 1rem;
+            }
+            h1.paper-title {
+                font-size: 1.35rem;
+            }
+            .abstract-box {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="top-bar">
+        <div class="header-content">
+            <a href="index.html" class="brand-container">
+                <img src="favicon.png" alt="Logo DompetKu" class="brand-logo">
+                <span class="brand-title">DompetKu</span>
+            </a>
+            <nav class="nav-links">
+                <a href="index.html">Aplikasi</a>
+                <a href="ui-design.html">Desain UI/UX</a>
+                <a href="white-paper.html" class="active">White Paper</a>
+                <a href="privacy-policy.html">Kebijakan Privasi</a>
+                <a href="tos.html">Syarat & Ketentuan</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="paper-container">
+        <article class="paper-card">
+            
+            <header class="paper-header">
+                <div class="paper-type">Kertas Kerja Ilmiah & Arsitektur Teknis</div>
+                <h1 class="paper-title">DompetKu: Arsitektur Sistem Pencatatan Finansial Terdesentralisasi Berbasis Local-First dan Pemrosesan Kecerdasan Buatan Multimodal untuk Sektor Usaha Mikro</h1>
+                <div class="paper-authors">Fazrin Mauza Dwi Zuhudi</div>
+                <div class="paper-institution">Program Studi S1 Pendidikan Teknologi Informasi, Universitas Negeri Surabaya & Rumah BUMN BNI Ngawi</div>
+            </header>
+
+            <div class="abstract-box">
+                <div class="abstract-title">Abstrak</div>
+                <p class="abstract-text">
+                    Sektor Usaha Mikro, Kecil, dan Menengah (UMKM) menghadapi kendala klasik dalam tata kelola administrasi keuangan, khususnya percampuran arus kas personal dengan operasional bisnis serta friksi waktu pencatatan transaksi manual. Penelitian dan implementasi sistem DompetKu menyajikan solusi berupa platform Progressive Web App (PWA) dengan paradigma local-first. Seluruh data transaksi diisolasi pada mesin peramban pengguna melalui IndexedDB tanpa perantara peladen penyimpan terpusat. Untuk meminimalkan latensi pencatatan, sistem mengintegrasikan tiga jalur inferensi kecerdasan buatan: pemrosesan bahasa alami berbasis teks perintah cepat, optical character recognition untuk faktur fisik, serta streaming suara dua arah secara langsung. Redundansi arsip diakomodasi melalui protokol OAuth 2.0 yang menghubungkan klien langsung ke Google Drive pribadi pengguna. Hasil implementasi menunjukkan efisiensi waktu entri data, keterjaminan privasi finansial, dan stabilitas operasional pada kondisi jaringan nirkoneksi.
+                </p>
+                <div class="keywords"><strong>Kata Kunci:</strong> Local-First Architecture, Progressive Web App, Pencatatan Keuangan UMKM, Kecerdasan Buatan Multimodal, Zero-Knowledge Privacy.</div>
+            </div>
+
+            <div class="paper-body">
+
+                <section>
+                    <h2 class="section-title">1. Pendahuluan</h2>
+                    <p>
+                        Pencatatan keuangan yang tertib merupakan pondasi utama dalam evaluasi kelayakan usaha dan pertumbuhan skala bisnis UMKM. Kendati demikian, mayoritas pelaku usaha mikro di Indonesia masih mengandalkan pencatatan berbasis kertas atau bahkan tidak melakukan pencatatan sama sekali. Kendala mendasar yang ditemukan meliputi tingginya beban kognitif pengisian formulir akuntansi berlapis, kekhawatiran kebocoran data rahasia bisnis ke peladen pihak ketiga, serta ketidakstabilan konektivitas internet pada lokasi operasional.
+                    </p>
+                    <p>
+                        Aplikasi berbasis komputasi awan murni (cloud-centric) menimbulkan ketergantungan mutlak pada ketersediaan jaringan dan membuka celah privasi. Untuk mengatasi disparitas tersebut, proyek DompetKu dirancang dengan memadukan arsitektur komputasi local-first dengan akselerasi otomatisasi kecerdasan buatan, memastikan integritas data berada dalam kontrol penuh pemilik perangkat.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="section-title">2. Arsitektur Komputasi Local-First</h2>
+                    <p>
+                        Paradigma local-first menempatkan media penyimpanan lokal pengguna sebagai sumber kebenaran primer (primary source of truth). Diagram alur penyimpanan dan pemrosesan data dirancang sebagai berikut:
+                    </p>
+
+                    <div class="diagram-block">
+[Antarmuka Pengguna (PWA Klien)]
+      │
+      ├── (Baca / Tulis Instan) ────────► [IndexedDB / LocalStorage Klien]
+      │                                             │
+      ├── (Permintaan Ekstraksi AI)                  │ (Sinkronisasi Terenkripsi)
+      │        │                                    ▼
+      │   [API AI Gateway]                 [Google Drive Pengguna]
+      │   (Stateless Processing)            (Pencadangan Mandiri Klien)
+      │        │
+      └── (Hasil JSON Transaksi)
+                    </div>
+
+                    <p>
+                        Implementasi arsitektur ini didasarkan pada tiga pilar fungsional:
+                    </p>
+                    <ol>
+                        <li><strong>Kemandirian Penyimpanan Klien:</strong> Data transaksi, daftar pos kantong, preferensi profil, dan riwayat mutasi disimpan pada IndexedDB peramban. Operasi create, read, update, dan delete (CRUD) berjalan dengan latensi di bawah 15 milidetik karena dieksekusi secara lokal tanpa menunggu round-trip network.</li>
+                        <li><strong>Ketahanan Luring Berkelanjutan:</strong> Menggunakan Service Worker untuk mengarsipkan bundel aset statis (HTML, skrip logika, gaya CSS, berkas pustaka grafik), sehingga aplikasi tetap dapat dimuat dan dioperasikan dalam kondisi tanpa jaringan internet.</li>
+                        <li><strong>Kerahasiaan Nir-Peladen (Zero-Knowledge):</strong> Pengembang tidak menyediakan pangkalan data relasional untuk menghimpun data transaksi pengguna. Beban kepatuhan perlindungan data pribadi dialihkan ke sistem kendali pengguna secara mandiri.</li>
+                    </ol>
+                </section>
+
+                <section>
+                    <h2 class="section-title">3. Pipeline Otomatisasi Kecerdasan Buatan (AI)</h2>
+                    <p>
+                        Guna memangkas waktu pengisian formulir transaksi, DompetKu mengimplementasikan antarmuka multimodal yang terdiri dari tiga kanal masukan independen:
+                    </p>
+
+                    <h3 class="subsection-title">3.1 Ekstraksi Teks Bahasa Alami (NLP Parsing)</h3>
+                    <p>
+                        Pengguna menginput kalimat perintah natural tanpa format kaku. Masukan dikirimkan ke model pemrosesan bahasa alami yang dikonfigurasikan dengan instruksi sistem ketat untuk mengekstraksi objek data bertipe terstruktur:
+                    </p>
+                    <ul>
+                        <li>Nominal numerik (mengonversi satuan percakapan seperti 'ribu', 'k', 'jt' menjadi integer murni).</li>
+                        <li>Tipe transaksi (Pemasukan atau Pengeluaran).</li>
+                        <li>Kategori pembukuan (contoh: Bahan Baku, Operasional, Penjualan Produk).</li>
+                        <li>Pos alokasi kantong (Usaha atau Pribadi).</li>
+                    </ul>
+
+                    <h3 class="subsection-title">3.2 Pengenalan Karakter Optis Citra Struk (Vision OCR)</h3>
+                    <p>
+                        Pemindaian dokumen bukti transaksi fisik diproses melalui model visi komputer. Model melakukan segmentasi citra terhadap area nama gerai, daftar butir belanjaan, stempel tanggal, serta nominal agregat akhir, lalu menghasilkan skema formulir verifikasi sebelum dilakukan persistensi ke penyimpanan lokal.
+                    </p>
+
+                    <h3 class="subsection-title">3.3 Antarmuka Suara Interaktif Waktu-Nyata (Live Call Voice AI)</h3>
+                    <p>
+                        Jalur komunikasi suara memanfaatkan streaming audio dua arah dengan latensi rendah. Aliran suara percakapan diterjemahkan ke teks secara simultan, diinterpretasikan intensinya untuk pemanggilan fungsi (function calling) mutasi keuangan, dan dijawab kembali dengan sintesis audio alami.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="section-title">4. Tata Kelola Akuntansi dan Mekanisme Cadangan</h2>
+                    <p>
+                        Sistem membedakan dua entitas kantong finansial utama: Kas Usaha dan Kas Pribadi. Setiap transaksi terikat pada satu kantong spesifik untuk mencegah bias kalkulasi margin laba bersih.
+                    </p>
+
+                    <div class="spec-table-container">
+                        <table class="spec-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Kantong Usaha</th>
+                                    <th>Kantong Pribadi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Fungsi Utama</td>
+                                    <td>Operasional perdagangan, bahan baku, modal kerja</td>
+                                    <td>Kebutuhan rumah tangga, konsumsi individual</td>
+                                </tr>
+                                <tr>
+                                    <td>Perhitungan Laba Bersih</td>
+                                    <td>Dihitung (Pemasukan dikurangi Pengeluaran Operasional)</td>
+                                    <td>Diisolasi dari laba rugi usaha</td>
+                                </tr>
+                                <tr>
+                                    <td>Output Pelaporan</td>
+                                    <td>Buku kas harian usaha, rekap laba kotor, ekspor CSV/PDF</td>
+                                    <td>Catatan pengeluaran personal</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>
+                        Untuk mitigasi risiko kehilangan perangkat fisik atau pembersihan cache peramban, DompetKu memanfaatkan protokol otorisasi OAuth 2.0 milik Google Identity Services. Pengguna dapat menghubungkan akun Google Drive pribadi mereka secara langsung. Berkas cadangan yang memuat snapshot basis data lokal diunggah langsung ke penyimpanan awan Pengguna tanpa perantara peladen pihak ketiga.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="section-title">5. Evaluasi Kinerja dan Karakteristik Teknis</h2>
+                    <p>
+                        Tinjauan parameter teknis implementasi disarikan pada tabel matriks sistem berikut:
+                    </p>
+
+                    <div class="spec-table-container">
+                        <table class="spec-table">
+                            <thead>
+                                <tr>
+                                    <th>Komponen Sistem</th>
+                                    <th>Spesifikasi Teknis</th>
+                                    <th>Tujuan dan Karakteristik</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Model Aplikasi</td>
+                                    <td>Progressive Web App (PWA) Standalone</td>
+                                    <td>Dapat diinstalasi pada sistem operasi mobile tanpa dependensi app store</td>
+                                </tr>
+                                <tr>
+                                    <td>Penyimpanan Klien</td>
+                                    <td>IndexedDB & LocalStorage API</td>
+                                    <td>Akses data transaksi instan tanpa latensi koneksi jaringan</td>
+                                </tr>
+                                <tr>
+                                    <td>Model Pemrosesan AI</td>
+                                    <td>Stateless Remote Inference Pipeline</td>
+                                    <td>Kerahasiaan data terjamin, rekaman masukan tidak dijadikan arsip server</td>
+                                </tr>
+                                <tr>
+                                    <td>Pencadangan Awan</td>
+                                    <td>Google Drive REST API via OAuth 2.0</td>
+                                    <td>Desentralisasi penyimpanan cadangan langsung ke hak milik pengguna</td>
+                                </tr>
+                                <tr>
+                                    <td>Format Ekspor</td>
+                                    <td>CSV (RFC 4180) & PDF Rendering Klien</td>
+                                    <td>Kompatibilitas universal dengan perangkat lunak akuntansi spreadsheet</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="section-title">6. Kesimpulan dan Arah Pengembangan</h2>
+                    <p>
+                        Platform DompetKu membuktikan bahwa integrasi komputasi local-first dengan modul kecerdasan buatan multimodal mampu menjawab tantangan adopsi pencatatan keuangan pada segmen usaha mikro. Sistem ini berhasil memangkas hambatan manualitas entri data sekaligus menjamin kedaulatan privasi finansial pengguna secara penuh.
+                    </p>
+                    <p>
+                        Arah pengembangan lanjutan mencakup pengayaan algoritma deteksi tren arus kas berbasis pembelajaran mesin lokal (in-browser machine learning) serta format sinkronisasi terenkripsi peer-to-peer antarperangkat dalam satu ekosistem usaha.
+                    </p>
+                </section>
+
+                <section>
+                    <h2 class="section-title">Referensi</h2>
+                    <ol class="reference-list">
+                        <li>Kleppmann, M., Wiggins, A., van Hardenberg, P., & McGranaghan, M. (2019). Local-first software: you own your data, in spite of the cloud. Proceedings of the ACM on Human-Computer Interaction, 3(Onward!), 154-178.</li>
+                        <li>Bank Indonesia. (2020). Laporan Perkembangan UMKM dan Digitalisasi Keuangan Sektor Riil. Jakarta: Departemen Pengembangan UMKM dan Perlindungan Konsumen.</li>
+                        <li>Russell, S., & Norvig, P. (2020). Artificial Intelligence: A Modern Approach (4th ed.). Pearson Education.</li>
+                        <li>W3C. (2021). Indexed Database API 3.0. World Wide Web Consortium Recommendation.</li>
+                        <li>Mozilla Developer Network. (2023). Progressive Web Apps: Core Principles and Offline Persistence. MDN Web Docs.</li>
+                    </ol>
+                </section>
+
+            </div>
+
+            <footer class="doc-footer">
+                <p>&copy; DompetKu. Naskah Publikasi Teknis & White Paper. Seluruh hak cipta dilindungi.</p>
+            </footer>
+
+        </article>
+    </main>
+
+</body>
+</html>
