@@ -5,6 +5,7 @@
 
   <p>
     <a href="https://dompetku.is-local.org" target="_blank"><img src="https://img.shields.io/badge/Akses%20Web-dompetku.is--local.org-2563EB?style=flat-square" alt="Domain"></a>
+    <a href="panduan.html" target="_blank"><img src="https://img.shields.io/badge/Buku%20Panduan-PDF%20(15%20Hal)-DC2626?style=flat-square" alt="Buku Panduan PDF"></a>
     <img src="https://img.shields.io/badge/Platform-Progressive%20Web%20App%20(PWA)-10B981?style=flat-square" alt="Platform PWA">
     <img src="https://img.shields.io/badge/Penyimpanan-IndexedDB%20(Offline--First)-6366F1?style=flat-square" alt="IndexedDB">
     <img src="https://img.shields.io/badge/Integrasi%20AI-Google%20Gemini%20API-4285F4?style=flat-square" alt="Google Gemini AI">
