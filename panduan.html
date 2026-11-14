@@ -3,27 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Buku Panduan Pengguna | DompetKu</title>
-<meta name="description" content="Buku panduan lengkap penggunaan aplikasi DompetKu untuk pencatatan keuangan UMKM terintegrasi kecerdasan buatan.">
+<title>Mengunduh Buku Panduan | DompetKu</title>
+<meta name="description" content="Mengunduh Buku Panduan Penggunaan Aplikasi DompetKu (PDF).">
 <link rel="icon" type="image/png" href="favicon.png">
+<meta http-equiv="refresh" content="0; url=assets/panduan/Panduan%20DompetKu.pdf">
 
 <!-- FontAwesome 6 (vendor lokal) -->
 <link rel="stylesheet" href="assets/fa/css/all.min.css">
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@600;700&display=swap');
-
-:root {
-    --primary: #059669;
-    --primary-hover: #047857;
-    --primary-light: #ecfdf5;
-    --dark: #0f172a;
-    --gray-text: #475569;
-    --gray-light: #64748b;
-    --bg: #f8fafc;
-    --card-bg: #ffffff;
-    --border: #e2e8f0;
-}
 
 * {
     box-sizing: border-box;
@@ -33,565 +22,192 @@
 
 body {
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: var(--bg);
-    color: var(--dark);
-    line-height: 1.5;
+    background: #0f172a;
+    color: #f8fafc;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
 }
 
-/* Header Top Bar */
-header.top-bar {
-    background-color: #0f172a;
-    color: #ffffff;
-    border-bottom: 1px solid #1e293b;
-    position: sticky;
-    top: 0;
-    z-index: 50;
-}
-.header-content {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0.75rem 1.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-}
-.brand-container {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    text-decoration: none;
-    color: #ffffff;
-}
-.brand-logo {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    object-fit: cover;
-    background: #ffffff;
-    padding: 2px;
-}
-.brand-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    color: #ffffff;
-}
-.nav-links {
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-    font-size: 0.85rem;
-}
-.nav-links a {
-    color: #cbd5e1;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.15s ease;
-}
-.nav-links a:hover,
-.nav-links a.active {
-    color: #34d399;
-}
-
-/* Main Container */
-.container {
-    max-width: 1400px;
+.download-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 24px;
+    padding: 40px 32px;
+    max-width: 480px;
     width: 100%;
-    margin: 0 auto;
-    padding: 24px 20px 48px;
-    flex: 1;
-}
-
-/* Action Header */
-.guide-header-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 24px 28px;
-    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
-    margin-bottom: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-.guide-header-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-.badge-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--primary-light);
-    color: var(--primary);
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    padding: 4px 12px;
-    border-radius: 6px;
-    margin-bottom: 8px;
-    border: 1px solid #a7f3d0;
-}
-.guide-title {
-    font-size: 24px;
-    font-weight: 800;
-    color: var(--dark);
-    letter-spacing: -0.5px;
-    line-height: 1.3;
-}
-.guide-subtitle {
-    font-size: 13.5px;
-    color: var(--gray-light);
-    margin-top: 6px;
-    max-width: 760px;
-    line-height: 1.6;
-}
-
-/* Buttons */
-.action-buttons {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-.btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 11px 18px;
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight: 700;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    border: none;
-}
-.btn-primary {
-    background: var(--primary);
-    color: #ffffff;
-    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
-}
-.btn-primary:hover {
-    background: var(--primary-hover);
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(5, 150, 105, 0.35);
-}
-.btn-secondary {
-    background: #ffffff;
-    color: var(--dark);
-    border: 1px solid var(--border);
-}
-.btn-secondary:hover {
-    background: #f1f5f9;
-    border-color: #cbd5e1;
-}
-
-/* Specs Bar */
-.guide-specs-bar {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding-top: 14px;
-    border-top: 1px solid var(--border);
-    font-size: 12px;
-    color: var(--gray-text);
-    flex-wrap: wrap;
-}
-.spec-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-.spec-item i {
-    color: var(--primary);
-}
-.spec-item strong {
-    color: var(--dark);
-}
-
-/* PDF Viewer Frame Card */
-.viewer-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
-    display: flex;
-    flex-direction: column;
-}
-.viewer-card-header {
-    background: #0f172a;
-    color: #ffffff;
-    padding: 12px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 12px;
-}
-.viewer-file-info {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 600;
-}
-.viewer-file-info i {
-    color: #f87171;
-}
-.viewer-quick-actions {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-.viewer-quick-actions a {
-    color: #cbd5e1;
-    text-decoration: none;
-    font-size: 11.5px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    transition: color 0.15s;
-}
-.viewer-quick-actions a:hover {
-    color: #34d399;
-}
-
-.pdf-frame-wrapper {
-    width: 100%;
-    height: 82vh;
-    min-height: 600px;
-    background: #525659;
-    position: relative;
-}
-.pdf-frame {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-}
-
-/* Table of Contents Section */
-.toc-section {
-    margin-top: 36px;
-}
-.toc-section-title {
-    font-size: 15px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    color: var(--dark);
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.toc-section-title::after {
-    content: "";
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-}
-.toc-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-}
-.toc-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    transition: transform 0.15s, box-shadow 0.15s;
-}
-.toc-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.05);
-}
-.toc-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.toc-badge {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--primary);
-    background: var(--primary-light);
-    padding: 2px 6px;
-    border-radius: 4px;
-}
-.toc-page {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--gray-light);
-}
-.toc-name {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--dark);
-    margin-top: 2px;
-}
-.toc-desc {
-    font-size: 11px;
-    color: var(--gray-light);
-    line-height: 1.4;
-}
-
-/* Footer */
-footer.page-footer {
-    background: var(--card-bg);
-    border-top: 1px solid var(--border);
-    padding: 20px;
     text-align: center;
-    font-size: 12px;
-    color: var(--gray-light);
-    margin-top: auto;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-@media (max-width: 1024px) {
-    .toc-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+.icon-wrapper {
+    width: 84px;
+    height: 84px;
+    background: rgba(5, 150, 105, 0.15);
+    border: 2px solid #059669;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 22px;
+    color: #34d399;
+    font-size: 36px;
+    animation: pulse 2s infinite ease-in-out;
 }
-@media (max-width: 720px) {
-    .container {
-        padding: 16px 12px 36px;
-    }
-    .header-content {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .nav-links {
-        flex-wrap: wrap;
-        gap: 0.75rem;
-    }
-    .guide-title {
-        font-size: 20px;
-    }
-    .pdf-frame-wrapper {
-        height: 70vh;
-        min-height: 480px;
-    }
-    .toc-grid {
-        grid-template-columns: 1fr;
-    }
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.4); }
+    50% { transform: scale(1.05); box-shadow: 0 0 0 12px rgba(5, 150, 105, 0); }
+}
+
+.title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.3px;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    font-size: 13px;
+    color: #94a3b8;
+    line-height: 1.6;
+    margin-bottom: 26px;
+}
+
+.file-meta-box {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 14px;
+    padding: 12px 18px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11.5px;
+    color: #94a3b8;
+    margin-bottom: 24px;
+}
+.file-meta-name {
+    font-weight: 700;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.file-meta-name i {
+    color: #f87171;
+    font-size: 14px;
+}
+.file-meta-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #34d399;
+    background: rgba(5, 150, 105, 0.2);
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.btn-download-direct {
+    width: 100%;
+    background: #059669;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 14px 20px;
+    border-radius: 14px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+    box-shadow: 0 6px 18px rgba(5, 150, 105, 0.35);
+    margin-bottom: 12px;
+}
+.btn-download-direct:hover {
+    background: #047857;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 22px rgba(5, 150, 105, 0.45);
+}
+
+.btn-back {
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.15s;
+    padding: 8px 12px;
+}
+.btn-back:hover {
+    color: #ffffff;
+}
+
+.footer-text {
+    margin-top: 24px;
+    font-size: 11px;
+    color: #64748b;
+    text-align: center;
 }
 </style>
 </head>
 <body>
 
-<header class="top-bar">
-  <div class="header-content">
-    <a href="index.html" class="brand-container">
-      <img src="favicon.png" alt="Logo DompetKu" class="brand-logo">
-      <span class="brand-title">DompetKu</span>
-    </a>
-    <nav class="nav-links">
-      <a href="index.html">Aplikasi</a>
-      <a href="panduan.html" class="active">Panduan</a>
-      <a href="ui-design.html">Desain UI/UX</a>
-      <a href="white-paper.html">White Paper</a>
-      <a href="privacy-policy.html">Kebijakan Privasi</a>
-      <a href="tos.html">Syarat & Ketentuan</a>
-    </nav>
+<div class="download-card">
+  <div class="icon-wrapper">
+    <i class="fa-solid fa-cloud-arrow-down"></i>
   </div>
-</header>
+  
+  <h1 class="title">Mengunduh Buku Panduan</h1>
+  <p class="subtitle">
+    Proses pengunduhan berkas PDF panduan resmi DompetKu (15 Halaman) sedang berjalan otomatis.
+  </p>
 
-<main class="container">
+  <div class="file-meta-box">
+    <span class="file-meta-name">
+      <i class="fa-solid fa-file-pdf"></i>
+      <span>Panduan DompetKu.pdf</span>
+    </span>
+    <span class="file-meta-badge">15 Halaman A4</span>
+  </div>
 
-  <!-- Header Card -->
-  <section class="guide-header-card">
-    <div class="guide-header-top">
-      <div>
-        <span class="badge-tag"><i class="fa-solid fa-book-bookmark"></i> Dokumen Resmi · Panduan Pengguna</span>
-        <h1 class="guide-title">Buku Panduan Penggunaan Aplikasi DompetKu</h1>
-        <p class="guide-subtitle">
-          Panduan langkah demi langkah penggunaan sistem pencatatan keuangan UMKM terintegrasi kecerdasan buatan. Mengulas tata cara pengelolaan kas usaha dan pribadi, fitur asisten AI, hingga pencadangan data mandiri Google Drive.
-        </p>
-      </div>
-      <div class="action-buttons">
-        <a href="assets/panduan/Panduan DompetKu.pdf" download="Panduan DompetKu.pdf" class="btn btn-primary">
-          <i class="fa-solid fa-cloud-arrow-down"></i> Unduh Buku Panduan (PDF)
-        </a>
-        <a href="assets/panduan/Panduan DompetKu.pdf" target="_blank" class="btn btn-secondary">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i> Buka Tab Baru
-        </a>
-      </div>
-    </div>
+  <a id="direct-link" href="assets/panduan/Panduan DompetKu.pdf" download="Panduan DompetKu.pdf" class="btn-download-direct">
+    <i class="fa-solid fa-download"></i>
+    <span>Klik di Sini Jika Belum Mengunduh</span>
+  </a>
 
-    <div class="guide-specs-bar">
-      <div class="spec-item"><i class="fa-solid fa-file-pdf"></i> Format: <strong>PDF (A4 - 300 DPI)</strong></div>
-      <div class="spec-item"><i class="fa-solid fa-layer-group"></i> Total Halaman: <strong>15 Halaman Lengkap</strong></div>
-      <div class="spec-item"><i class="fa-solid fa-hard-drive"></i> Ukuran Berkas: <strong>17.5 MB</strong></div>
-      <div class="spec-item"><i class="fa-solid fa-graduation-cap"></i> Program: <strong>Magang Berdampak 2026 (UNESA × Rumah BUMN BNI Ngawi)</strong></div>
-    </div>
-  </section>
+  <a href="index.html" class="btn-back">
+    <i class="fa-solid fa-arrow-left"></i>
+    <span>Kembali ke Aplikasi DompetKu</span>
+  </a>
+</div>
 
-  <!-- PDF Viewer Card -->
-  <section class="viewer-card">
-    <div class="viewer-card-header">
-      <div class="viewer-file-info">
-        <i class="fa-solid fa-file-pdf"></i>
-        <span>Panduan DompetKu.pdf</span>
-      </div>
-      <div class="viewer-quick-actions">
-        <a href="assets/panduan/Panduan DompetKu.pdf" target="_blank">
-          <i class="fa-solid fa-maximize"></i> Layar Penuh
-        </a>
-        <a href="assets/panduan/Panduan DompetKu.pdf" download="Panduan DompetKu.pdf">
-          <i class="fa-solid fa-download"></i> Unduh Berkas
-        </a>
-      </div>
-    </div>
-    
-    <div class="pdf-frame-wrapper">
-      <iframe src="assets/panduan/Panduan DompetKu.pdf#toolbar=1&navpanes=1" type="application/pdf" class="pdf-frame" title="Buku Panduan Penggunaan DompetKu">
-        <p style="padding: 24px; color: white; text-align: center;">
-          Peramban Anda tidak dapat memuat penampil PDF langsung. 
-          <a href="assets/panduan/Panduan DompetKu.pdf" download style="color: #34d399; text-decoration: underline;">
-            Klik di sini untuk mengunduh berkas Panduan DompetKu.pdf
-          </a>
-        </p>
-      </iframe>
-    </div>
-  </section>
+<p class="footer-text">
+  &copy; DompetKu · Program Magang Berdampak 2026 UNESA × Rumah BUMN BNI Ngawi
+</p>
 
-  <!-- Table of Contents Preview -->
-  <section class="toc-section">
-    <div class="toc-section-title">
-      <i class="fa-solid fa-list-check" style="color: var(--primary);"></i>
-      <span>Daftar Isi Pokok Buku Panduan</span>
-    </div>
-
-    <div class="toc-grid">
-      <div class="toc-card">
-        <div class="toc-card-header">
-          <span class="toc-badge">BAB 01</span>
-          <span class="toc-page">Hal. 02</span>
-        </div>
-        <h3 class="toc-name">Memulai & Pendaftaran</h3>
-        <p class="toc-desc">Akses aplikasi via browser, registrasi identitas UMKM, dan penetapan kas awal.</p>
-      </div>
-
-      <div class="toc-card">
-        <div class="toc-card-header">
-          <span class="toc-badge">BAB 02</span>
-          <span class="toc-page">Hal. 03</span>
-        </div>
-        <h3 class="toc-name">Konsep Dua Kantong</h3>
-        <p class="toc-desc">Prinsip dasar pemisahan kas operasional usaha dengan kas konsumtif pribadi.</p>
-      </div>
-
-      <div class="toc-card">
-        <div class="toc-card-header">
-          <span class="toc-badge">BAB 03</span>
-          <span class="toc-page">Hal. 04</span>
-        </div>
-        <h3 class="toc-name">Transaksi Bisnis (Usaha)</h3>
-        <p class="toc-desc">Mencatat penerimaan jasa/jual beli dan beban belanja modal operasional.</p>
-      </div>
-
-      <div class="toc-card">
-        <div class="toc-card-header">
-          <span class="toc-badge">BAB 04</span>
-          <span class="toc-page">Hal. 05</span>
-        </div>
-        <h3 class="toc-name">Transaksi Pribadi</h3>
-        <p class="toc-desc">Pencatatan arus kas belanja rumah tangga tanpa mengacaukan kas toko.</p>
-      </div>
-
-      <div class="toc-card">
-        <div class="toc-card-header">
-          <span class="toc-badge">BAB 05</span>
-          <span class="toc-page">Hal. 06</span>
-        </div>
-        <h3 class="toc-name">Penarikan Prive</h3>
-        <p class="toc-desc">Mekanisme transfer penarikan laba usaha untuk kebutuhan pribadi sesuai akuntansi.</p>
-      </div>
-
-      <div class="toc-card">
-        <div class="toc-card-header">
-          <span class="toc-badge">BAB 06</span>
-          <span class="toc-page">Hal. 07</span>
-        </div>
-        <h3 class="toc-name">Riwayat Transaksi</h3>
-        <p class="toc-desc">Pemantauan mutasi kas, pencarian kata kunci, koreksi data, dan filter multi-kriteria.</p>
-      </div>
-
-      <div class="toc-card">
-        <div class="toc-card-header">
-          <span class="toc-badge">BAB 07</span>
-          <span class="toc-page">Hal. 08</span>
-        </div>
-        <h3 class="toc-name">Laporan Keuangan</h3>
-        <p class="toc-desc">Ringkasan laba rugi otomatis, grafik tren keuangan, dan ekspor dokumen siap cetak.</p>
-      </div>
-
-      <div class="toc-card">
-        <div class="toc-card-header">
-          <span class="toc-badge">BAB 08</span>
-          <span class="toc-page">Hal. 09</span>
-        </div>
-        <h3 class="toc-name">Fitur Pintar AI</h3>
-        <p class="toc-desc">Pencatatan cepat berbasis teks bahasa sehari-hari dan ekstraksi foto struk belanja.</p>
-      </div>
-
-      <div class="toc-card">
-        <div class="toc-card-header">
-          <span class="toc-badge">BAB 09</span>
-          <span class="toc-page">Hal. 10</span>
-        </div>
-        <h3 class="toc-name">Telepon Live AI</h3>
-        <p class="toc-desc">Interaksi suara real-time mencatat transaksi sambil beraktivitas langsung di tempat usaha.</p>
-      </div>
-
-      <div class="toc-card">
-        <div class="toc-card-header">
-          <span class="toc-badge">BAB 10</span>
-          <span class="toc-page">Hal. 11</span>
-        </div>
-        <h3 class="toc-name">Pengaturan & Backup</h3>
-        <p class="toc-desc">Konfigurasi profil dan pencadangan awan mandiri ke akun Google Drive pribadi.</p>
-      </div>
-
-      <div class="toc-card">
-        <div class="toc-card-header">
-          <span class="toc-badge">BAB 11</span>
-          <span class="toc-page">Hal. 12</span>
-        </div>
-        <h3 class="toc-name">Instalasi PWA & Offline</h3>
-        <p class="toc-desc">Memasang aplikasi ke layar ponsel dan pengoperasian luring tanpa kuota internet.</p>
-      </div>
-
-      <div class="toc-card">
-        <div class="toc-card-header">
-          <span class="toc-badge">PENUTUP</span>
-          <span class="toc-page">Hal. 13</span>
-        </div>
-        <h3 class="toc-name">FAQ & Pengembang</h3>
-        <p class="toc-desc">Tanya jawab kendala umum dan kontak bantuan teknis pengembang sistem.</p>
-      </div>
-    </div>
-  </section>
-
-</main>
-
-<footer class="page-footer">
-  <p>&copy; DompetKu · Buku Panduan Pengguna Resmi. Program Magang Berdampak 2026 UNESA × Rumah BUMN BNI Ngawi.</p>
-</footer>
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        var link = document.createElement('a');
+        link.href = 'assets/panduan/Panduan DompetKu.pdf';
+        link.download = 'Panduan DompetKu.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }, 150);
+});
+</script>
 
 </body>
 </html>
