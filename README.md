@@ -62,7 +62,9 @@ Sistem dikembangkan dengan berlandaskan pada prinsip rekayasa perangkat lunak un
 
 ## Implementasi Antarmuka Pengguna
 
-Pengembangan antarmuka pengguna mengadopsi pendekatan Mobile-First Responsive Design untuk menjamin kemudahan interaksi pada perangkat seluler. Pengujian fungsionalitas sistem mencakup 13 tampilan antarmuka utama yang dikelompokkan ke dalam 5 modul operasional sebagai berikut:
+> Dokumentasi interaktif spesifikasi visual, filosofi desain, dan rincian frame layar dapat diakses pada dokumen: [**Perancangan Antarmuka Pengguna (UI/UX) DompetKu**](ui-design.html).
+
+Pengembangan antarmuka pengguna mengadopsi pendekatan Mobile-First Responsive Design untuk menjamin kemudahan interaksi pada perangkat seluler. Pengujian fungsionalitas sistem mencakup 15 tampilan antarmuka utama yang dikelompokkan ke dalam 5 modul operasional sebagai berikut:
 
 ### 1. Inisialisasi dan Konfigurasi Profil
 

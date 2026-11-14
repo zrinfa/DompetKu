@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perancangan Antarmuka Pengguna (UI/UX) | DompetKu</title>
+<meta name="description" content="Dokumentasi Spesifikasi Visual dan Perancangan Antarmuka Pengguna (UI/UX) Sistem Aplikasi DompetKu UMKM.">
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+:root{--primary:#059669;--primary-light:#ecfdf5;--dark:#0f172a;--gray-text:#475569;--gray-light:#64748b;--bg:#f8fafc;--card-bg:#fff;--border:#e2e8f0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--dark);line-height:1.5;padding:0 0 40px}
+
+/* Top Navigation Bar */
+header.top-bar {
+    background-color: #0f172a;
+    color: #ffffff;
+    border-bottom: 1px solid #1e293b;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+.header-content {
+    max-width: 1700px;
+    margin: 0 auto;
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+.brand-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: #ffffff;
+}
+.brand-logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #ffffff;
+    padding: 2px;
+}
+.brand-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #ffffff;
+}
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    font-size: 0.85rem;
+}
+.nav-links a {
+    color: #cbd5e1;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.15s ease;
+}
+.nav-links a:hover,
+.nav-links a.active {
+    color: #34d399;
+}
+
+.container{max-width:1700px;margin:0 auto;padding:24px 16px 0}
+
+.header-title-section{text-align:center;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.header-title-section h1{font-size:26px;font-weight:800;letter-spacing:-.5px;line-height:1.25}
+.header-title-section p{font-size:13px;color:var(--gray-light);margin-top:6px;font-weight:500}
+
+.top-specs-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
+.spec-card{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:16px 18px;box-shadow:0 1px 3px rgba(0,0,0,.04);display:flex;flex-direction:column}
+.spec-card-header{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gray-light);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.spec-card-header::after{content:"";flex:1;height:1px;background:var(--border)}
+
+.logo-philosophy-body{display:flex;gap:18px;align-items:center;flex:1}
+.logo-block{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;width:120px}
+.logo-block img{width:96px;height:96px;object-fit:contain;background:transparent}
+.logo-name{font-size:16px;font-weight:800;letter-spacing:-.3px;color:#000}
+.philosophy-grid{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.philosophy-item{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--primary);border-radius:8px;padding:8px 10px;font-size:11px;color:var(--gray-text);line-height:1.45;display:flex;flex-direction:column;gap:2px}
+.philosophy-item strong{color:var(--dark);font-size:11.5px}
+
+.palette-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;flex:1}
+.color-swatch-card{border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#fff;display:flex;flex-direction:column}
+.color-swatch-box{flex:1;min-height:70px}
+.color-swatch-meta{padding:7px 8px;display:flex;flex-direction:column;gap:1px}
+.color-hex{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700}
+.color-name{font-size:10.5px;font-weight:700}
+.color-role{font-size:9.5px;font-weight:500;color:var(--gray-light);line-height:1.25}
+
+.screens-section-title{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:8px}
+.screens-count-tag{font-size:11px;font-weight:600;color:var(--primary);background:var(--primary-light);padding:2px 10px;border-radius:12px}
+
+.screens-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;align-items:start}
+.screen-item-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04);display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s}
+.screen-item-card:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.08)}
+.mockup-display-area{padding:8px 6px 6px;background:#f1f5f9;display:flex;justify-content:center}
+.phone-frame{width:100%;max-width:215px;background:#0f172a;border-radius:20px;padding:4px;border:2px solid #334155;box-shadow:0 8px 18px rgba(0,0,0,.18)}
+.phone-frame img{width:100%;height:auto;border-radius:15px;display:block;background:#fff}
+.screen-caption-area{padding:8px 9px 3px}
+.screen-index-badge{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:2px}
+.screen-title-text{font-size:12px;font-weight:700;line-height:1.3;min-height:2.6em}
+.screen-collapse-detail{padding:2px 9px 6px}
+.collapse-trigger{font-size:11px;font-weight:600;color:var(--primary);cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:5px 0;user-select:none;border-top:1px solid #f1f5f9;list-style:none}
+.collapse-trigger::-webkit-details-marker{display:none}
+.collapse-trigger::after{content:'▾';font-size:14px;transition:transform .2s}
+details[open] .collapse-trigger::after{transform:rotate(180deg)}
+.collapse-body{padding-top:6px;font-size:10.5px;color:var(--gray-text);display:flex;flex-direction:column;gap:6px;line-height:1.4}
+.detail-row strong{color:var(--dark);font-size:10.5px;display:block;margin-bottom:1px}
+
+@media(max-width:1280px){.screens-grid{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:1024px){.top-specs-grid{grid-template-columns:1fr}.screens-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:720px){
+ body{padding-bottom:30px}
+ .container{padding:16px 10px 0}
+ .header-content{flex-direction:column;align-items:flex-start}
+ .nav-links{flex-wrap:wrap;gap:0.75rem}
+ .header-title-section h1{font-size:19px}
+ .screens-grid{grid-template-columns:repeat(2,1fr);gap:6px}
+ .logo-philosophy-body{flex-direction:column}
+ .philosophy-grid{grid-template-columns:1fr}
+ .palette-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:420px){.screens-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="top-bar">
+  <div class="header-content">
+    <a href="index.html" class="brand-container">
+      <img src="favicon.png" alt="Logo DompetKu" class="brand-logo">
+      <span class="brand-title">DompetKu</span>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html">Aplikasi</a>
+      <a href="ui-design.html" class="active">Desain UI/UX</a>
+      <a href="white-paper.html">White Paper</a>
+      <a href="privacy-policy.html">Kebijakan Privasi</a>
+      <a href="tos.html">Syarat & Ketentuan</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+
+  <header class="header-title-section">
+    <h1>Perancangan Antarmuka Pengguna (UI/UX) Aplikasi DompetKu</h1>
+    <p>Dokumentasi Spesifikasi Visual Sistem Aplikasi DompetKu</p>
+  </header>
+
+  <section class="top-specs-grid">
+    <div class="spec-card">
+      <div class="spec-card-header"><span>Identitas Logo dan Filosofi Desain</span></div>
+      <div class="logo-philosophy-body">
+        <div class="logo-block">
+          <img src="icons/icon-192.png" alt="Logo DompetKu">
+          <div class="logo-name">DompetKu</div>
+        </div>
+        <div class="philosophy-grid"><div class="philosophy-item"><strong>Dompet: Kendali di Tangan Pengguna</strong><span>Aplikasi pencatatan keuangan UMKM yang terasa seperti dompet sendiri. Berbasis local-first, data tersimpan di perangkat pengguna, sehingga kendali penuh tetap di tangan pemilik layaknya dompet fisik.</span></div><div class="philosophy-item"><strong>Dua Jari: Mencatat Secepat Jentikan</strong><span>Jempol dan telunjuk yang saling rapat melambangkan pencatatan yang cepat dan mudah. Mendukung offline, ikon dapat dipasang lewat PWA, dan dapat diakses kapan saja dari browser, ponsel, maupun desktop.</span></div><div class="philosophy-item"><strong>Hati: Dibuat untuk Kemudahan Pengguna</strong><span>Dirancang berdasarkan kebutuhan pengguna tanpa motif komersial. Aplikasi aktif selamanya tanpa biaya, tanpa iklan, dan tanpa server yang harus dijaga tetap menyala.</span></div><div class="philosophy-item"><strong>Tiga Berkas Cahaya: Tiga Fitur AI</strong><span>Melambangkan tiga fitur kecerdasan buatan: pencatatan dengan teks bahasa alami, pemindaian foto struk belanja, dan panggilan suara Live AI.</span></div></div>
+      </div>
+    </div>
+
+    <div class="spec-card">
+      <div class="spec-card-header"><span>Palet Warna Sistem Antarmuka</span></div>
+      <div class="palette-grid">
+          <div class="color-swatch-card">
+            <div class="color-swatch-box" style="background:#059669;"></div>
+            <div class="color-swatch-meta"><span class="color-hex">#059669</span><span class="color-name">Emerald</span></div>
+          </div>
+          <div class="color-swatch-card">
+            <div class="color-swatch-box" style="background:#0284C7;"></div>
+            <div class="color-swatch-meta"><span class="color-hex">#0284C7</span><span class="color-name">Sky Blue</span></div>
+          </div>
+          <div class="color-swatch-card">
+            <div class="color-swatch-box" style="background:#DC2626;"></div>
+            <div class="color-swatch-meta"><span class="color-hex">#DC2626</span><span class="color-name">Crimson</span></div>
+          </div>
+          <div class="color-swatch-card">
+            <div class="color-swatch-box" style="background:#D97706;"></div>
+            <div class="color-swatch-meta"><span class="color-hex">#D97706</span><span class="color-name">Amber</span></div>
+          </div>
+          <div class="color-swatch-card">
+            <div class="color-swatch-box" style="background:#0F172A;"></div>
+            <div class="color-swatch-meta"><span class="color-hex">#0F172A</span><span class="color-name">Slate Dark</span></div>
+          </div>
+          <div class="color-swatch-card">
+            <div class="color-swatch-box" style="background:#F8FAFC;border-bottom:1px solid #e2e8f0;"></div>
+            <div class="color-swatch-meta"><span class="color-hex">#F8FAFC</span><span class="color-name">Slate Light</span></div>
+          </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="screens-section-title">
+    <span>Daftar Desain Antarmuka Layar Mobile</span>
+    <span class="screens-count-tag">15 Frame Layar</span>
+  </div>
+
+  <div class="screens-grid">
+      <article class="screen-item-card">
+        <div class="mockup-display-area"><div class="phone-frame"><img src="assets/ui/01b_tampilan_awal_pilih_profil.png" alt="Layar 01" loading="lazy"></div></div>
+        <div class="screen-caption-area">
+          <span class="screen-index-badge">Frame 01</span>
+          <h2 class="screen-title-text">Tampilan Awal dan Pemilihan Profil Akun</h2>
+        </div>
+        <div class="screen-collapse-detail">
+          <details>
+            <summary class="collapse-trigger">Detail Tampilan</summary>
+            <div class="collapse-body">
+              <div class="detail-row"><strong>Fungsi Sistem</strong>Pintu masuk pemilihan entitas kas aktif antara Profil Usaha dan Profil Pribadi.</div>
+              <div class="detail-row"><strong>Komponen Utama</strong>Kartu seleksi profil, visual status saldo berjalan, dan tombol inisialisasi profil baru.</div>
+              <div class="detail-row"><strong>Relevansi UMKM</strong>Menjamin pemisahan pembukuan kas bisnis dan kebutuhan rumah tangga sejak langkah awal.</div>
+            </div>
+          </details>
+        </div>
+      </article>
+
+      <article class="screen-item-card">
+        <div class="mockup-display-area"><div class="phone-frame"><img src="assets/ui/02_form_pendaftaran_profil_usaha.png" alt="Layar 02" loading="lazy"></div></div>
+        <div class="screen-caption-area">
+          <span class="screen-index-badge">Frame 02</span>
+          <h2 class="screen-title-text">Form Pendaftaran Profil Usaha Baru</h2>
+        </div>
+        <div class="screen-collapse-detail">
+          <details>
+            <summary class="collapse-trigger">Detail Tampilan</summary>
+            <div class="collapse-body">
+              <div class="detail-row"><strong>Fungsi Sistem</strong>Formulir pendaftaran identitas bisnis UMKM dan penetapan saldo kas awal usaha.</div>
+              <div class="detail-row"><strong>Komponen Utama</strong>Input teks nama usaha, selector kategori sektor jasa jahit, dan input modal kas pertama.</div>
+              <div class="detail-row"><strong>Relevansi UMKM</strong>Menjadi basis data awal perhitungan ekuitas dan modal kerja riil pemilik usaha.</div>
+            </div>
+          </details>
+        </div>
+      </article>
+
+      <article class="screen-item-card">
+        <div class="mockup-display-area"><div class="phone-frame"><img src="assets/ui/03_panduan_tur_aplikasi.png" alt="Layar 03" loading="lazy"></div></div>
+        <div class="screen-caption-area">
+          <span class="screen-index-badge">Frame 03</span>
+          <h2 class="screen-title-text">Panduan Tur Interaktif Pengguna Baru</h2>
+        </div>
+        <div class="screen-collapse-detail">
+          <details>
+            <summary class="collapse-trigger">Detail Tampilan</summary>
+            <div class="collapse-body">
+              <div class="detail-row"><strong>Fungsi Sistem</strong>Modul orientasi interaktif pengenalan navigasi dan tata letak fitur utama aplikasi.</div>
+              <div class="detail-row"><strong>Komponen Utama</strong>Overlay sorotan visual (spotlight tooltip), penunjuk langkah alur, dan tombol lewati tur.</div>
+              <div class="detail-row"><strong>Relevansi UMKM</strong>Membantu wirausaha mikro beradaptasi dengan cepat tanpa kendala literasi digital.</div>
+            </div>
+          </details>
+        </div>
+      </article>
+
+      <article class="screen-item-card">
+        <div class="mockup-display-area"><div class="phone-frame"><img src="assets/ui/04_tampilan_home_dashboard.png" alt="Layar 04" loading="lazy"></div></div>
+        <div class="screen-caption-area">
+          <span class="screen-index-badge">Frame 04</span>
+          <h2 class="screen-title-text">Dashboard Utama Ringkasan Saldo Kas</h2>
+        </div>
+        <div class="screen-collapse-detail">
+          <details>
+            <summary class="collapse-trigger">Detail Tampilan</summary>
+            <div class="collapse-body">
+              <div class="detail-row"><strong>Fungsi Sistem</strong>Pusat visualisasi posisi saldo kas aktif, arus kas periodik, dan pintasan aksi cepat.</div>
+              <div class="detail-row"><strong>Komponen Utama</strong>Kartu saldo total, ringkasan mutasi hijau merah, tombol aksi catat, dan bilah navigasi.</div>
+              <div class="detail-row"><strong>Relevansi UMKM</strong>Memberikan informasi posisi keuangan seketika bagi pemilik usaha saat membuka ponsel.</div>
+            </div>
+          </details>
+        </div>
+      </article>
+
+      <article class="screen-item-card">
+        <div class="mockup-display-area"><div class="phone-frame"><img src="assets/ui/05_tampilan_form_transaksi.png" alt="Layar 05" loading="lazy"></div></div>
+        <div class="screen-caption-area">
+          <span class="screen-index-badge">Frame 05</span>
+          <h2 class="screen-title-text">Form Input Pemasukan Kas Operasional</h2>
+        </div>
+        <div class="screen-collapse-detail">
+          <details>
+            <summary class="collapse-trigger">Detail Tampilan</summary>
+            <div class="collapse-body">
+              <div class="detail-row"><strong>Fungsi Sistem</strong>Pencatatan pendapatan dari order jahitan pakaian, permak, dan penjualan bahan kain.</div>
+              <div class="detail-row"><strong>Komponen Utama</strong>Layar input nominal angka besar, chips kategori transaksi, tanggal, dan metode bayar.</div>
+              <div class="detail-row"><strong>Relevansi UMKM</strong>Proses pencatatan efisien hanya lima detik untuk menjaga kelancaran antrean pelanggan.</div>
+            </div>
+          </details>
+        </div>
+      </article>
+
+      <article class="screen-item-card">
+        <div class="mockup-display-area"><div class="phone-frame"><img src="assets/ui/05b_tampilan_form_pengeluaran.png" alt="Layar 05B" loading="lazy"></div></div>
+        <div class="screen-caption-area">
+          <span class="screen-index-badge">Frame 05B</span>
+          <h2 class="screen-title-text">Form Input Pengeluaran Biaya Usaha</h2>
+        </div>
+        <div class="screen-collapse-detail">
+          <details>
+            <summary class="collapse-trigger">Detail Tampilan</summary>
+            <div class="collapse-body">
+              <div class="detail-row"><strong>Fungsi Sistem</strong>Pencatatan beban belanja modal seperti benang, jarum, resleting, dan biaya listrik.</div>
+              <div class="detail-row"><strong>Komponen Utama</strong>Aksen warna merah beban kas, pemilihan pos biaya usaha, dan tombol lampirkan bukti nota.</div>
+              <div class="detail-row"><strong>Relevansi UMKM</strong>Mencegah kebocoran anggaran operasional kecil yang sering tidak terdokumentasikan.</div>
+            </div>
+          </details>
+        </div>
+      </article>
+
+      <article class="screen-item-card">
+        <div class="mockup-display-area"><div class="phone-frame"><img src="assets/ui/05c_tampilan_form_transaksi_pribadi.png" alt="Layar 05C" loading="lazy"></div></div>
+        <div class="screen-caption-area">
+          <span class="screen-index-badge">Frame 05C</span>
+          <h2 class="screen-title-text">Form Transaksi Kas Kantong Pribadi</h2>
+        </div>
+        <div class="screen-collapse-detail">
+          <details>
+            <summary class="collapse-trigger">Detail Tampilan</summary>
+            <div class="collapse-body">
+              <div class="detail-row"><strong>Fungsi Sistem</strong>Pencatatan pengeluaran atau pemasukan pribadi di luar pos operasional usaha.</div>
+              <div class="detail-row"><strong>Komponen Utama</strong>Indikator kantong pribadi aktif, input nominal, kategori belanja rumah tangga, dan tanggal.</div>
+              <div class="detail-row"><strong>Relevansi UMKM</strong>Memfasilitasi kebutuhan keluarga tanpa mencampuradukkan saldo pembukuan toko jahit.</div>
+            </div>
+          </details>
+        </div>
+      </article>
+
+      <article class="screen-item-card">
+        <div class="mockup-display-area"><div class="phone-frame"><img src="assets/ui/06_tampilan_form_transfer_prive.png" alt="Layar 06" loading="lazy"></div></div>
+        <div class="screen-caption-area">
+          <span class="screen-index-badge">Frame 06</span>
+          <h2 class="screen-title-text">Form Mutasi Transfer Antar Kantong dan Prive</h2>
+        </div>
+        <div class="screen-collapse-detail">
+          <details>
+            <summary class="collapse-trigger">Detail Tampilan</summary>
+            <div class="collapse-body">
+              <div class="detail-row"><strong>Fungsi Sistem</strong>Pencatatan penarikan dana dari kas usaha untuk kebutuhan pribadi pemilik (Prive).</div>
+              <div class="detail-row"><strong>Komponen Utama</strong>Selector sumber kantong kas dan tujuan, field jumlah transfer, dan catatan keterangan.</div>
+              <div class="detail-row"><strong>Relevansi UMKM</strong>Pengambilan uang kas tercatat tertib sesuai prinsip akuntansi tanpa merusak modal usaha.</div>
+            </div>
+          </details>
+        </div>
+      </article>
+
+      <article class="screen-item-card">
+        <div class="mockup-display-area"><div class="phone-frame"><img src="assets/ui/07_tampilan_riwayat_transaksi.png" alt="Layar 07" loading="lazy"></div></div>
+        <div class="screen-caption-area">
+          <span class="screen-index-badge">Frame 07</span>
+          <h2 class="screen-title-text">Riwayat Transaksi dan Filter Mutasi Kas</h2>
+        </div>
+        <div class="screen-collapse-detail">
+          <details>
+            <summary class="collapse-trigger">Detail Tampilan</summary>
+            <div class="collapse-body">
+              <div class="detail-row"><strong>Fungsi Sistem</strong>Daftar kronologis mutasi kas masuk dan keluar dilengkapi fasilitas filter multi kriteria.</div>
+              <div class="detail-row"><strong>Komponen Utama</strong>Kolom pencarian transaksi, filter tipe mutasi (Masuk, Keluar, Prive), dan list harian.</div>
+              <div class="detail-row"><strong>Relevansi UMKM</strong>Memudahkan audit kas fisik harian dan pelacakan riwayat transaksi pelanggan.</div>
+            </div>
+          </details>
+        </div>
+      </article>
+
+      <article class="screen-item-card">
+        <div class="mockup-display-area"><div class="phone-frame"><img src="assets/ui/08_tampilan_laporan_keuangan.png" alt="Layar 08" loading="lazy"></div></div>
+        <div class="screen-caption-area">
+          <span class="screen-index-badge">Frame 08</span>
+          <h2 class="screen-title-text">Laporan Keuangan Arus Kas dan Laba Rugi</h2>
+        </div>
+        <div class="screen-collapse-detail">
+          <details>
+            <summary class="collapse-trigger">Detail Tampilan</summary>
+            <div class="collapse-body">
+              <div class="detail-row"><strong>Fungsi Sistem</strong>Penyajian laporan finansial periodik berdasarkan standar SAK EMKM sederhana.</div>
+              <div class="detail-row"><strong>Komponen Utama</strong>Ringkasan total pendapatan, total beban, laba bersih usaha, dan tombol export file.</div>
+              <div class="detail-row"><strong>Relevansi UMKM</strong>Menghasilkan laporan siap cetak untuk pengajuan kredit usaha atau evaluasi margin keuntungan.</div>
+            </div>
+          </details>
+        </div>
+      </article>
+
+      <article class="screen-item-card">
+        <div class="mockup-display-area"><div class="phone-frame"><img src="assets/ui/08b_tampilan_laporan_keuangan_grafik.png" alt="Layar 08B" loading="lazy"></div></div>
+        <div class="screen-caption-area">
+          <span class="screen-index-badge">Frame 08B</span>
+          <h2 class="screen-title-text">Visualisasi Grafik Tren Keuangan Interaktif</h2>
+        </div>
+        <div class="screen-collapse-detail">
+          <details>
+            <summary class="collapse-trigger">Detail Tampilan</summary>
+            <div class="collapse-body">
+              <div class="detail-row"><strong>Fungsi Sistem</strong>Visualisasi data perbandingan pendapatan dan pengeluaran bulanan dalam bentuk grafik.</div>
+              <div class="detail-row"><strong>Komponen Utama</strong>Diagram batang komparatif pemasukan dan pengeluaran serta grafik lingkaran pos biaya.</div>
+              <div class="detail-row"><strong>Relevansi UMKM</strong>Mempermudah pemilik usaha membaca tren keuangan bisnis tanpa kesulitan memahami tabel angka.</div>
+            </div>
+          </details>
+        </div>
+      </article>
+
+      <article class="screen-item-card">
+        <div class="mockup-display-area"><div class="phone-frame"><img src="assets/ui/09_tampilan_menu_ai_catat_cepat.png" alt="Layar 09" loading="lazy"></div></div>
+        <div class="screen-caption-area">
+          <span class="screen-index-badge">Frame 09</span>
+          <h2 class="screen-title-text">Asisten AI Catat Cepat Bahasa Alami</h2>
+        </div>
+        <div class="screen-collapse-detail">
+          <details>
+            <summary class="collapse-trigger">Detail Tampilan</summary>
+            <div class="collapse-body">
+              <div class="detail-row"><strong>Fungsi Sistem</strong>Pencatatan transaksi instan menggunakan pemrosesan bahasa alami (NLP) Gemini AI.</div>
+              <div class="detail-row"><strong>Komponen Utama</strong>Field input prompt teks bebas, tombol perekam suara mikrofon, dan kartu verifikasi data.</div>
+              <div class="detail-row"><strong>Relevansi UMKM</strong>Cukup mengetik atau mendiktekan kalimat santai, nominal dan kategori otomatis terisi rapi.</div>
+            </div>
+          </details>
+        </div>
+      </article>
+
+      <article class="screen-item-card">
+        <div class="mockup-display-area"><div class="phone-frame"><img src="assets/ui/10_tampilan_menu_ai_foto_struk.png" alt="Layar 10" loading="lazy"></div></div>
+        <div class="screen-caption-area">
+          <span class="screen-index-badge">Frame 10</span>
+          <h2 class="screen-title-text">AI Pemindai Foto Struk dan Nota Belanja</h2>
+        </div>
+        <div class="screen-collapse-detail">
+          <details>
+            <summary class="collapse-trigger">Detail Tampilan</summary>
+            <div class="collapse-body">
+              <div class="detail-row"><strong>Fungsi Sistem</strong>Ekstraksi data otomatis dari nota fisik pembelian bahan baku berbasis teknologi OCR.</div>
+              <div class="detail-row"><strong>Komponen Utama</strong>Antarmuka bidik kamera, tombol unggah foto galeri, dan tampilan deteksi nominal total.</div>
+              <div class="detail-row"><strong>Relevansi UMKM</strong>Bukti kas tersimpan aman dalam bentuk digital sehingga nota belanja tidak akan hilang tercecer.</div>
+            </div>
+          </details>
+        </div>
+      </article>
+
+      <article class="screen-item-card">
+        <div class="mockup-display-area"><div class="phone-frame"><img src="assets/ui/11_tampilan_telepon_live_ai.png" alt="Layar 11" loading="lazy"></div></div>
+        <div class="screen-caption-area">
+          <span class="screen-index-badge">Frame 11</span>
+          <h2 class="screen-title-text">Panggilan Suara Interaktif Live AI Assistant</h2>
+        </div>
+        <div class="screen-collapse-detail">
+          <details>
+            <summary class="collapse-trigger">Detail Tampilan</summary>
+            <div class="collapse-body">
+              <div class="detail-row"><strong>Fungsi Sistem</strong>Pencatatan transaksi dua arah secara langsung melalui percakapan suara berbasis AI audio.</div>
+              <div class="detail-row"><strong>Komponen Utama</strong>Visualisasi gelombang audio real-time, status saluran suara WebRTC, dan tombol kontrol panggilan.</div>
+              <div class="detail-row"><strong>Relevansi UMKM</strong>Sangat efisien digunakan saat tangan penjahit sedang sibuk memotong kain atau menjahit.</div>
+            </div>
+          </details>
+        </div>
+      </article>
+
+      <article class="screen-item-card">
+        <div class="mockup-display-area"><div class="phone-frame"><img src="assets/ui/12_tampilan_pengaturan.png" alt="Layar 12" loading="lazy"></div></div>
+        <div class="screen-caption-area">
+          <span class="screen-index-badge">Frame 12</span>
+          <h2 class="screen-title-text">Pengaturan Sistem, Keamanan dan Data Profil</h2>
+        </div>
+        <div class="screen-collapse-detail">
+          <details>
+            <summary class="collapse-trigger">Detail Tampilan</summary>
+            <div class="collapse-body">
+              <div class="detail-row"><strong>Fungsi Sistem</strong>Pusat manajemen konfigurasi aplikasi, instalasi PWA luring (offline), dan pencadangan data.</div>
+              <div class="detail-row"><strong>Komponen Utama</strong>Pengaturan profil bisnis HappaLestari, fitur backup dan restore data JSON, dan panduan sistem.</div>
+              <div class="detail-row"><strong>Relevansi UMKM</strong>Data keuangan tetap tersimpan aman di perangkat dan tidak akan hilang saat berganti ponsel.</div>
+            </div>
+          </details>
+        </div>
+      </article>
+  </div>
+
+</div>
+</body>
+</html>
