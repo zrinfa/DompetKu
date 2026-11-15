@@ -105,11 +105,13 @@ Guna mempercepat proses adopsi, edukasi, dan pendampingan literasi keuangan bagi
 
 <table>
   <tr>
-    <td width="50%" align="center" valign="top">
+    <td width="100%" align="center" valign="top">
       <img src="assets/ui/DompetKu_logo_filosofi.png" alt="Identitas Logo dan Filosofi Desain DompetKu" width="100%" />
       <br><br><strong>Gambar A.</strong><br>Identitas Logo dan Filosofi Desain Sistem
     </td>
-    <td width="50%" align="center" valign="top">
+  </tr>
+  <tr>
+    <td width="100%" align="center" valign="top">
       <img src="assets/ui/palet_warna_DompetKu.png" alt="Palet Warna Sistem Antarmuka DompetKu" width="100%" />
       <br><br><strong>Gambar B.</strong><br>Palet Warna dan Hierarki Visual Antarmuka
     </td>
