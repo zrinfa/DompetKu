@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "Zuhudi"
+    given-names: "Fazrin Mauza Dwi"
+    affiliation: "Universitas Negeri Surabaya & Rumah BUMN BNI Ngawi"
+title: "DompetKu: Aplikasi Pencatatan Keuangan UMKM Terintegrasi Kecerdasan Buatan"
+version: "1.0.0"
+date-released: 2026-11-15
+url: "https://dompetku.is-local.org"
+repository-code: "https://github.com/zrinfa/DompetKu"
+license: "MIT"
+keywords:
+  - "UMKM"
+  - "financial-recording"
+  - "artificial-intelligence"
+  - "progressive-web-app"
+  - "local-first"
+  - "gemini-ai"

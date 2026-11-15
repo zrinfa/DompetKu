@@ -1,0 +1,29 @@
+{
+  "title": "DompetKu: Aplikasi Pencatatan Keuangan UMKM Terintegrasi Kecerdasan Buatan",
+  "description": "DompetKu adalah aplikasi pencatatan keuangan berbasis web (Progressive Web App/PWA) yang dirancang untuk membantu UMKM mengelola keuangan usaha dan pribadi secara praktis, terstruktur, dan efisien. Mengusung arsitektur offline-first dengan penyimpanan lokal menggunakan IndexedDB serta fitur backup & restore melalui Google Drive pengguna, DompetKu dapat digunakan tanpa ketergantungan pada server berbayar. Aplikasi ini mengintegrasikan teknologi Artificial Intelligence (AI) untuk pencatatan transaksi melalui input teks bahasa sehari-hari, pemindaian foto struk belanja, dan interaksi suara secara real-time melalui fitur Telepon Live. AI secara otomatis memahami informasi transaksi, menentukan kantong Usaha atau Pribadi, mengklasifikasikan Pemasukan atau Pengeluaran, serta mengekstraksi detail transaksi. Dilengkapi pengelolaan kategori, transfer Suntik Modal/Prive, laporan laba bersih dan prive dalam bentuk grafik dan tabel, serta ekspor data CSV/JSON. DompetKu dikembangkan sebagai inovasi digital dalam mendukung digitalisasi dan peningkatan literasi keuangan UMKM melalui Program Magang Berdampak 2026 Universitas Negeri Surabaya bersama Rumah BUMN BNI Ngawi.",
+  "creators": [
+    {
+      "name": "Zuhudi, Fazrin Mauza Dwi",
+      "affiliation": "Universitas Negeri Surabaya & Rumah BUMN BNI Ngawi"
+    }
+  ],
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "MIT",
+  "keywords": [
+    "DompetKu",
+    "UMKM",
+    "Pencatatan Keuangan",
+    "Kecerdasan Buatan",
+    "Artificial Intelligence",
+    "Progressive Web App",
+    "Local-First",
+    "IndexedDB",
+    "Google Gemini AI",
+    "Google Drive Backup",
+    "Magang Berdampak",
+    "Universitas Negeri Surabaya",
+    "Rumah BUMN BNI Ngawi"
+  ],
+  "version": "1.0.0"
+}
