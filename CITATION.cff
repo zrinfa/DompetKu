@@ -6,6 +6,7 @@ authors:
     affiliation: "Universitas Negeri Surabaya & Rumah BUMN BNI Ngawi"
 title: "DompetKu: Aplikasi Pencatatan Keuangan UMKM Terintegrasi Kecerdasan Buatan"
 version: "1.0.0"
+doi: "10.5281/zenodo.24243247"
 date-released: 2026-11-15
 url: "https://dompetku.is-local.org"
 repository-code: "https://github.com/zrinfa/DompetKu"

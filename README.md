@@ -4,6 +4,7 @@
   <p><strong>Aplikasi Pencatatan Keuangan UMKM Terintegrasi Kecerdasan Buatan</strong></p>
 
   <p>
+    <a href="https://doi.org/10.5281/zenodo.24243246"><img src="https://zenodo.org/badge/1351512524.svg" alt="DOI Zenodo"></a>
     <a href="https://dompetku.is-local.org" target="_blank"><img src="https://img.shields.io/badge/Akses%20Web-dompetku.is--local.org-2563EB?style=flat-square" alt="Domain"></a>
     <a href="panduan.html" target="_blank"><img src="https://img.shields.io/badge/Buku%20Panduan-PDF%20(15%20Hal)-DC2626?style=flat-square" alt="Buku Panduan PDF"></a>
     <img src="https://img.shields.io/badge/Platform-Progressive%20Web%20App%20(PWA)-10B981?style=flat-square" alt="Platform PWA">
@@ -40,6 +41,8 @@ DompetKu adalah aplikasi pencatatan keuangan berbasis web (Progressive Web App/P
 | **Mitra Instansi** | Rumah BUMN BNI Ngawi |
 | **Program** | Program Magang Berdampak Semester Gasal 2026/2027 |
 | **Periode Pelaksanaan** | 03 Agustus 2026 sampai dengan 03 Desember 2026 |
+| **Identitas Digital (DOI)** | [![DOI](https://zenodo.org/badge/1351512524.svg)](https://doi.org/10.5281/zenodo.24243246) &nbsp; [10.5281/zenodo.24243247](https://doi.org/10.5281/zenodo.24243247) |
+| **Arsip Ilmiah Terindeks** | [Zenodo (CERN)](https://doi.org/10.5281/zenodo.24243247) & [OpenAIRE](https://explore.openaire.eu) |
 
 ---
 
