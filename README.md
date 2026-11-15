@@ -42,7 +42,7 @@ DompetKu adalah aplikasi pencatatan keuangan berbasis web (Progressive Web App/P
 | **Program** | Program Magang Berdampak Semester Gasal 2026/2027 |
 | **Periode Pelaksanaan** | 03 Agustus 2026 sampai dengan 03 Desember 2026 |
 | **Identitas Digital (DOI)** | [![DOI](https://zenodo.org/badge/1351512524.svg)](https://doi.org/10.5281/zenodo.24243246) &nbsp; [10.5281/zenodo.24243247](https://doi.org/10.5281/zenodo.24243247) |
-| **Arsip Ilmiah Terindeks** | [Zenodo (CERN)](https://doi.org/10.5281/zenodo.24243247) & [OpenAIRE](https://explore.openaire.eu) |
+| **Arsip Ilmiah Terindeks** | [Zenodo (CERN)](https://doi.org/10.5281/zenodo.24243247) & [OpenAIRE](https://explore.openaire.eu/search/result?pid=10.5281%2Fzenodo.24243247) |
 
 ---
 
