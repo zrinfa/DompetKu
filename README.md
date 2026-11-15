@@ -61,9 +61,62 @@ Sistem dikembangkan dengan berlandaskan pada prinsip rekayasa perangkat lunak un
 
 ---
 
+## Buku Panduan Pengguna (User Guidebook)
+
+Guna mempercepat proses adopsi, edukasi, dan pendampingan literasi keuangan bagi pelaku UMKM binaan, telah disusun dokumen resmi **Buku Panduan Penggunaan Aplikasi DompetKu** setebal 15 halaman (format A4) dengan pembahasan sistematis langkah demi langkah:
+
+<div align="center">
+  <a href="assets/panduan/Panduan%20DompetKu.pdf" target="_blank">
+    <img src="assets/panduan/cover_panduan.png" alt="Sampul Buku Panduan DompetKu" width="360" style="border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.18); border: 1px solid #e2e8f0;" />
+  </a>
+  <br><br>
+  <p>
+    <a href="https://dompetku.is-local.org/panduan.html" target="_blank">
+      <img src="https://img.shields.io/badge/Akses%20Web-Halaman%20Panduan-059669?style=for-the-badge&logo=googledocs&logoColor=white" alt="Halaman Panduan">
+    </a>
+    &nbsp;
+    <a href="assets/panduan/Panduan%20DompetKu.pdf" download="Panduan DompetKu.pdf">
+      <img src="https://img.shields.io/badge/Unduh%20Berkas-PDF%20Resmi%20(5.2%20MB)-DC2626?style=for-the-badge&logo=adobeacrobatreader&logoColor=white" alt="Unduh PDF Panduan">
+    </a>
+  </p>
+</div>
+
+### Rangkuman Pokok Bahasan Panduan:
+* **BAB 01:** Memulai Aplikasi, Registrasi Entitas Usaha, dan Penetapan Kas Awal
+* **BAB 02:** Konsep Dua Kantong (Pemisahan Kas Bisnis vs Kas Pribadi Pemilik)
+* **BAB 03:** Pencatatan Transaksi Bisnis (Penerimaan Omzet Jasa & Pengeluaran Bahan Baku)
+* **BAB 04:** Pencatatan Transaksi Kas Kantong Pribadi Rumah Tangga
+* **BAB 05:** Tata Kelola Mutasi Penarikan Prive dan Suntik Modal Berbasis Akuntansi
+* **BAB 06:** Riwayat Transaksi, Penyaringan Multi-Kriteria, dan Koreksi Data
+* **BAB 07:** Laporan Keuangan Laba Rugi Otomatis dan Visualisasi Tren Arus Kas
+* **BAB 08:** Otomasi AI Catat Cepat (Bahasa Sehari-hari) & Pemindaian Citra Nota/Struk (OCR)
+* **BAB 09:** Fitur Telepon Live AI (Panggilan Suara Interaktif Dua Arah Waktu Nyata)
+* **BAB 10:** Konfigurasi Sistem, Kategori Kustom, dan Pencadangan Mandiri ke Google Drive
+* **BAB 11:** Prosedur Pemasangan PWA (Home Screen) & Pengoperasian Luring (Offline)
+* **PENUTUP:** Tanya Jawab Kendala Teknis (FAQ) dan Kontak Bantuan Pengembang
+
+---
+
 ## Implementasi Antarmuka Pengguna
 
 > Dokumentasi interaktif spesifikasi visual, filosofi desain, dan rincian frame layar dapat diakses pada dokumen: [**Perancangan Antarmuka Pengguna (UI/UX) DompetKu**](ui-design.html).
+
+### Spesifikasi Identitas Visual dan Palet Warna Sistem
+
+<table>
+  <tr>
+    <td width="50%" align="center" valign="top">
+      <img src="assets/ui/DompetKu_logo_filosofi.png" alt="Identitas Logo dan Filosofi Desain DompetKu" width="100%" />
+      <br><br><strong>Gambar A.</strong><br>Identitas Logo dan Filosofi Desain Sistem
+    </td>
+    <td width="50%" align="center" valign="top">
+      <img src="assets/ui/palet_warna_DompetKu.png" alt="Palet Warna Sistem Antarmuka DompetKu" width="100%" />
+      <br><br><strong>Gambar B.</strong><br>Palet Warna dan Hierarki Visual Antarmuka
+    </td>
+  </tr>
+</table>
+
+<br>
 
 Pengembangan antarmuka pengguna mengadopsi pendekatan Mobile-First Responsive Design untuk menjamin kemudahan interaksi pada perangkat seluler. Pengujian fungsionalitas sistem mencakup 15 tampilan antarmuka utama yang dikelompokkan ke dalam 5 modul operasional sebagai berikut:
 
@@ -161,6 +214,10 @@ Pengembangan antarmuka pengguna mengadopsi pendekatan Mobile-First Responsive De
 ## Analisis Fungsional Antarmuka
 
 Berikut merupakan deskripsi teknis dari setiap komponen antarmuka yang diimplementasikan pada sistem:
+
+### Identitas Visual dan Sistem Warna (Gambar A, Gambar B)
+- **Filosofi Desain Logo (Gambar A):** Memuat representasi simbolis bentuk Dompet (kedaulatan data local-first di tangan pengguna), Dua Jari (pencatatan cepat secepat jentikan jari), Siluet Hati (keberpihakan non-komersial tanpa biaya server/iklan), dan Tiga Berkas Cahaya (sinergi tiga fitur multimodal AI: teks, struk, dan suara).
+- **Hierarki Palet Warna (Gambar B):** Standarisasi warna fungsional mencakup Emerald Green (#059669) untuk entitas kas usaha, Sky Blue (#0284C7) untuk entitas kas pribadi, Crimson Red (#DC2626) untuk beban belanja dan peringatan, Amber Gold (#D97706) untuk transfer prive/modal, serta Slate Dark (#0F172A) dan Slate Light (#F8FAFC) untuk ergonomi visual pengguna.
 
 ### 1. Inisialisasi dan Konfigurasi Pengguna (Gambar 1, Gambar 2, Gambar 3)
 - **Pemilihan Profil Kas (Gambar 1):** Berfungsi sebagai gerbang pemisah antara pembukuan usaha mikro dan pengelolaan keuangan personal. Pengguna dapat berganti konteks secara terisolasi tanpa mencampuradukkan saldo rekening.
