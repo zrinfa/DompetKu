@@ -3310,10 +3310,10 @@
 
      function setTxDateFilter(val) {
          state.txDateFilter = val || 'ALL';
-         document.querySelectorAll('#tx-date-filters .tx-date-btn').forEach(btn => {
-             const isAct = btn.dataset.filter === state.txDateFilter;
-             btn.className = `tx-date-btn w-full py-1.5 text-[10px] sm:text-xs rounded-lg text-center transition-all ${isAct ? 'font-bold bg-emerald-500 text-white shadow-xs' : 'font-medium bg-slate-100 hover:bg-slate-200 text-slate-600'}`;
-         });
+         const dateSel = document.getElementById('tx-filter-date');
+         if (dateSel && dateSel.value !== state.txDateFilter) {
+             dateSel.value = state.txDateFilter;
+         }
          state.transactionPage = 1;
          renderTransactions();
      }
@@ -3322,7 +3322,9 @@
          const search = safeLower((document.getElementById('tx-search') ? document.getElementById('tx-search').value : ''));
          const entity = (document.getElementById('tx-filter-entity') ? document.getElementById('tx-filter-entity').value : 'ALL');
          const type = (document.getElementById('tx-filter-type') ? document.getElementById('tx-filter-type').value : 'ALL');
-         const dateFilter = state.txDateFilter || 'ALL';
+         const dateSel = document.getElementById('tx-filter-date');
+         const dateFilter = (dateSel ? dateSel.value : (state.txDateFilter || 'ALL'));
+         state.txDateFilter = dateFilter;
 
          const now = new Date();
          const todayYMD = getLocalDateString(now);
@@ -3548,7 +3550,8 @@
              'TRANSFER': 'Transfer Internal'
          };
 
-         const dVal = state.txDateFilter || 'ALL';
+         const dateSel = document.getElementById('tx-filter-date');
+         const dVal = (dateSel ? dateSel.value : (state.txDateFilter || 'ALL'));
          const eVal = (document.getElementById('tx-filter-entity') ? document.getElementById('tx-filter-entity').value : 'ALL');
          const tVal = (document.getElementById('tx-filter-type') ? document.getElementById('tx-filter-type').value : 'ALL');
 
