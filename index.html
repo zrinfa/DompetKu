@@ -117,7 +117,9 @@
             #print-area table thead, #tx-print-area table thead { display: table-header-group; }
             #print-area table tr, #tx-print-area table tr { page-break-inside: avoid; break-inside: avoid; }
             #print-area canvas, #tx-print-area canvas { max-width: 100%; display: block; margin-left: auto; margin-right: auto; }
-            #print-area table, #tx-print-area table { border-collapse: collapse; width: 100%; }
+            #print-area table, #tx-print-area table { border-collapse: collapse; width: 100%; table-layout: fixed; }
+            #tx-print-summary-table { border-collapse: separate !important; border-spacing: 8px 0 !important; width: 100% !important; margin-bottom: 14px !important; }
+            #tx-print-summary-table td { border: 1px solid #cbd5e1 !important; border-radius: 8px !important; }
             #print-area table th, #tx-print-area table th { background: #f1f5f9 !important; color: #0f172a !important; font-weight: 800; text-transform: uppercase; font-size: 10px; letter-spacing: 0.4px; border-top: 2px solid #0f172a; border-bottom: 2px solid #0f172a; }
             #print-area table td, #tx-print-area table td { border-bottom: 1px solid #e2e8f0; font-size: 11px; }
             #print-area table tr:last-child td, #tx-print-area table tr:last-child td { border-bottom: 2px solid #0f172a; }
@@ -617,8 +619,8 @@
                             <i class="fa-solid fa-list-check text-emerald-600"></i> Riwayat Transaksi
                         </h2>
                         <div class="flex items-center gap-1.5">
-                            <button onclick="exportTransactionsPdf()" type="button" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all" title="Ekspor PDF">
-                                <i class="fa-solid fa-file-pdf text-rose-600 text-xs"></i> Ekspor PDF
+                            <button onclick="exportTransactionsPdf()" type="button" class="bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 shadow-xs transition-all" title="Cetak Riwayat Transaksi">
+                                <i class="fa-solid fa-print text-xs"></i> Cetak
                             </button>
                             <button onclick="openModal('modal-transaction')" type="button" class="bg-emerald-500 hover:bg-emerald-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 shadow-xs">
                                 <i class="fa-solid fa-plus text-[10px]"></i> Tambah
@@ -644,13 +646,13 @@
                                 <option value="TRANSFER">Transfer Internal</option>
                             </select>
                         </div>
-                        <!-- Filter Tanggal (Default selalu Semua) -->
-                        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1" id="tx-date-filters">
-                            <button type="button" onclick="setTxDateFilter('ALL')" data-filter="ALL" class="tx-date-btn px-2.5 py-1 text-xs font-bold rounded-lg transition-all bg-emerald-500 text-white shadow-xs shrink-0">Semua</button>
-                            <button type="button" onclick="setTxDateFilter('TODAY')" data-filter="TODAY" class="tx-date-btn px-2.5 py-1 text-xs font-medium rounded-lg transition-all bg-slate-100 hover:bg-slate-200 text-slate-600 shrink-0">Hari ini</button>
-                            <button type="button" onclick="setTxDateFilter('YESTERDAY')" data-filter="YESTERDAY" class="tx-date-btn px-2.5 py-1 text-xs font-medium rounded-lg transition-all bg-slate-100 hover:bg-slate-200 text-slate-600 shrink-0">Kemarin</button>
-                            <button type="button" onclick="setTxDateFilter('THIS_MONTH')" data-filter="THIS_MONTH" class="tx-date-btn px-2.5 py-1 text-xs font-medium rounded-lg transition-all bg-slate-100 hover:bg-slate-200 text-slate-600 shrink-0">Bulan ini</button>
-                            <button type="button" onclick="setTxDateFilter('LAST_MONTH')" data-filter="LAST_MONTH" class="tx-date-btn px-2.5 py-1 text-xs font-medium rounded-lg transition-all bg-slate-100 hover:bg-slate-200 text-slate-600 shrink-0">Bulan lalu</button>
+                        <!-- Filter Tanggal (Paten / Fixed Grid 5 Kolom) -->
+                        <div class="grid grid-cols-5 gap-1 pt-1" id="tx-date-filters">
+                            <button type="button" onclick="setTxDateFilter('ALL')" data-filter="ALL" class="tx-date-btn w-full py-1.5 text-[10px] sm:text-xs font-bold rounded-lg text-center transition-all bg-emerald-500 text-white shadow-xs">Semua</button>
+                            <button type="button" onclick="setTxDateFilter('TODAY')" data-filter="TODAY" class="tx-date-btn w-full py-1.5 text-[10px] sm:text-xs font-medium rounded-lg text-center transition-all bg-slate-100 hover:bg-slate-200 text-slate-600">Hari ini</button>
+                            <button type="button" onclick="setTxDateFilter('YESTERDAY')" data-filter="YESTERDAY" class="tx-date-btn w-full py-1.5 text-[10px] sm:text-xs font-medium rounded-lg text-center transition-all bg-slate-100 hover:bg-slate-200 text-slate-600">Kemarin</button>
+                            <button type="button" onclick="setTxDateFilter('THIS_MONTH')" data-filter="THIS_MONTH" class="tx-date-btn w-full py-1.5 text-[10px] sm:text-xs font-medium rounded-lg text-center transition-all bg-slate-100 hover:bg-slate-200 text-slate-600">Bulan ini</button>
+                            <button type="button" onclick="setTxDateFilter('LAST_MONTH')" data-filter="LAST_MONTH" class="tx-date-btn w-full py-1.5 text-[10px] sm:text-xs font-medium rounded-lg text-center transition-all bg-slate-100 hover:bg-slate-200 text-slate-600">Bulan lalu</button>
                         </div>
                     </div>
                 </div>
@@ -672,37 +674,39 @@
                         </div>
                     </div>
 
-                    <!-- Ringkasan Singkat Riwayat -->
-                    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;">
-                        <div style="background:#f8fafc;padding:8px 10px;border-radius:8px;border:1px solid #e2e8f0;">
-                            <span style="font-size:9px;color:#64748b;display:block;">Total Transaksi</span>
-                            <span id="tx-print-summary-count" style="font-size:12px;font-weight:700;color:#0f172a;display:block;">0</span>
-                        </div>
-                        <div style="background:#f8fafc;padding:8px 10px;border-radius:8px;border:1px solid #e2e8f0;">
-                            <span style="font-size:9px;color:#64748b;display:block;">Total Pemasukan</span>
-                            <span id="tx-print-summary-in" style="font-size:12px;font-weight:700;color:#16a34a;display:block;">Rp 0</span>
-                        </div>
-                        <div style="background:#f8fafc;padding:8px 10px;border-radius:8px;border:1px solid #e2e8f0;">
-                            <span style="font-size:9px;color:#64748b;display:block;">Total Pengeluaran</span>
-                            <span id="tx-print-summary-out" style="font-size:12px;font-weight:700;color:#e11d48;display:block;">Rp 0</span>
-                        </div>
-                        <div style="background:#f8fafc;padding:8px 10px;border-radius:8px;border:1px solid #e2e8f0;">
-                            <span style="font-size:9px;color:#64748b;display:block;">Arus Kas Bersih</span>
-                            <span id="tx-print-summary-net" style="font-size:12px;font-weight:700;color:#0284c7;display:block;">Rp 0</span>
-                        </div>
-                    </div>
+                    <!-- Ringkasan Singkat Riwayat (Paten / Fixed Layout) -->
+                    <table id="tx-print-summary-table" style="width:100%;table-layout:fixed;border-collapse:separate;border-spacing:8px 0;margin-bottom:14px;border:none;">
+                        <tr>
+                            <td style="width:25%;background:#f8fafc;padding:8px 10px;border-radius:8px;border:1px solid #cbd5e1;vertical-align:top;box-sizing:border-box;">
+                                <span style="font-size:9px;color:#64748b;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Total Transaksi</span>
+                                <span id="tx-print-summary-count" style="font-size:12px;font-weight:700;color:#0f172a;display:block;margin-top:2px;">0</span>
+                            </td>
+                            <td style="width:25%;background:#f8fafc;padding:8px 10px;border-radius:8px;border:1px solid #cbd5e1;vertical-align:top;box-sizing:border-box;">
+                                <span style="font-size:9px;color:#64748b;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Total Pemasukan</span>
+                                <span id="tx-print-summary-in" style="font-size:12px;font-weight:700;color:#16a34a;display:block;margin-top:2px;">Rp 0</span>
+                            </td>
+                            <td style="width:25%;background:#f8fafc;padding:8px 10px;border-radius:8px;border:1px solid #cbd5e1;vertical-align:top;box-sizing:border-box;">
+                                <span style="font-size:9px;color:#64748b;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Total Pengeluaran</span>
+                                <span id="tx-print-summary-out" style="font-size:12px;font-weight:700;color:#e11d48;display:block;margin-top:2px;">Rp 0</span>
+                            </td>
+                            <td style="width:25%;background:#f8fafc;padding:8px 10px;border-radius:8px;border:1px solid #cbd5e1;vertical-align:top;box-sizing:border-box;">
+                                <span style="font-size:9px;color:#64748b;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Arus Kas Bersih</span>
+                                <span id="tx-print-summary-net" style="font-size:12px;font-weight:700;color:#0284c7;display:block;margin-top:2px;">Rp 0</span>
+                            </td>
+                        </tr>
+                    </table>
 
-                    <!-- Tabel Riwayat Transaksi -->
-                    <table style="width:100%;border-collapse:collapse;font-size:10px;">
+                    <!-- Tabel Riwayat Transaksi (Paten / Fixed Layout) -->
+                    <table style="width:100%;table-layout:fixed;border-collapse:collapse;font-size:10px;">
                         <thead>
                             <tr>
-                                <th style="padding:6px 4px;text-align:center;width:26px;">No</th>
-                                <th style="padding:6px;text-align:left;width:95px;">Tanggal</th>
+                                <th style="padding:6px 4px;text-align:center;width:28px;">No</th>
+                                <th style="padding:6px;text-align:left;width:105px;">Tanggal</th>
                                 <th style="padding:6px;text-align:left;">Catatan / Deskripsi</th>
                                 <th style="padding:6px;text-align:left;width:65px;">Entitas</th>
                                 <th style="padding:6px;text-align:left;width:80px;">Kategori</th>
                                 <th style="padding:6px;text-align:center;width:75px;">Arus Kas</th>
-                                <th style="padding:6px;text-align:right;width:85px;">Nominal</th>
+                                <th style="padding:6px;text-align:right;width:95px;">Nominal</th>
                             </tr>
                         </thead>
                         <tbody id="tx-print-table-body"></tbody>

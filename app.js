@@ -2415,7 +2415,6 @@
 
          const fab = document.getElementById('ai-fab');
          if (fab) fab.classList.toggle('hidden', tabId !== 'tab-dashboard');
-         if (tabId === 'tab-transaksi') setTxDateFilter('ALL');
          if (tabId === 'tab-laporan') updateReports();
          if (tabId === 'tab-pengaturan') {
              pendingLogoBase64 = null;
@@ -3313,7 +3312,7 @@
          state.txDateFilter = val || 'ALL';
          document.querySelectorAll('#tx-date-filters .tx-date-btn').forEach(btn => {
              const isAct = btn.dataset.filter === state.txDateFilter;
-             btn.className = `tx-date-btn px-2.5 py-1 text-xs rounded-lg transition-all shrink-0 ${isAct ? 'font-bold bg-emerald-500 text-white shadow-xs' : 'font-medium bg-slate-100 hover:bg-slate-200 text-slate-600'}`;
+             btn.className = `tx-date-btn w-full py-1.5 text-[10px] sm:text-xs rounded-lg text-center transition-all ${isAct ? 'font-bold bg-emerald-500 text-white shadow-xs' : 'font-medium bg-slate-100 hover:bg-slate-200 text-slate-600'}`;
          });
          state.transactionPage = 1;
          renderTransactions();
@@ -3517,7 +3516,7 @@
      function exportTransactionsPdf() {
          const filtered = getFilteredTransactions();
          if (!filtered || filtered.length === 0) {
-             showToast('Tidak ada transaksi untuk diekspor.', 'warning');
+             showToast('Tidak ada transaksi untuk dicetak.', 'warning');
              return;
          }
 
