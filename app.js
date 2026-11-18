@@ -111,6 +111,7 @@
          tourSeen: true,
          selectedMonth: getLocalMonthString(),
          selectedDate: getLocalDateString(),
+         txDateFilter: 'ALL',
          hasUnsavedChanges: false,
          transactionPage: 1,
          transactionLimit: 10,
@@ -1908,6 +1909,15 @@
          const entity = (r.entity === 'USAHA' || r.entity === 'PRIBADI') ? r.entity : null;
          closeModal('modal-ai');
          openWallet(entity || activeWallet);
+         if (typeof aiMode !== 'undefined' && aiMode === 'photo' && aiPhotoDataUrl) {
+             pendingTxPhotoImg = aiPhotoDataUrl;
+             pendingTxPhotoDriveId = null;
+             pendingTxPhotoDeleteId = null;
+             const prev = document.getElementById('tx-photo-preview');
+             if (prev) { prev.src = aiPhotoDataUrl; prev.classList.remove('hidden'); }
+             const rm = document.getElementById('tx-photo-remove');
+             if (rm) rm.classList.remove('hidden');
+         }
           try { window.__dompetkuTxSource = (typeof aiMode !== 'undefined' && aiMode === 'photo') ? 'nota' : 'ai'; } catch (e) {}
          if (type) {
              document.querySelectorAll('input[name="tx-type"]').forEach(el => { el.checked = (el.value === type); });
@@ -2071,8 +2081,16 @@
              return;
          }
          const now = getLocalDateTimeInputValue();
+         const photoObj = (typeof aiMode !== 'undefined' && aiMode === 'photo' && aiPhotoDataUrl) ? {
+             img: aiPhotoDataUrl,
+             driveFileId: null,
+             driveFileName: '',
+             pending: true,
+             updatedAt: new Date().toISOString()
+         } : null;
+         const savedBatch = [];
          aiPendingItems.forEach(it => {
-             state.transactions.unshift({
+             const newTx = {
                  id: generateId(),
                  type: it.type,
                  entity: it.entity,
@@ -2081,13 +2099,21 @@
                  date: now,
                  paymentMethod: 'Tunai',
                  description: it.description || it.category
-             });
+             };
+             if (photoObj) {
+                 newTx.photo = { ...photoObj };
+             }
+             state.transactions.unshift(newTx);
+             savedBatch.push(newTx);
          });
          const n = aiPendingItems.length;
          aiPendingItems = [];
          aiEditing = -1;
          saveAppData();
          refreshUI();
+         if (photoObj) {
+             savedBatch.forEach(tx => uploadTxPhotoInteractive(tx).catch(() => {}));
+         }
          closeModal('modal-ai');
          aiBackToInput();
          showToast(n + ' transaksi tersimpan.', 'success');
@@ -2389,6 +2415,7 @@
 
          const fab = document.getElementById('ai-fab');
          if (fab) fab.classList.toggle('hidden', tabId !== 'tab-dashboard');
+         if (tabId === 'tab-transaksi') setTxDateFilter('ALL');
          if (tabId === 'tab-laporan') updateReports();
          if (tabId === 'tab-pengaturan') {
              pendingLogoBase64 = null;
@@ -2403,6 +2430,7 @@
      // Solusi: jaga satu "guard" entri. Back ditahan, satu level ditutup, guard dipasang
      // lagi; saat tidak ada yang bisa ditutup, back diteruskan agar app memang keluar.
      const DK_CLOSERS = {
+         'modal-tx-detail': () => closeModal('modal-tx-detail'),
          'modal-transaction': () => closeModal('modal-transaction'),
          'modal-transfer': () => closeModal('modal-transfer'),
          'modal-confirm': () => { dkHide('modal-confirm'); pendingConfirmCallback = null; },
@@ -3260,7 +3288,8 @@
          const img = document.getElementById('photo-view-img');
          if (img) img.src = t.photo.img;
          const st = document.getElementById('photo-view-status');
-         if (st) st.innerText = (t.description || '') + ' • ' + formatRp(t.amount || 0) + ' — ' + (t.photo.driveFileId ? 'Tersimpan di Google Drive' : 'Hanya di HP ini (menunggu upload)');
+         const storageText = t.photo.driveFileId ? 'Tersimpan di Google Drive' : 'Hanya di HP ini (menunggu upload)';
+         if (st) st.innerText = (t.description || '') + ' • ' + formatRp(t.amount || 0) + ' • ' + storageText;
          document.getElementById('modal-photo').classList.remove('hidden');
      }
 
@@ -3268,20 +3297,69 @@
          document.getElementById('modal-photo').classList.add('hidden');
      }
 
-     function renderTransactions() {
-         const container = document.getElementById('full-transactions-list');
-         const search = safeLower(document.getElementById('tx-search').value);
-         const entity = document.getElementById('tx-filter-entity').value;
-         const type = document.getElementById('tx-filter-type').value;
+     function getTxDateYMD(t) {
+         if (!t || !t.date) return '';
+         try {
+             if (typeof t.date === 'string' && t.date.length >= 10) {
+                 return t.date.slice(0, 10);
+             }
+             const d = new Date(t.date);
+             if (!isNaN(d)) return getLocalDateString(d);
+         } catch (e) {}
+         return '';
+     }
 
-         let filtered = state.transactions.filter(t => {
-             const matchSearch = safeLower(t.description).includes(search) || safeLower(t.category).includes(search);
+     function setTxDateFilter(val) {
+         state.txDateFilter = val || 'ALL';
+         document.querySelectorAll('#tx-date-filters .tx-date-btn').forEach(btn => {
+             const isAct = btn.dataset.filter === state.txDateFilter;
+             btn.className = `tx-date-btn px-2.5 py-1 text-xs rounded-lg transition-all shrink-0 ${isAct ? 'font-bold bg-emerald-500 text-white shadow-xs' : 'font-medium bg-slate-100 hover:bg-slate-200 text-slate-600'}`;
+         });
+         state.transactionPage = 1;
+         renderTransactions();
+     }
+
+     function getFilteredTransactions() {
+         const search = safeLower((document.getElementById('tx-search') ? document.getElementById('tx-search').value : ''));
+         const entity = (document.getElementById('tx-filter-entity') ? document.getElementById('tx-filter-entity').value : 'ALL');
+         const type = (document.getElementById('tx-filter-type') ? document.getElementById('tx-filter-type').value : 'ALL');
+         const dateFilter = state.txDateFilter || 'ALL';
+
+         const now = new Date();
+         const todayYMD = getLocalDateString(now);
+         const yest = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+         const yesterdayYMD = getLocalDateString(yest);
+         const thisMonthYM = getLocalMonthString(now);
+         const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+         const lastMonthYM = getLocalMonthString(lastMonthDate);
+
+         return state.transactions.filter(t => {
+             const matchSearch = !search || safeLower(t.description).includes(search) || safeLower(t.category).includes(search);
              const matchEntity = entity === 'ALL' || t.entity === entity || t.type === 'TRANSFER';
              const matchType = type === 'ALL' || t.type === type;
-             return matchSearch && matchEntity && matchType;
-         });
 
-         filtered = filtered.slice().sort((a, b) => txTime(b) - txTime(a));
+             let matchDate = true;
+             const txYMD = getTxDateYMD(t);
+             const txYM = txYMD ? txYMD.slice(0, 7) : '';
+
+             if (dateFilter === 'TODAY') {
+                 matchDate = (txYMD === todayYMD);
+             } else if (dateFilter === 'YESTERDAY') {
+                 matchDate = (txYMD === yesterdayYMD);
+             } else if (dateFilter === 'THIS_MONTH') {
+                 matchDate = (txYM === thisMonthYM);
+             } else if (dateFilter === 'LAST_MONTH') {
+                 matchDate = (txYM === lastMonthYM);
+             }
+
+             return matchSearch && matchEntity && matchType && matchDate;
+         }).slice().sort((a, b) => txTime(b) - txTime(a));
+     }
+
+     function renderTransactions() {
+         const container = document.getElementById('full-transactions-list');
+         if (!container) return;
+         const filtered = getFilteredTransactions();
 
          const total = filtered.length;
          const totalPages = Math.ceil(total / state.transactionLimit) || 1;
@@ -3326,10 +3404,10 @@
          let iconClass = isIncome ? 'fa-circle-arrow-down' : (isTransfer ? 'fa-right-left' : 'fa-circle-arrow-up');
          let prefix = isIncome ? '+' : (isTransfer ? '' : '-');
          const hasPhoto = !!(t.photo && (t.photo.img || t.photo.driveFileId));
-         const photoBtn = (!hasPhoto || !allowDelete) ? '' : `<button data-txid="${escapeHtml(t.id)}" onclick="viewTxPhoto(this.dataset.txid)" class="text-xs ${t.photo.driveFileId ? 'text-slate-500 hover:text-emerald-600' : 'text-amber-500 hover:text-amber-600'} p-1.5" title="Lihat bukti foto"><i class="fa-solid fa-paperclip"></i></button>`;
+         const photoBtn = (!hasPhoto || !allowDelete) ? '' : `<button data-txid="${escapeHtml(t.id)}" onclick="event.stopPropagation(); viewTxPhoto(this.dataset.txid)" class="text-xs ${t.photo.driveFileId ? 'text-slate-500 hover:text-emerald-600' : 'text-amber-500 hover:text-amber-600'} p-1.5" title="Lihat bukti foto"><i class="fa-solid fa-paperclip"></i></button>`;
 
          return `
-             <div class="flex items-center justify-between p-2.5 bg-white rounded-xl border border-slate-100 shadow-xs">
+             <div onclick="openTxDetail('${escapeHtml(t.id)}')" class="flex items-center justify-between p-2.5 bg-white rounded-xl border border-slate-100 shadow-xs cursor-pointer hover:border-slate-300 hover:shadow-sm transition-all active:scale-[0.99]" title="Ketuk untuk melihat detail">
                  <div class="flex items-center gap-2.5 min-w-0">
                      <div class="w-8 h-8 rounded-xl ${colorClass} flex items-center justify-center shrink-0 ring-1 ring-current/15">
                          <i class="fa-solid ${iconClass} text-sm"></i>
@@ -3344,9 +3422,208 @@
                  </div>
                  <div class="text-right shrink-0 ml-2">
                      <span class="text-xs font-bold ${isIncome ? 'text-emerald-600' : (isTransfer ? 'text-slate-800' : 'text-rose-600')} block">${prefix}${formatRp(t.amount)}</span>
-                     ${allowDelete ? `<span class="inline-flex gap-2 mt-0.5">${photoBtn}<button data-txid="${escapeHtml(t.id)}" onclick="editTransaction(this.dataset.txid)" class="text-xs text-slate-500 hover:text-emerald-600 p-1.5" title="Edit"><i class="fa-solid fa-pen"></i></button><button data-txid="${escapeHtml(t.id)}" onclick="deleteTransaction(this.dataset.txid)" class="text-xs text-rose-400 hover:text-rose-600 p-1.5" title="Hapus"><i class="fa-solid fa-trash-can"></i></button></span>` : ''}
+                     ${allowDelete ? `<span class="inline-flex gap-2 mt-0.5">${photoBtn}<button data-txid="${escapeHtml(t.id)}" onclick="event.stopPropagation(); editTransaction(this.dataset.txid)" class="text-xs text-slate-500 hover:text-emerald-600 p-1.5" title="Edit"><i class="fa-solid fa-pen"></i></button><button data-txid="${escapeHtml(t.id)}" onclick="event.stopPropagation(); deleteTransaction(this.dataset.txid)" class="text-xs text-rose-400 hover:text-rose-600 p-1.5" title="Hapus"><i class="fa-solid fa-trash-can"></i></button></span>` : ''}
                  </div>
              </div>`;
+     }
+
+     function openTxDetail(id) {
+         const t = state.transactions.find(x => String(x.id) === String(id));
+         if (!t) return;
+
+         const isIncome = t.type === 'PEMASUKAN';
+         const isTransfer = t.type === 'TRANSFER';
+         const colorClass = isIncome ? 'text-emerald-600 bg-emerald-50' : (isTransfer ? 'text-amber-600 bg-amber-50' : 'text-rose-600 bg-rose-50');
+         const iconClass = isIncome ? 'fa-circle-arrow-down' : (isTransfer ? 'fa-right-left' : 'fa-circle-arrow-up');
+         const prefix = isIncome ? '+' : (isTransfer ? '' : '-');
+         const amountColor = isIncome ? 'text-emerald-600' : (isTransfer ? 'text-slate-800' : 'text-rose-600');
+
+         const iconBox = document.getElementById('tx-detail-icon-box');
+         if (iconBox) iconBox.className = `w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${colorClass}`;
+         const iconEl = document.getElementById('tx-detail-icon');
+         if (iconEl) iconEl.className = `fa-solid ${iconClass} text-sm`;
+
+         const entityBadge = document.getElementById('tx-detail-entity-badge');
+         if (entityBadge) {
+             entityBadge.innerText = t.entity || '-';
+             entityBadge.className = `text-[10px] font-bold px-1.5 py-0.5 rounded ${t.entity === 'USAHA' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700'}`;
+         }
+
+         const typeBadge = document.getElementById('tx-detail-type-badge');
+         if (typeBadge) {
+             typeBadge.innerText = isIncome ? 'Pemasukan' : (isTransfer ? 'Transfer' : 'Pengeluaran');
+             typeBadge.className = `text-[10px] font-bold px-1.5 py-0.5 rounded ${isIncome ? 'bg-emerald-50 text-emerald-700' : (isTransfer ? 'bg-amber-50 text-amber-700' : 'bg-rose-50 text-rose-700')}`;
+         }
+
+         const amountEl = document.getElementById('tx-detail-amount');
+         if (amountEl) {
+             amountEl.className = `text-2xl font-black block mt-0.5 ${amountColor}`;
+             amountEl.innerText = `${prefix}${formatRp(t.amount)}`;
+         }
+
+         const catEl = document.getElementById('tx-detail-category');
+         if (catEl) catEl.innerText = t.category || '-';
+
+         const dtEl = document.getElementById('tx-detail-datetime');
+         if (dtEl) {
+             let dateStr = '-';
+             if (t.date && !isNaN(new Date(t.date))) {
+                 const d = new Date(t.date);
+                 dateStr = d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) + ', ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ' WIB';
+             }
+             dtEl.innerText = dateStr;
+         }
+
+         const methodEl = document.getElementById('tx-detail-method');
+         if (methodEl) methodEl.innerText = t.paymentMethod || 'Tunai';
+
+         const descEl = document.getElementById('tx-detail-desc');
+         if (descEl) descEl.innerText = t.description || '-';
+
+         const photoSec = document.getElementById('tx-detail-photo-section');
+         const photoImg = document.getElementById('tx-detail-photo-img');
+         const photoStorage = document.getElementById('tx-detail-photo-storage');
+         const photoWrap = document.getElementById('tx-detail-photo-wrap');
+
+         if (t.photo && t.photo.img) {
+             if (photoSec) photoSec.classList.remove('hidden');
+             if (photoImg) photoImg.src = t.photo.img;
+             if (photoStorage) photoStorage.innerText = t.photo.driveFileId ? 'Tersimpan di Google Drive' : 'Hanya di HP ini';
+             if (photoWrap) photoWrap.onclick = () => { viewTxPhoto(t.id); };
+         } else {
+             if (photoSec) photoSec.classList.add('hidden');
+             if (photoImg) photoImg.src = '';
+         }
+
+         const btnEdit = document.getElementById('tx-detail-btn-edit');
+         if (btnEdit) {
+             btnEdit.onclick = () => {
+                 closeModal('modal-tx-detail');
+                 editTransaction(t.id);
+             };
+         }
+
+         const btnDelete = document.getElementById('tx-detail-btn-delete');
+         if (btnDelete) {
+             btnDelete.onclick = () => {
+                 closeModal('modal-tx-detail');
+                 deleteTransaction(t.id);
+             };
+         }
+
+         openModal('modal-tx-detail');
+     }
+
+     function exportTransactionsPdf() {
+         const filtered = getFilteredTransactions();
+         if (!filtered || filtered.length === 0) {
+             showToast('Tidak ada transaksi untuk diekspor.', 'warning');
+             return;
+         }
+
+         try {
+             const logoEl = document.getElementById('tx-print-logo-img');
+             if (logoEl) logoEl.src = getDisplayLogo(state.logoBase64);
+         } catch (e) {}
+         try {
+             const nameEl = document.getElementById('tx-print-company-name');
+             if (nameEl) nameEl.innerText = state.businessName || 'DompetKu';
+         } catch (e) {}
+
+         const dateLabels = {
+             'ALL': 'Semua Tanggal',
+             'TODAY': 'Hari Ini',
+             'YESTERDAY': 'Kemarin',
+             'THIS_MONTH': 'Bulan Ini',
+             'LAST_MONTH': 'Bulan Lalu'
+         };
+         const entityLabels = {
+             'ALL': 'Semua Entitas',
+             'USAHA': 'Khusus Usaha',
+             'PRIBADI': 'Khusus Pribadi'
+         };
+         const typeLabels = {
+             'ALL': 'Semua Arus Kas',
+             'PEMASUKAN': 'Pemasukan',
+             'PENGELUARAN': 'Pengeluaran',
+             'TRANSFER': 'Transfer Internal'
+         };
+
+         const dVal = state.txDateFilter || 'ALL';
+         const eVal = (document.getElementById('tx-filter-entity') ? document.getElementById('tx-filter-entity').value : 'ALL');
+         const tVal = (document.getElementById('tx-filter-type') ? document.getElementById('tx-filter-type').value : 'ALL');
+
+         const filterText = `Periode: ${dateLabels[dVal] || dVal} • Entitas: ${entityLabels[eVal] || eVal} • Arus Kas: ${typeLabels[tVal] || tVal}`;
+         try {
+             const perEl = document.getElementById('tx-print-period-label');
+             if (perEl) perEl.innerText = filterText;
+         } catch (e) {}
+
+         const nowStr = new Date().toLocaleString('id-ID');
+         try {
+             const ds = document.getElementById('tx-print-date-stamp');
+             if (ds) ds.innerText = 'Dicetak pada: ' + nowStr;
+         } catch (e) {}
+
+         let totalIn = 0, totalOut = 0;
+         filtered.forEach(t => {
+             const amt = Number(t.amount) || 0;
+             if (t.type === 'PEMASUKAN') totalIn += amt;
+             else if (t.type === 'PENGELUARAN') totalOut += amt;
+         });
+         const net = totalIn - totalOut;
+
+         try {
+             document.getElementById('tx-print-summary-count').innerText = filtered.length + ' transaksi';
+             document.getElementById('tx-print-summary-in').innerText = formatRp(totalIn);
+             document.getElementById('tx-print-summary-out').innerText = formatRp(totalOut);
+             document.getElementById('tx-print-summary-net').innerText = formatRp(net);
+         } catch (e) {}
+
+         const tbody = document.getElementById('tx-print-table-body');
+         if (tbody) {
+             tbody.innerHTML = filtered.map((t, idx) => {
+                 const isIncome = t.type === 'PEMASUKAN';
+                 const isTransfer = t.type === 'TRANSFER';
+                 const prefix = isIncome ? '+' : (isTransfer ? '' : '-');
+                 const color = isIncome ? '#16a34a' : (isTransfer ? '#b45309' : '#e11d48');
+                 let dtStr = '-';
+                 if (t.date && !isNaN(new Date(t.date))) {
+                     const d = new Date(t.date);
+                     dtStr = pad2(d.getDate()) + '/' + pad2(d.getMonth() + 1) + '/' + d.getFullYear() + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+                 }
+                 return `<tr>
+                     <td style="padding:6px 4px;text-align:center;">${idx + 1}</td>
+                     <td style="padding:6px;white-space:nowrap;">${dtStr}</td>
+                     <td style="padding:6px;font-weight:600;">${escapeHtml(t.description || '-')}</td>
+                     <td style="padding:6px;">${escapeHtml(t.entity || '-')}</td>
+                     <td style="padding:6px;">${escapeHtml(t.category || '-')}</td>
+                     <td style="padding:6px;text-align:center;font-weight:600;color:${color};">${escapeHtml(t.type || '-')}</td>
+                     <td style="padding:6px;text-align:right;font-weight:700;color:${color};white-space:nowrap;">${prefix}${formatRp(t.amount || 0)}</td>
+                 </tr>`;
+             }).join('');
+         }
+
+         try {
+             const sd = document.getElementById('tx-print-sign-date');
+             if (sd) sd.innerText = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+             const sn = document.getElementById('tx-print-sign-name');
+             if (sn) sn.innerText = state.businessName || 'Pemilik Usaha';
+         } catch (e) {}
+
+         const prevTheme = document.documentElement.dataset.theme;
+         document.documentElement.dataset.theme = 'light';
+         document.body.classList.add('print-tx-mode');
+
+         const restore = () => {
+             if (prevTheme) document.documentElement.dataset.theme = prevTheme;
+             document.body.classList.remove('print-tx-mode');
+             window.removeEventListener('afterprint', restore);
+         };
+
+         window.addEventListener('afterprint', restore);
+         window.print();
+         setTimeout(restore, 1500);
      }
 
      function setReportPeriod(period) {

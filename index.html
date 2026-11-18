@@ -94,21 +94,33 @@
             }
             #app-shell > header, #app-shell > nav { display: none !important; }
             #main-viewport { overflow: visible !important; height: auto !important; max-height: none !important; position: static !important; }
-            #view-laporan { display: block !important; overflow: visible !important; height: auto !important; max-height: none !important; position: static !important; }
             .no-print { display: none !important; }
+
+            /* Mode cetak default: laporan */
+            body:not(.print-tx-mode) #view-laporan { display: block !important; overflow: visible !important; height: auto !important; max-height: none !important; position: static !important; }
+            body:not(.print-tx-mode) #tx-print-area { display: none !important; }
+            body:not(.print-tx-mode) #view-transaksi { display: none !important; }
+
+            /* Mode cetak riwayat transaksi */
+            body.print-tx-mode #view-laporan { display: none !important; }
+            body.print-tx-mode #view-transaksi { display: block !important; overflow: visible !important; height: auto !important; max-height: none !important; position: static !important; }
+            body.print-tx-mode #view-transaksi > div:not(#tx-print-area) { display: none !important; }
+            body.print-tx-mode #full-transactions-list { display: none !important; }
+            body.print-tx-mode #tx-print-area { display: block !important; overflow: visible !important; height: auto !important; max-height: none !important; position: static !important; }
+
             /* Warna background ikut tercetak + tabel rapi multi-halaman */
-            #print-area, #print-area * {
+            #print-area, #print-area *, #tx-print-area, #tx-print-area * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
                 box-shadow: none !important;
             }
-            #print-area table thead { display: table-header-group; }
-            #print-area table tr { page-break-inside: avoid; break-inside: avoid; }
-            #print-area canvas { max-width: 100%; display: block; margin-left: auto; margin-right: auto; }
-            #print-area table { border-collapse: collapse; width: 100%; }
-            #print-area table th { background: #f1f5f9 !important; color: #0f172a !important; font-weight: 800; text-transform: uppercase; font-size: 10px; letter-spacing: 0.4px; border-top: 2px solid #0f172a; border-bottom: 2px solid #0f172a; }
-            #print-area table td { border-bottom: 1px solid #e2e8f0; font-size: 11px; }
-            #print-area table tr:last-child td { border-bottom: 2px solid #0f172a; }
+            #print-area table thead, #tx-print-area table thead { display: table-header-group; }
+            #print-area table tr, #tx-print-area table tr { page-break-inside: avoid; break-inside: avoid; }
+            #print-area canvas, #tx-print-area canvas { max-width: 100%; display: block; margin-left: auto; margin-right: auto; }
+            #print-area table, #tx-print-area table { border-collapse: collapse; width: 100%; }
+            #print-area table th, #tx-print-area table th { background: #f1f5f9 !important; color: #0f172a !important; font-weight: 800; text-transform: uppercase; font-size: 10px; letter-spacing: 0.4px; border-top: 2px solid #0f172a; border-bottom: 2px solid #0f172a; }
+            #print-area table td, #tx-print-area table td { border-bottom: 1px solid #e2e8f0; font-size: 11px; }
+            #print-area table tr:last-child td, #tx-print-area table tr:last-child td { border-bottom: 2px solid #0f172a; }
         }
 
         @keyframes slideDown {
@@ -604,9 +616,14 @@
                         <h2 class="text-xs sm:text-sm font-bold text-slate-800 flex items-center gap-1.5">
                             <i class="fa-solid fa-list-check text-emerald-600"></i> Riwayat Transaksi
                         </h2>
-                        <button onclick="openModal('modal-transaction')" class="bg-emerald-500 hover:bg-emerald-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1">
-                            <i class="fa-solid fa-plus text-[10px]"></i> Tambah
-                        </button>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="exportTransactionsPdf()" type="button" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all" title="Ekspor PDF">
+                                <i class="fa-solid fa-file-pdf text-rose-600 text-xs"></i> Ekspor PDF
+                            </button>
+                            <button onclick="openModal('modal-transaction')" type="button" class="bg-emerald-500 hover:bg-emerald-600 text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 shadow-xs">
+                                <i class="fa-solid fa-plus text-[10px]"></i> Tambah
+                            </button>
+                        </div>
                     </div>
 
                     <div class="space-y-2 pt-1">
@@ -627,10 +644,86 @@
                                 <option value="TRANSFER">Transfer Internal</option>
                             </select>
                         </div>
+                        <!-- Filter Tanggal (Default selalu Semua) -->
+                        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1" id="tx-date-filters">
+                            <button type="button" onclick="setTxDateFilter('ALL')" data-filter="ALL" class="tx-date-btn px-2.5 py-1 text-xs font-bold rounded-lg transition-all bg-emerald-500 text-white shadow-xs shrink-0">Semua</button>
+                            <button type="button" onclick="setTxDateFilter('TODAY')" data-filter="TODAY" class="tx-date-btn px-2.5 py-1 text-xs font-medium rounded-lg transition-all bg-slate-100 hover:bg-slate-200 text-slate-600 shrink-0">Hari ini</button>
+                            <button type="button" onclick="setTxDateFilter('YESTERDAY')" data-filter="YESTERDAY" class="tx-date-btn px-2.5 py-1 text-xs font-medium rounded-lg transition-all bg-slate-100 hover:bg-slate-200 text-slate-600 shrink-0">Kemarin</button>
+                            <button type="button" onclick="setTxDateFilter('THIS_MONTH')" data-filter="THIS_MONTH" class="tx-date-btn px-2.5 py-1 text-xs font-medium rounded-lg transition-all bg-slate-100 hover:bg-slate-200 text-slate-600 shrink-0">Bulan ini</button>
+                            <button type="button" onclick="setTxDateFilter('LAST_MONTH')" data-filter="LAST_MONTH" class="tx-date-btn px-2.5 py-1 text-xs font-medium rounded-lg transition-all bg-slate-100 hover:bg-slate-200 text-slate-600 shrink-0">Bulan lalu</button>
+                        </div>
                     </div>
                 </div>
 
                 <div id="full-transactions-list" class="space-y-2"></div>
+
+                <!-- AREA CETAK RIWAYAT TRANSAKSI (Hanya tampil saat ekspor PDF) -->
+                <div id="tx-print-area" class="hidden space-y-3.5">
+                    <!-- KOP LAPORAN RIWAYAT (hanya cetak) -->
+                    <div style="display:flex;align-items:center;gap:12px;padding-bottom:10px;border-bottom:3px double #0f172a;" class="mb-4">
+                        <img id="tx-print-logo-img" src="icons/icon-192.png" alt="Logo Usaha" style="width:58px;height:58px;object-fit:cover;border-radius:12px;border:1px solid #cbd5e1;flex-shrink:0;">
+                        <div style="flex:1;min-width:0;">
+                            <h1 id="tx-print-company-name" style="font-size:18px;font-weight:800;color:#0f172a;line-height:1.2;margin:0;">DompetKu</h1>
+                            <p style="font-size:13px;font-weight:700;color:#0f172a;margin:2px 0 0;">Laporan Riwayat Transaksi</p>
+                            <p id="tx-print-period-label" style="font-size:11px;color:#475569;margin:2px 0 0;">Filter: -</p>
+                        </div>
+                        <div style="text-align:right;flex-shrink:0;">
+                            <p id="tx-print-date-stamp" style="font-size:10px;color:#334155;font-weight:600;margin:2px 0 0;"></p>
+                        </div>
+                    </div>
+
+                    <!-- Ringkasan Singkat Riwayat -->
+                    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;">
+                        <div style="background:#f8fafc;padding:8px 10px;border-radius:8px;border:1px solid #e2e8f0;">
+                            <span style="font-size:9px;color:#64748b;display:block;">Total Transaksi</span>
+                            <span id="tx-print-summary-count" style="font-size:12px;font-weight:700;color:#0f172a;display:block;">0</span>
+                        </div>
+                        <div style="background:#f8fafc;padding:8px 10px;border-radius:8px;border:1px solid #e2e8f0;">
+                            <span style="font-size:9px;color:#64748b;display:block;">Total Pemasukan</span>
+                            <span id="tx-print-summary-in" style="font-size:12px;font-weight:700;color:#16a34a;display:block;">Rp 0</span>
+                        </div>
+                        <div style="background:#f8fafc;padding:8px 10px;border-radius:8px;border:1px solid #e2e8f0;">
+                            <span style="font-size:9px;color:#64748b;display:block;">Total Pengeluaran</span>
+                            <span id="tx-print-summary-out" style="font-size:12px;font-weight:700;color:#e11d48;display:block;">Rp 0</span>
+                        </div>
+                        <div style="background:#f8fafc;padding:8px 10px;border-radius:8px;border:1px solid #e2e8f0;">
+                            <span style="font-size:9px;color:#64748b;display:block;">Arus Kas Bersih</span>
+                            <span id="tx-print-summary-net" style="font-size:12px;font-weight:700;color:#0284c7;display:block;">Rp 0</span>
+                        </div>
+                    </div>
+
+                    <!-- Tabel Riwayat Transaksi -->
+                    <table style="width:100%;border-collapse:collapse;font-size:10px;">
+                        <thead>
+                            <tr>
+                                <th style="padding:6px 4px;text-align:center;width:26px;">No</th>
+                                <th style="padding:6px;text-align:left;width:95px;">Tanggal</th>
+                                <th style="padding:6px;text-align:left;">Catatan / Deskripsi</th>
+                                <th style="padding:6px;text-align:left;width:65px;">Entitas</th>
+                                <th style="padding:6px;text-align:left;width:80px;">Kategori</th>
+                                <th style="padding:6px;text-align:center;width:75px;">Arus Kas</th>
+                                <th style="padding:6px;text-align:right;width:85px;">Nominal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tx-print-table-body"></tbody>
+                    </table>
+
+                    <!-- Footer Catatan & Tanda Tangan -->
+                    <div style="page-break-inside:avoid;margin-top:16px;">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;padding-top:12px;border-top:1px solid #e2e8f0;">
+                            <div style="font-size:10px;color:#64748b;max-width:60%;">
+                                <p style="margin:0;font-weight:700;color:#0f172a;">Catatan:</p>
+                                <p style="margin:0;">Laporan riwayat transaksi ini dicetak otomatis dari sistem pencatatan keuangan DompetKu.</p>
+                            </div>
+                            <div style="text-align:center;min-width:140px;font-size:10px;">
+                                <p id="tx-print-sign-date" style="margin:0;color:#475569;"></p>
+                                <p style="margin:2px 0 0;font-weight:700;color:#0f172a;">Pemilik Usaha,</p>
+                                <div style="height:48px;"></div>
+                                <p id="tx-print-sign-name" style="margin:0;font-weight:700;color:#0f172a;text-decoration:underline;"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </section>
 
             <!-- TAB 3: REPORTS & ANALYTICS -->
@@ -1418,6 +1511,84 @@
                     <i class="fa-solid fa-arrow-left"></i> Kembali
                 </button>
             </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DETAIL TRANSAKSI -->
+    <div id="modal-tx-detail" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-end sm:items-center justify-center z-50 hidden transition-opacity p-0 sm:p-4">
+        <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-2xl max-h-[92vh] overflow-y-auto shadow-2xl flex flex-col">
+            <!-- Header Modal Detail -->
+            <div class="p-4 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur-xs z-10 rounded-t-3xl sm:rounded-t-2xl">
+                <div class="flex items-center gap-2.5">
+                    <div id="tx-detail-icon-box" class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0">
+                        <i id="tx-detail-icon" class="fa-solid text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-bold text-slate-800">Detail Transaksi</h3>
+                        <div class="flex items-center gap-1.5 mt-0.5">
+                            <span id="tx-detail-entity-badge" class="text-[10px] font-bold px-1.5 py-0.5 rounded"></span>
+                            <span id="tx-detail-type-badge" class="text-[10px] font-bold px-1.5 py-0.5 rounded"></span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Action Buttons Kanan Atas: Edit, Hapus, Tutup -->
+                <div class="flex items-center gap-1">
+                    <button type="button" id="tx-detail-btn-edit" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-emerald-50 text-slate-600 hover:text-emerald-600 flex items-center justify-center transition-all" title="Edit Transaksi">
+                        <i class="fa-solid fa-pen text-xs"></i>
+                    </button>
+                    <button type="button" id="tx-detail-btn-delete" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 flex items-center justify-center transition-all" title="Hapus Transaksi">
+                        <i class="fa-solid fa-trash-can text-xs"></i>
+                    </button>
+                    <button type="button" onclick="closeModal('modal-tx-detail')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-all ml-0.5" title="Tutup">
+                        <i class="fa-solid fa-xmark text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Body Modal Detail -->
+            <div class="p-4 space-y-3.5 text-xs">
+                <!-- Nominal -->
+                <div class="text-center py-3 bg-slate-50 rounded-2xl border border-slate-100">
+                    <span class="text-[10px] font-semibold text-slate-400 block uppercase tracking-wider">Jumlah Nominal</span>
+                    <span id="tx-detail-amount" class="text-2xl font-black block mt-0.5"></span>
+                </div>
+
+                <!-- Info Grid -->
+                <div class="divide-y divide-slate-100 border border-slate-100 rounded-2xl overflow-hidden bg-white shadow-xs">
+                    <div class="flex items-center justify-between p-3">
+                        <span class="text-slate-500 font-medium">Kategori</span>
+                        <span id="tx-detail-category" class="font-bold text-slate-800"></span>
+                    </div>
+                    <div class="flex items-center justify-between p-3">
+                        <span class="text-slate-500 font-medium">Tanggal & Waktu</span>
+                        <span id="tx-detail-datetime" class="font-semibold text-slate-800"></span>
+                    </div>
+                    <div class="flex items-center justify-between p-3">
+                        <span class="text-slate-500 font-medium">Metode Pembayaran</span>
+                        <span id="tx-detail-method" class="font-semibold text-slate-800"></span>
+                    </div>
+                    <div class="p-3 space-y-1">
+                        <span class="text-slate-500 font-medium block">Catatan / Keterangan</span>
+                        <p id="tx-detail-desc" class="font-semibold text-slate-800 text-xs break-words leading-relaxed"></p>
+                    </div>
+                </div>
+
+                <!-- Foto Bukti / Struk (Jika ada) -->
+                <div id="tx-detail-photo-section" class="hidden space-y-2 border border-slate-100 rounded-2xl p-3 bg-slate-50 shadow-xs">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5">
+                            <i class="fa-solid fa-image text-emerald-600"></i> Bukti Foto / Struk
+                        </span>
+                        <span id="tx-detail-photo-storage" class="text-[10px] text-slate-400 font-medium"></span>
+                    </div>
+                    <div class="relative group cursor-pointer overflow-hidden rounded-xl border border-slate-200 bg-slate-900" id="tx-detail-photo-wrap" title="Ketuk untuk perbesar">
+                        <img id="tx-detail-photo-img" src="" alt="Bukti Foto Transaksi" class="w-full max-h-48 object-contain">
+                        <div class="absolute inset-0 bg-slate-900/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold gap-1">
+                            <i class="fa-solid fa-magnifying-glass-plus"></i> Lihat Ukuran Penuh
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

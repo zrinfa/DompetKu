@@ -1,4 +1,4 @@
-/* DompetKu Telemetry — pelapor performa & penggunaan aplikasi.
+/* DompetKu Telemetry - pelapor performa & penggunaan aplikasi.
  * Mengirim ke backend/track.php (MySQL):
  *  - nama usaha user, user_key (id profil)
  *  - device fingerprint lengkap
