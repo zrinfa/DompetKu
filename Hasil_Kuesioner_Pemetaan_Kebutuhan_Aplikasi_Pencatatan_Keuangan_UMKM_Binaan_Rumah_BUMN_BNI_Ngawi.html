@@ -104,7 +104,7 @@ td.n,th.n{width:44px;text-align:center}
   <div id="grafik" class="hide">
     <div class="card">
       <div class="qh"><h2>Grafik keseluruhan data</h2></div>
-      <p class="sub">Seluruh pertanyaan dalam satu gambar. Digambar sebagai vektor sehingga tetap tajam saat diperbesar.</p>
+      <p class="sub">Ringkasan ringkas berukuran 5:4 (temuan utama, grafik pilihan, sorotan saran) untuk ditempel di laporan. Grafik lengkap tiap pertanyaan tersedia pada tombol "Unduh gambar" di tab Ringkasan. Digambar sebagai vektor sehingga tetap tajam.</p>
       <div class="ptools">
         <button class="dl solid" id="btn-poster-png">Unduh gambar PNG (resolusi tinggi)</button>
         <button class="dl" id="btn-poster-svg">Unduh SVG (vektor)</button>
@@ -171,7 +171,7 @@ function qFile(i,ext){
 const FILES = {
   head:   `${PREFIX}_Judul-dan-Total-${DATA.length}-Responden.png`,
   table:  `${PREFIX}_Daftar-${DATA.length}-Responden-Tabel.png`,
-  poster: `${PREFIX}_Grafik-Keseluruhan-Semua-Pertanyaan-${DATA.length}-Responden`,
+  poster: `${PREFIX}_Grafik-Keseluruhan-Ringkas-Rasio-5x4-${DATA.length}-Responden`,
   ringkasan: `${PREFIX}_Ringkasan-Semua-Pertanyaan-Tampilan-Halaman-${DATA.length}-Responden.png`,
   csv:    `${PREFIX}_Seluruh-Data-${DATA.length}-Responden.csv`,
   zip:    `${PREFIX}_Semua-Gambar-Grafik-${DATA.length}-Responden.zip`
@@ -302,56 +302,60 @@ function wrapChars(s,size,weight,maxW){
 }
 
 /* grafik batang vertikal */
-function chartCard(q,i,colW){
+function chartCard(q,i,colW,cp){
   const N = DATA.length, t = tally(q), color = PALETTE[i % PALETTE.length], barW = colW - 2*IN;
-  const tLines = wrapText(q.title,18,500,barW-32);
-  const sub = `${t.n} dari ${N} responden` + (q.type==='multi' ? ' (pilihan ganda, % dari responden)' : '');
-  const sLines = wrapText(sub,12.5,400,barW);
-  let s = '', y = 30;
-  s += `<circle cx="${IN+11}" cy="${y-6}" r="11" fill="${color}"/>` + T(IN+11,y-1.5,i+1,{s:12,w:700,f:'#ffffff',a:'middle'});
-  tLines.forEach((l,k)=>{ s += T(IN+32,y+k*23,l,{s:18,w:500}); });
-  y += (tLines.length-1)*23 + 20;
-  sLines.forEach((l,k)=>{ s += T(IN,y+k*16,l,{s:12.5,f:'#5f6368'}); });
-  y += (sLines.length-1)*16 + 14;
+  const TF = cp?16:18, TL = cp?19:23, SF = cp?11.5:12.5, SL = cp?14:16, PH = cp?((typeof cp==='number'&&cp>1)?cp:104):190, TP = cp?26:38, VF = cp?13:13, PF2 = cp?10.5:11;
+  const I2 = cp?10:IN, bW = colW - 2*I2;
+  const tLines = wrapText(q.title,TF,500,bW-(cp?26:32));
+  const sub = `${t.n} dari ${N} responden` + (q.type==='multi' ? (cp?' (pilihan ganda)':' (pilihan ganda, % dari responden)') : '');
+  const sLines = wrapText(sub,SF,400,bW);
+  let s = '', y = cp?19:30;
+  const r0 = cp?9:11;
+  s += `<circle cx="${I2+r0}" cy="${y-(cp?5:6)}" r="${r0}" fill="${color}"/>` + T(I2+r0,y-(cp?1.5:1.5),i+1,{s:cp?11:12,w:700,f:'#ffffff',a:'middle'});
+  tLines.forEach((l,k)=>{ s += T(I2+r0*2+(cp?8:10),y+k*TL,l,{s:TF,w:500}); });
+  y += (tLines.length-1)*TL + (cp?13:20);
+  sLines.forEach((l,k)=>{ s += T(I2,y+k*SL,l,{s:SF,f:'#5f6368'}); });
+  y += (sLines.length-1)*SL + (cp?3:14);
 
-  const k = t.items.length, axisW = 38, plotH = 190, topPad = 38;
-  const px = IN + axisW, pw = barW - axisW, cw = pw / k;
+  const k = t.items.length, axisW = cp?30:38, plotH = PH, topPad = TP;
+  const px = I2 + axisW, pw = bW - axisW, cw = pw / k;
   const py = y + topPad, base = py + plotH;
   [0,25,50,75,100].forEach(v=>{
     const gy = base - v/100*plotH;
     s += `<line x1="${px}" y1="${gy}" x2="${px+pw}" y2="${gy}" stroke="${v===0?'#9aa0a6':'#e8eaed'}" stroke-width="1"/>`;
-    s += T(px-6,gy+4,v+'%',{s:11,f:'#5f6368',a:'end'});
+    s += T(px-5,gy+3.5,v+'%',{s:PF2,f:'#5f6368',a:'end'});
   });
   s += `<line x1="${px}" y1="${py}" x2="${px}" y2="${base}" stroke="#9aa0a6" stroke-width="1"/>`;
-  const lfs = k>5 ? 10.5 : (k>3 ? 11.5 : 12.5), lh = lfs + 3.5;
+  const lfs = cp ? (k>5?11:12) : (k>5 ? 10.5 : (k>3 ? 11.5 : 12.5)), lh = lfs + 2.5;
   let maxLines = 1;
   t.items.forEach((it,j)=>{
     const pct = it.c / t.n * 100, bh = Math.max(pct/100*plotH, 2);
-    const bw = Math.min(cw*0.62, 72), cx = px + cw*j + cw/2;
+    const bw = Math.min(cw*0.62, 64), cx = px + cw*j + cw/2;
     s += `<rect x="${cx-bw/2}" y="${base-bh}" width="${bw}" height="${bh}" rx="3" fill="${PALETTE[j % PALETTE.length]}"/>`;
-    s += T(cx,base-bh-18,it.c,{s:13,w:700,a:'middle'});
-    s += T(cx,base-bh-5,fmt(pct)+'%',{s:11,f:'#5f6368',a:'middle'});
-    const ll = wrapChars(it.label,lfs,400,cw-6);
+    s += T(cx,base-bh-(cp?14:18),it.c,{s:VF,w:700,a:'middle'});
+    s += T(cx,base-bh-4,fmt(pct)+'%',{s:PF2,f:'#5f6368',a:'middle'});
+    const ll = wrapChars(it.label,lfs,400,cw-4);
     maxLines = Math.max(maxLines,ll.length);
-    ll.forEach((l,m)=>{ s += T(cx,base+16+m*lh,l,{s:lfs,a:'middle'}); });
+    ll.forEach((l,m)=>{ s += T(cx,base+(cp?13:16)+m*lh,l,{s:lfs,a:'middle'}); });
   });
-  const h = base + 16 + (maxLines-1)*lh + 18;
-  return {h, svg:`<rect width="${colW}" height="${h}" rx="12" fill="#ffffff" stroke="#cfe3d8" stroke-width="1.2"/>` + s};
+  const h = base + (cp?13:16) + (maxLines-1)*lh + (cp?7:18);
+  return {h, svg:`<rect width="${colW}" height="${h}" rx="8" fill="#ffffff" stroke="#cfe3d8" stroke-width="1.2"/>` + s};
 }
 
-function saranCards(num,colW){
+function saranCards(num,colW,cp){
   const N = DATA.length, saran = saranList(), out = [];
-  out.push({h:62, svg:`<rect width="${colW}" height="62" rx="12" fill="#047857"/>`
-    + `<circle cx="${IN+11}" cy="24" r="11" fill="#ffffff"/>` + T(IN+11,28.5,num,{s:12,w:700,f:'#047857',a:'middle'})
-    + T(IN+32,30,'Saran dan masukan',{s:18,w:500,f:'#ffffff'})
-    + T(IN,50,`${saran.length} jawaban dari ${N} responden`,{s:12.5,f:'#d1fae5'})});
+  const I2 = cp?14:IN, fs = cp?12.5:14.5, lh = cp?16:19, hh = cp?46:62;
+  out.push({h:hh, svg:`<rect width="${colW}" height="${hh}" rx="10" fill="#047857"/>`
+    + `<circle cx="${I2+9}" cy="${cp?19:24}" r="${cp?9:11}" fill="#ffffff"/>` + T(I2+9,cp?23:28.5,num,{s:cp?11:12,w:700,f:'#047857',a:'middle'})
+    + T(I2+(cp?26:32),cp?24:30,'Saran dan masukan',{s:cp?15:18,w:500,f:'#ffffff'})
+    + T(I2,cp?40:50,`${saran.length} jawaban dari ${N} responden`,{s:cp?11:12.5,f:'#d1fae5'})});
   saran.forEach(r=>{
-    const lines = wrapText('\u201c'+r.saran.trim()+'\u201d',14.5,400,colW-2*IN);
-    const h = 52 + (lines.length-1)*20 + 16;
-    let s = `<rect width="${colW}" height="${h}" rx="10" fill="#ffffff" stroke="#cfe3d8" stroke-width="1.2"/>`;
-    s += `<rect width="4" height="${h-20}" x="0" y="10" fill="#059669"/>`;
-    s += T(IN,28,r.nama,{s:13.5,w:700,f:'#047857'});
-    lines.forEach((l,k)=>{ s += T(IN,52+k*20,l,{s:14.5}); });
+    const lines = wrapText('\u201c'+r.saran.trim()+'\u201d',fs,400,colW-2*I2);
+    const top = cp?32:44, h = top + (lines.length-1)*lh + (cp?10:14);
+    let s = `<rect width="${colW}" height="${h}" rx="8" fill="#ffffff" stroke="#cfe3d8" stroke-width="1.2"/>`;
+    s += `<rect width="4" height="${h-16}" x="0" y="8" fill="#059669"/>`;
+    s += T(I2,cp?19:23,r.nama,{s:cp?12:13.5,w:700,f:'#047857'});
+    lines.forEach((l,k)=>{ s += T(I2,top+1+k*lh,l,{s:fs}); });
     out.push({h, svg:s});
   });
   return out;
@@ -360,7 +364,20 @@ function saranCards(num,colW){
 /* satu pertanyaan jadi satu gambar */
 function questionSvg(i){
   const q = QUESTIONS[i], W = 680, M = 24, G = 12;
-  let cards = q.type==='text' ? saranCards(i+1,W) : [chartCard(q,i,W)];
+  if(q.type==='text'){
+    const C = 2, cg = 10, cwid = 480, FW = C*cwid + (C-1)*cg, TWt = FW + 2*M;
+    const hdr = saranCards(i+1,FW)[0], items = saranCards(i+1,cwid).slice(1);
+    const colY = Array(C).fill(M + hdr.h + cg);
+    let g = `<g transform="translate(${M},${M})">${hdr.svg}</g>`;
+    items.forEach(c=>{
+      let k = 0; for(let j=1;j<C;j++) if(colY[j] < colY[k]-0.5) k = j;
+      g += `<g transform="translate(${M + k*(cwid+cg)},${colY[k]})">${c.svg}</g>`;
+      colY[k] += c.h + cg;
+    });
+    const Ht = Math.max(...colY) - cg + M;
+    return {W:TWt,H:Ht,svg:`<svg xmlns="http://www.w3.org/2000/svg" width="${TWt}" height="${Ht}" viewBox="0 0 ${TWt} ${Ht}" font-family="${PF}"><rect width="${TWt}" height="${Ht}" fill="#ecfdf5"/>${g}</svg>`};
+  }
+  let cards = [chartCard(q,i,W)];
   let y = M, g = '';
   cards.forEach(c=>{ g += `<g transform="translate(${M},${y})">${c.svg}</g>`; y += c.h + G; });
   const H = y - G + M, TW = W + 2*M;
@@ -388,31 +405,82 @@ async function svgToPng({svg,W,H}){
 /* ===== Poster (semua pertanyaan) ===== */
 let POSTER = null;
 function buildPoster(){
-  const W = 1500, PAD = 36, GAP = 18, COLS = 3, N = DATA.length;
-  const colW = (W - 2*PAD - (COLS-1)*GAP) / COLS;
-  const tl = wrapText('Hasil Kuesioner Pemetaan Kebutuhan Aplikasi Pencatatan Keuangan UMKM Binaan Rumah BUMN BNI Ngawi',32,700,W-2*PAD);
-  let hy = 52, head = '';
-  tl.forEach((l,k)=>{ head += T(PAD,hy+k*40,l,{s:32,w:700,f:'#ffffff'}); });
-  hy += (tl.length-1)*40 + 32;
-  head += T(PAD,hy,`Ringkasan seluruh pertanyaan dari ${N} responden`,{s:17,f:'#d1fae5'});
-  const headH = hy + 26;
-  const top = headH + 22, colY = Array(COLS).fill(top), colX = [...Array(COLS)].map((_,k)=>PAD + k*(colW+GAP));
-  let body = '';
-  const place = c => {
-    let k = 0; for(let j=1;j<COLS;j++) if(colY[j] < colY[k]-0.5) k = j;
-    body += `<g transform="translate(${colX[k]},${colY[k]})">${c.svg}</g>`;
-    colY[k] += c.h + GAP;
+  /* rasio 5:4, ringkas dan rapat: temuan utama + 12 grafik + sorotan saran */
+  const W = 1500, H = 1200, PAD = 20, GAP = 8, COLS = 3, N = DATA.length;
+  const colW = (W - 2*PAD - (COLS-1)*GAP) / COLS, FW = W - 2*PAD;
+  const tl = wrapText('Ringkasan Hasil Kuesioner Pemetaan Kebutuhan Aplikasi Pencatatan Keuangan UMKM Binaan Rumah BUMN BNI Ngawi',24,700,FW);
+  let hy = 34, head = '';
+  tl.forEach((l,k)=>{ head += T(PAD,hy+k*30,l,{s:24,w:700,f:'#ffffff'}); });
+  hy += (tl.length-1)*30 + 24;
+  head += T(PAD,hy,`Berdasarkan respons ${N} pelaku UMKM`,{s:14,f:'#d1fae5'});
+  const headH = hy + 12;
+
+  const cnt = f => DATA.filter(f).length;
+  const stats = [
+    {c:cnt(r=>r.catat!=='Ya, rutin'), t:'belum mencatat keuangan secara rutin'},
+    {c:cnt(r=>r.pernah==='Belum pernah'), t:'belum pernah memakai aplikasi pencatatan'},
+    {c:cnt(r=>r.ai==='Ya, sangat tertarik'), t:'sangat tertarik pada solusi berbasis AI'},
+    {c:cnt(r=>r.bayar==='Tetap gratis'), t:'memilih aplikasi tetap gratis'}
+  ];
+  const sy = headH + GAP, sh = 70, sw = (FW - 3*GAP)/4;
+  let sbody = '';
+  stats.forEach((st,k)=>{
+    const x = PAD + k*(sw+GAP), lines = wrapText(st.t,14,400,sw-118);
+    sbody += `<g transform="translate(${x},${sy})"><rect width="${sw}" height="${sh}" rx="8" fill="#ffffff" stroke="#cfe3d8" stroke-width="1.2"/>`
+      + `<rect width="5" height="${sh-16}" x="0" y="8" fill="${PALETTE[k]}"/>`
+      + T(14,38,fmt(st.c/N*100)+'%',{s:28,w:700,f:'#047857'})
+      + T(14,58,`${st.c} dari ${N}`,{s:11.5,f:'#5f6368'});
+    lines.forEach((l,m)=>{ sbody += T(106,30+m*17,l,{s:14}); });
+    sbody += '</g>';
+  });
+  const top = sy + sh + GAP;
+
+  /* sorotan saran pilihan */
+  const names = ['Drt kripik','Aneka sarapan pagi','Omah Juice'];
+  const qb = names.map(n=>DATA.find(r=>r.nama===n)).filter(Boolean).map(r=>({r, lines:wrapText('\u201c'+r.saran.trim()+'\u201d',14,400,colW-24)}));
+  const qh = Math.max(...qb.map(b=>b.lines.length)) * 17 + 24;
+  const boxH = 28 + qh + 4, footH = 20;
+  const limit = H - footH - boxH - GAP - 2;
+
+  const K = n => QUESTIONS.findIndex(q=>q.key===n);
+  const LISTS = [
+    ['jenis','lama','omzet','catat','cara','kendala','campur','habis','pernah','ai','bantu','bersedia'],
+    ['jenis','catat','cara','kendala','campur','pernah','ai','bantu','bersedia','bayar'],
+    ['jenis','catat','kendala','pernah','ai','bantu','bersedia','bayar'],
+    ['jenis','catat','kendala','pernah','bersedia','bayar']
+  ];
+  const lay = (keys,ph)=>{
+    const colY = Array(COLS).fill(top), items = [];
+    keys.forEach(key=>{
+      const i = K(key), c = chartCard(QUESTIONS[i],i,colW,ph);
+      let k = 0; for(let j=1;j<COLS;j++) if(colY[j] < colY[k]-0.5) k = j;
+      items.push(`<g transform="translate(${PAD + k*(colW+GAP)},${colY[k]})">${c.svg}</g>`);
+      colY[k] += c.h + GAP;
+    });
+    return {svg:items.join(''), bottom:Math.max(...colY)-GAP};
   };
-  let last = 0;
-  QUESTIONS.forEach((q,i)=>{ if(q.type!=='text'){ place(chartCard(q,i,colW)); last = i+1; } });
-  saranCards(last+1,colW).forEach(place);
-  const H = Math.max(...colY) - GAP + 14;
-  const foot = T(W/2,H+16,`Sumber: respons kuesioner. Total ${N} responden.`,{s:12.5,f:'#5f6368',a:'middle'});
-  const HH = H + 30;
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${HH}" viewBox="0 0 ${W} ${HH}" font-family="${PF}">`
+  let best = null;
+  for(const keys of LISTS){
+    for(let ph=130; ph>=64; ph-=2){ const r = lay(keys,ph); if(r.bottom <= limit){ best = r; break; } }
+    if(best) break;
+  }
+  if(!best) best = lay(LISTS[3],64);
+
+  const by = H - footH - boxH;
+  let qs = `<g transform="translate(${PAD},${by})"><rect width="${FW}" height="${boxH}" rx="8" fill="#ffffff" stroke="#cfe3d8" stroke-width="1.2"/>`
+    + `<rect width="${FW}" height="24" rx="8" fill="#047857"/><rect y="14" width="${FW}" height="10" fill="#047857"/>`
+    + T(12,17,'Sorotan saran dan masukan responden',{s:14,w:500,f:'#ffffff'});
+  qb.forEach((b,ci)=>{
+    const x = 12 + ci*(colW+GAP);
+    qs += T(x,42,b.r.nama,{s:12,w:700,f:'#047857'});
+    b.lines.forEach((l,m)=>{ qs += T(x,59+m*17,l,{s:14}); });
+  });
+  qs += '</g>';
+  const foot = T(W/2,H-6,`Sumber: respons kuesioner. Total ${N} responden. Rincian lengkap tiap pertanyaan ada pada unduhan per grafik.`,{s:11,f:'#5f6368',a:'middle'});
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" font-family="${PF}">`
     + `<defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#064e3b"/><stop offset="1" stop-color="#059669"/></linearGradient></defs>`
-    + `<rect width="${W}" height="${HH}" fill="#ecfdf5"/><rect width="${W}" height="${headH}" fill="url(#hg)"/>` + head + body + foot + `</svg>`;
-  return {svg, W, H:HH};
+    + `<rect width="${W}" height="${H}" fill="#ecfdf5"/><rect width="${W}" height="${headH}" fill="url(#hg)"/>` + head + sbody + best.svg + qs + foot + `</svg>`;
+  return {svg, W, H};
 }
 function initPoster(){
   POSTER = buildPoster();
