@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Hasil Kuesioner Pemetaan Kebutuhan Aplikasi Pencatatan Keuangan UMKM Binaan Rumah BUMN BNI Ngawi</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -10,7 +10,9 @@
 :root{
   --g900:#064e3b; --g700:#047857; --g600:#059669; --g500:#10b981; --g100:#d1fae5; --g50:#ecfdf5; --g25:#f4fcf8;
   --text:#202124; --muted:#5f6368; --line:#dadce0;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 }
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 html,body{margin:0}
 body{background:var(--g50);color:var(--text);font-family:Roboto,"Segoe UI",Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5}
@@ -34,8 +36,6 @@ body{background:var(--g50);color:var(--text);font-family:Roboto,"Segoe UI",Arial
 .dl.solid{background:var(--g600);color:#fff}
 .dl.solid:hover{background:var(--g700)}
 .dl:disabled{opacity:.6;cursor:wait}
-
-/* diagram batang vertikal */
 .chart{display:grid;grid-template-columns:44px 1fr;margin-top:34px}
 .yaxis{position:relative;height:240px}
 .yaxis span{position:absolute;right:8px;transform:translateY(50%);font-size:11px;color:var(--muted)}
@@ -49,15 +49,12 @@ body{background:var(--g50);color:var(--text);font-family:Roboto,"Segoe UI",Arial
 .xlabels{display:grid;margin-left:44px;margin-top:8px}
 .xl{text-align:center;font-size:12px;line-height:1.3;padding:0 6px;word-break:break-word}
 .axisnote{margin:14px 0 0 44px;font-size:11px;color:var(--muted)}
-
-/* saran */
 .sdesc{margin:0 0 18px;padding:12px 14px;background:var(--g50);border-radius:6px;font-size:13px;color:var(--g900)}
 .sgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .sbox{background:#fff;border:1px solid var(--g100);border-top:4px solid var(--g600);border-radius:6px;padding:0;display:flex;flex-direction:column;overflow:hidden}
 .sbox .o{padding:12px 16px;background:var(--g50);font-size:14px;font-weight:500;color:var(--g900);border-bottom:1px solid var(--g100)}
 .sbox .o span{font-weight:400;color:var(--g700)}
 .sbox .t{padding:16px;font-size:14.5px;line-height:1.6;word-break:break-word;flex:1}
-
 .wrap.wide{max-width:1400px}
 .ptools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px}
 .pnote{color:var(--muted);font-size:12px;margin:0 0 14px}
@@ -70,6 +67,7 @@ th{background:var(--g700);color:#fff;font-weight:500;text-align:left;padding:10p
 td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
 tr:nth-child(even) td{background:var(--g25)}
 td.n,th.n{width:44px;text-align:center}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#202124;color:#fff;padding:10px 16px;border-radius:6px;font-size:13px;max-width:90%;z-index:50;display:none}
 @media(max-width:640px){
   .sgrid{grid-template-columns:1fr}
   .tabdl{margin:0 12px 10px;width:calc(100% - 24px)}
@@ -88,7 +86,7 @@ td.n,th.n{width:44px;text-align:center}
     <p>Ringkasan respons pelaku UMKM.</p>
     <div class="total"><b id="total">0</b>responden</div>
     <div class="actions">
-      <button class="dl" data-target="card-head" data-name="00-judul">Unduh gambar</button>
+      <button class="dl" id="btn-head">Unduh gambar judul</button>
       <button class="dl solid" id="btn-zip">Unduh semua gambar (ZIP)</button>
       <button class="dl solid" id="btn-csv">Unduh seluruh data (CSV)</button>
     </div>
@@ -120,7 +118,7 @@ td.n,th.n{width:44px;text-align:center}
     <div class="card" id="card-tabel">
       <div class="qh">
         <h2>Daftar responden</h2>
-        <button class="dl" data-target="card-tabel" data-name="99-daftar-responden">Unduh gambar</button>
+        <button class="dl" id="btn-table">Unduh gambar</button>
       </div>
       <p class="sub" id="tabel-sub"></p>
       <div class="tw"><table id="tbl"></table></div>
@@ -128,12 +126,11 @@ td.n,th.n{width:44px;text-align:center}
   </div>
 
 </div>
+<div id="toast"></div>
 
 <script>
-/* Data respons (hardcode). ID 3 dan 8 sudah dikeluarkan. */
 const DATA = [{"id": 1, "nama": "Bawang Pak Suhut", "jenis": "Pertanian / Peternakan", "jenis_lain": "", "lama": "Kurang dari 1 tahun", "omzet": "Rp5 juta sampai Rp25 juta", "catat": "Ya, rutin", "cara": "Buku / Kertas", "media": [], "media_lain": "", "kendala": ["Waktu mencatat terlalu banyak", "Belum menemukan aplikasi yang mudah"], "kendala_lain": "", "campur": "Kadang-kadang", "habis": "Tidak pernah", "pernah": "Belum pernah", "apps": [], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["WhatsApp"], "bantu": "Sangat membantu", "bersedia": "Ya, bersedia", "bayar": "Tidak yakin", "alasan": "", "saran": "", "waktu": "2026-08-02 05:33:30"}, {"id": 2, "nama": "Kripik Tempe Kharisma", "jenis": "Makanan & Minuman", "jenis_lain": "", "lama": "1 sampai 5 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Kadang-kadang", "cara": "Buku / Kertas", "media": [], "media_lain": "", "kendala": ["Lainnya"], "kendala_lain": "Malas mencatat nya", "campur": "Ya, masih bercampur", "habis": "Ya, sering", "pernah": "Belum pernah", "apps": [], "apps_lain": "", "sering": ["WhatsApp", "Website"], "ai": "Ya, sangat tertarik", "ingin": ["Website", "WhatsApp"], "bantu": "Sangat membantu", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "Bisa scan barcode penjualan", "waktu": "2026-08-02 06:51:06"}, {"id": 4, "nama": "DONAT LEGEND", "jenis": "Makanan & Minuman", "jenis_lain": "", "lama": "Kurang dari 1 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Tidak", "cara": "Tidak mencatat", "media": [], "media_lain": "", "kendala": ["Belum menemukan aplikasi yang mudah"], "kendala_lain": "", "campur": "Ya, masih bercampur", "habis": "Ya, sering", "pernah": "Belum pernah", "apps": [], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["WhatsApp"], "bantu": "Sangat membantu", "bersedia": "Tidak yakin", "bayar": "Tetap gratis", "alasan": "", "saran": "Untuk aplikasi di buat mudah dan simple karena belum tentu yang usia tua bisa menggunakan dan dengan kapasitas memory kecil", "waktu": "2026-08-03 03:21:05"}, {"id": 5, "nama": "Giagi & Kayani", "jenis": "Makanan & Minuman", "jenis_lain": "", "lama": "Lebih dari 5 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Tidak", "cara": "Tidak mencatat", "media": [], "media_lain": "", "kendala": ["Lupa mencatat transaksi"], "kendala_lain": "", "campur": "Ya, masih bercampur", "habis": "Ya, sering", "pernah": "Belum pernah", "apps": [], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["WhatsApp"], "bantu": "Sangat membantu", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "Harapan saya produk terkenal dimana\" dan laku keras", "waktu": "2026-08-03 03:31:23"}, {"id": 6, "nama": "Khasefai", "jenis": "Kerajinan", "jenis_lain": "", "lama": "1 sampai 5 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Kadang-kadang", "cara": "Buku / Kertas", "media": [], "media_lain": "", "kendala": ["Lupa mencatat transaksi"], "kendala_lain": "", "campur": "Ya, masih bercampur", "habis": "Tidak yakin", "pernah": "Belum pernah", "apps": [], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Tidak yakin", "ingin": ["Website"], "bantu": "Sangat membantu", "bersedia": "Ya, bersedia", "bayar": "Bayar sekali (Lifetime)", "alasan": "", "saran": "", "waktu": "2026-08-03 03:40:16"}, {"id": 7, "nama": "Dys Angel (D'Angel)", "jenis": "Makanan & Minuman", "jenis_lain": "", "lama": "Lebih dari 5 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Kadang-kadang", "cara": "Buku / Kertas", "media": [], "media_lain": "", "kendala": ["Lupa mencatat transaksi"], "kendala_lain": "", "campur": "Kadang-kadang", "habis": "Ya, sering", "pernah": "Belum pernah", "apps": [], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["WhatsApp"], "bantu": "Membantu", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "Pengantar atau penjelasan dari aplikasi yang mudah di pahami, ringkas to the point.", "waktu": "2026-08-03 03:47:35"}, {"id": 9, "nama": "Kripik Tempe Ilham Jaya ( Mbok Menil)", "jenis": "Makanan & Minuman", "jenis_lain": "", "lama": "Lebih dari 5 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Tidak", "cara": "Tidak mencatat", "media": [], "media_lain": "", "kendala": ["Lainnya"], "kendala_lain": "Malas mencatat", "campur": "Ya, masih bercampur", "habis": "Ya, sering", "pernah": "Belum pernah", "apps": [], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["WhatsApp"], "bantu": "Membantu", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "Belum sempat terfikirkan", "waktu": "2026-08-03 03:57:43"}, {"id": 10, "nama": "Griya_Amar", "jenis": "Jasa", "jenis_lain": "", "lama": "Lebih dari 5 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Tidak", "cara": "Tidak mencatat", "media": [], "media_lain": "", "kendala": ["Lupa mencatat transaksi", "Waktu mencatat terlalu banyak", "Belum menemukan aplikasi yang mudah"], "kendala_lain": "", "campur": "Ya, masih bercampur", "habis": "Tidak yakin", "pernah": "Belum pernah", "apps": [], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["WhatsApp"], "bantu": "Membantu", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "", "waktu": "2026-08-03 04:13:25"}, {"id": 11, "nama": "Dapoer Nayla", "jenis": "Makanan & Minuman", "jenis_lain": "", "lama": "1 sampai 5 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Kadang-kadang", "cara": "Buku / Kertas", "media": [], "media_lain": "", "kendala": ["Lupa mencatat transaksi"], "kendala_lain": "", "campur": "Ya, masih bercampur", "habis": "Ya, sering", "pernah": "Belum pernah", "apps": [], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["WhatsApp"], "bantu": "Membantu", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "Semoga bisa menggunakan fitur dengan baik", "waktu": "2026-08-03 04:41:04"}, {"id": 12, "nama": "Yamada", "jenis": "Makanan & Minuman", "jenis_lain": "", "lama": "Lebih dari 5 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Tidak", "cara": "Buku / Kertas", "media": [], "media_lain": "", "kendala": ["Lupa mencatat transaksi", "Belum menemukan aplikasi yang mudah"], "kendala_lain": "", "campur": "Kadang-kadang", "habis": "Ya, sering", "pernah": "Pernah mencoba", "apps": ["Lainnya"], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["WhatsApp"], "bantu": "Sangat membantu", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "Karena sekarang ini harga pokok naik turun tidak menentu.. tolong untuk membantu umkm sementara ini semua di gratiskan", "waktu": "2026-08-03 04:43:07"}, {"id": 13, "nama": "Valent's", "jenis": "Makanan & Minuman", "jenis_lain": "", "lama": "Lebih dari 5 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Kadang-kadang", "cara": "Buku / Kertas", "media": [], "media_lain": "", "kendala": ["Lupa mencatat transaksi"], "kendala_lain": "", "campur": "Tidak, sudah terpisah", "habis": "Tidak pernah", "pernah": "Pernah mencoba", "apps": ["BukuKas"], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["WhatsApp"], "bantu": "Sangat membantu", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "", "waktu": "2026-08-03 04:57:35"}, {"id": 14, "nama": "DAPUR AULADUNA", "jenis": "Makanan & Minuman", "jenis_lain": "", "lama": "Lebih dari 5 tahun", "omzet": "Rp5 juta sampai Rp25 juta", "catat": "Ya, rutin", "cara": "Digital", "media": ["Aplikasi pencatatan keuangan"], "media_lain": "", "kendala": ["Lainnya"], "kendala_lain": "Klewat mencatat transaksi pengeluaran", "campur": "Kadang-kadang", "habis": "Tidak pernah", "pernah": "Ya, masih menggunakan", "apps": ["Lainnya"], "apps_lain": "Catatan Keuangan Chad Verbruggen", "sering": ["WhatsApp", "Microsoft Excel"], "ai": "Ya, sangat tertarik", "ingin": ["Website", "WhatsApp"], "bantu": "Sangat membantu", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "Ingin ada catatan keuangan yang mencatat stok barang yang sisa dan terjual setiap hari di berbagai toko dalam satu aplikasi", "waktu": "2026-08-03 05:24:05"}, {"id": 15, "nama": "Industri tempe kedelai", "jenis": "Perdagangan", "jenis_lain": "", "lama": "Lebih dari 5 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Tidak", "cara": "Tidak mencatat", "media": [], "media_lain": "", "kendala": ["Lupa mencatat transaksi"], "kendala_lain": "", "campur": "Ya, masih bercampur", "habis": "Ya, sering", "pernah": "Pernah mencoba", "apps": [], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": [], "bantu": "Membantu", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "", "waktu": "2026-08-03 05:57:52"}, {"id": 16, "nama": "Dinar minyak kemiri", "jenis": "Lainnya", "jenis_lain": "", "lama": "Lebih dari 5 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Ya, rutin", "cara": "Digital", "media": ["Microsoft Excel", "Aplikasi pencatatan keuangan"], "media_lain": "", "kendala": ["Tidak mengalami kendala"], "kendala_lain": "", "campur": "Tidak, sudah terpisah", "habis": "Tidak pernah", "pernah": "Ya, masih menggunakan", "apps": ["Lainnya"], "apps_lain": "", "sering": ["WhatsApp", "Microsoft Excel"], "ai": "Ya, sangat tertarik", "ingin": ["Website"], "bantu": "Sangat membantu", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "", "waktu": "2026-08-03 06:06:15"}, {"id": 17, "nama": "Siomay Mang Iding", "jenis": "Makanan & Minuman", "jenis_lain": "", "lama": "Lebih dari 5 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Kadang-kadang", "cara": "Tidak mencatat", "media": [], "media_lain": "", "kendala": ["Belum menemukan aplikasi yang mudah"], "kendala_lain": "", "campur": "Ya, masih bercampur", "habis": "Ya, sering", "pernah": "Pernah mencoba", "apps": ["Lainnya"], "apps_lain": "Warungku", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["WhatsApp"], "bantu": "Sangat membantu", "bersedia": "Ya, bersedia", "bayar": "Bayar sekali (Lifetime)", "alasan": "", "saran": "Sesederhana mungkin namun bisa mewakili karena pelaku umkm adalah aktor tunggal dalam usahanya artinya rata rata semua dilakukan sendiri dari pengadaan,produksi dan marketing", "waktu": "2026-08-03 06:07:26"}, {"id": 18, "nama": "Tunas Jaya", "jenis": "Makanan & Minuman", "jenis_lain": "", "lama": "Lebih dari 5 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Kadang-kadang", "cara": "Buku / Kertas", "media": [], "media_lain": "", "kendala": ["Lupa mencatat transaksi"], "kendala_lain": "", "campur": "Kadang-kadang", "habis": "Tidak yakin", "pernah": "Belum pernah", "apps": [], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["Website", "WhatsApp"], "bantu": "Membantu", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "Aplikasi yang mudah untuk para pemula", "waktu": "2026-08-03 06:15:02"}, {"id": 19, "nama": "SarangKembang", "jenis": "Jasa", "jenis_lain": "", "lama": "Lebih dari 5 tahun", "omzet": "Rp5 juta sampai Rp25 juta", "catat": "Ya, rutin", "cara": "Digital", "media": ["Aplikasi pencatatan keuangan"], "media_lain": "", "kendala": ["Sulit mengetahui keuntungan usaha", "Lainnya"], "kendala_lain": "", "campur": "Ya, masih bercampur", "habis": "Tidak yakin", "pernah": "Ya, masih menggunakan", "apps": ["Lainnya"], "apps_lain": "Catatan Keuangan", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["WhatsApp"], "bantu": "Tidak yakin", "bersedia": "Ya, bersedia", "bayar": "Bayar sekali (Lifetime)", "alasan": "Kualitas", "saran": "Belum ada", "waktu": "2026-08-03 06:17:18"}, {"id": 20, "nama": "Warung mbkY", "jenis": "Makanan & Minuman", "jenis_lain": "", "lama": "Lebih dari 5 tahun", "omzet": "Rp5 juta sampai Rp25 juta", "catat": "Kadang-kadang", "cara": "Tidak mencatat", "media": [], "media_lain": "", "kendala": ["Lupa mencatat transaksi"], "kendala_lain": "", "campur": "Ya, masih bercampur", "habis": "Tidak pernah", "pernah": "Belum pernah", "apps": [], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["WhatsApp"], "bantu": "Membantu", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "Tidak", "waktu": "2026-08-03 06:19:05"}, {"id": 21, "nama": "Dyah Budi Utami", "jenis": "Makanan & Minuman", "jenis_lain": "", "lama": "1 sampai 5 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Ya, rutin", "cara": "Buku / Kertas", "media": [], "media_lain": "", "kendala": ["Belum menemukan aplikasi yang mudah"], "kendala_lain": "", "campur": "Tidak, sudah terpisah", "habis": "Ya, sering", "pernah": "Ya, masih menggunakan", "apps": ["BukuKas"], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["WhatsApp"], "bantu": "Sangat membantu", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "Mudah 2an ada pelatihan nya untuk pencatatan keuangan", "waktu": "2026-08-03 06:21:16"}, {"id": 22, "nama": "WIJAYA KONVEKSI", "jenis": "Fashion", "jenis_lain": "", "lama": "Lebih dari 5 tahun", "omzet": "Rp5 juta sampai Rp25 juta", "catat": "Kadang-kadang", "cara": "Buku / Kertas", "media": [], "media_lain": "", "kendala": ["Sulit mengetahui keuntungan usaha", "Waktu mencatat terlalu banyak"], "kendala_lain": "", "campur": "Ya, masih bercampur", "habis": "Ya, sering", "pernah": "Belum pernah", "apps": [], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Tidak yakin", "ingin": ["WhatsApp"], "bantu": "Tidak yakin", "bersedia": "Tidak yakin", "bayar": "Tetap gratis", "alasan": "", "saran": "tidak", "waktu": "2026-08-03 06:35:41"}, {"id": 23, "nama": "98 Candra Jaya", "jenis": "Makanan & Minuman", "jenis_lain": "", "lama": "Lebih dari 5 tahun", "omzet": "Rp5 juta sampai Rp25 juta", "catat": "Tidak", "cara": "Tidak mencatat", "media": [], "media_lain": "", "kendala": ["Lupa mencatat transaksi"], "kendala_lain": "", "campur": "Ya, masih bercampur", "habis": "Ya, sering", "pernah": "Belum pernah", "apps": [], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["WhatsApp"], "bantu": "Membantu", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "saran saya jangan berbayar", "waktu": "2026-08-03 06:50:06"}, {"id": 24, "nama": "Siti Fathonah", "jenis": "Makanan & Minuman", "jenis_lain": "", "lama": "Lebih dari 5 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Ya, rutin", "cara": "Buku / Kertas", "media": [], "media_lain": "", "kendala": ["Lainnya"], "kendala_lain": "", "campur": "Ya, masih bercampur", "habis": "Ya, sering", "pernah": "Pernah mencoba", "apps": ["Lainnya"], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["WhatsApp"], "bantu": "Sangat membantu", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "Kreaologi", "waktu": "2026-08-03 11:55:21"}, {"id": 25, "nama": "BBS", "jenis": "Makanan & Minuman", "jenis_lain": "", "lama": "1 sampai 5 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Kadang-kadang", "cara": "Buku / Kertas", "media": [], "media_lain": "", "kendala": ["Sulit mengetahui keuntungan usaha"], "kendala_lain": "", "campur": "Kadang-kadang", "habis": "Ya, sering", "pernah": "Belum pernah", "apps": [], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Tidak yakin", "ingin": ["WhatsApp"], "bantu": "Tidak yakin", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "", "waktu": "2026-08-03 12:26:09"}, {"id": 26, "nama": "Nimas Craft Ngawi", "jenis": "Kerajinan", "jenis_lain": "", "lama": "Lebih dari 5 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Tidak", "cara": "Tidak mencatat", "media": [], "media_lain": "", "kendala": ["Lupa mencatat transaksi"], "kendala_lain": "", "campur": "Ya, masih bercampur", "habis": "Ya, sering", "pernah": "Belum pernah", "apps": [], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["WhatsApp"], "bantu": "Membantu", "bersedia": "Tidak yakin", "bayar": "Tetap gratis", "alasan": "", "saran": "", "waktu": "2026-08-03 12:41:18"}, {"id": 27, "nama": "Bordir cermy", "jenis": "Kerajinan", "jenis_lain": "", "lama": "Lebih dari 5 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Kadang-kadang", "cara": "Buku / Kertas", "media": [], "media_lain": "", "kendala": ["Sulit mengetahui keuntungan usaha"], "kendala_lain": "", "campur": "Ya, masih bercampur", "habis": "Ya, sering", "pernah": "Belum pernah", "apps": [], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": [], "bantu": "Sangat membantu", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "Tidak ada", "waktu": "2026-08-03 12:54:26"}, {"id": 28, "nama": "Omah Juice", "jenis": "Makanan & Minuman", "jenis_lain": "", "lama": "1 sampai 5 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Tidak", "cara": "Tidak mencatat", "media": [], "media_lain": "", "kendala": ["Belum menemukan aplikasi yang mudah"], "kendala_lain": "", "campur": "Ya, masih bercampur", "habis": "Ya, sering", "pernah": "Belum pernah", "apps": [], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["WhatsApp"], "bantu": "Sangat membantu", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "Semoga aplikasi bisa bermanfaat utk kemajuan usaha saya dan tidak berbayar. Trima kasih", "waktu": "2026-08-03 13:14:09"}, {"id": 29, "nama": "Drt kripik", "jenis": "Makanan & Minuman", "jenis_lain": "", "lama": "Lebih dari 5 tahun", "omzet": "Rp5 juta sampai Rp25 juta", "catat": "Kadang-kadang", "cara": "Buku / Kertas", "media": [], "media_lain": "", "kendala": ["Belum menemukan aplikasi yang mudah"], "kendala_lain": "", "campur": "Ya, masih bercampur", "habis": "Tidak pernah", "pernah": "Pernah mencoba", "apps": ["Lainnya"], "apps_lain": "Menghunakan buku untuk mengetahui pengeluaran dan masukan", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["WhatsApp"], "bantu": "Sangat membantu", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "Mudah diifahami. Mudah dikerjakan. Dan bisa diketahui pengeluaran usaha dan probadi termasuk pemasukannya", "waktu": "2026-08-03 13:22:26"}, {"id": 30, "nama": "Terang bulan maharaja", "jenis": "Makanan & Minuman", "jenis_lain": "", "lama": "Kurang dari 1 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Kadang-kadang", "cara": "Buku / Kertas", "media": [], "media_lain": "", "kendala": ["Lupa mencatat transaksi"], "kendala_lain": "", "campur": "Tidak, sudah terpisah", "habis": "Tidak pernah", "pernah": "Pernah mencoba", "apps": ["Excel"], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["Website"], "bantu": "Sangat membantu", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "", "waktu": "2026-08-03 14:01:10"}, {"id": 31, "nama": "Warung SOTO mb Nik", "jenis": "Makanan & Minuman", "jenis_lain": "", "lama": "Kurang dari 1 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Kadang-kadang", "cara": "Buku / Kertas", "media": [], "media_lain": "", "kendala": ["Lupa mencatat transaksi"], "kendala_lain": "", "campur": "Tidak, sudah terpisah", "habis": "Ya, sering", "pernah": "Belum pernah", "apps": [], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["WhatsApp"], "bantu": "Membantu", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "", "waktu": "2026-08-04 01:58:07"}, {"id": 32, "nama": "Aini_Hijab", "jenis": "Fashion", "jenis_lain": "", "lama": "Kurang dari 1 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Kadang-kadang", "cara": "Buku / Kertas", "media": [], "media_lain": "", "kendala": ["Sulit mengetahui keuntungan usaha"], "kendala_lain": "", "campur": "Ya, masih bercampur", "habis": "Ya, sering", "pernah": "Belum pernah", "apps": [], "apps_lain": "", "sering": ["WhatsApp", "Website"], "ai": "Ya, sangat tertarik", "ingin": ["Website", "WhatsApp", "Telegram"], "bantu": "Sangat membantu", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "Lebih ditingkatkan lagi untuk mempermudah jalannya suatu usaha", "waktu": "2026-08-04 02:03:00"}, {"id": 33, "nama": "Aneka sarapan pagi", "jenis": "Makanan & Minuman", "jenis_lain": "", "lama": "1 sampai 5 tahun", "omzet": "Rp5 juta sampai Rp25 juta", "catat": "Kadang-kadang", "cara": "Buku / Kertas", "media": [], "media_lain": "", "kendala": ["Lupa mencatat transaksi"], "kendala_lain": "", "campur": "Kadang-kadang", "habis": "Ya, sering", "pernah": "Belum pernah", "apps": [], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["WhatsApp"], "bantu": "Membantu", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "Aplikasi yg pling mudah digunakan sehari hari", "waktu": "2026-08-04 04:15:28"}, {"id": 34, "nama": "Victory", "jenis": "Makanan & Minuman", "jenis_lain": "", "lama": "Lebih dari 5 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Tidak", "cara": "Tidak mencatat", "media": [], "media_lain": "", "kendala": ["Belum menemukan aplikasi yang mudah"], "kendala_lain": "", "campur": "Ya, masih bercampur", "habis": "Ya, sering", "pernah": "Belum pernah", "apps": [], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["WhatsApp"], "bantu": "Sangat membantu", "bersedia": "Tidak", "bayar": "Tetap gratis", "alasan": "", "saran": "", "waktu": "2026-08-04 04:20:50"}, {"id": 35, "nama": "Rempeyek yu nemm", "jenis": "Makanan & Minuman", "jenis_lain": "", "lama": "Kurang dari 1 tahun", "omzet": "Kurang dari Rp5 juta", "catat": "Kadang-kadang", "cara": "Buku / Kertas", "media": [], "media_lain": "", "kendala": ["Sulit mengetahui keuntungan usaha"], "kendala_lain": "", "campur": "Kadang-kadang", "habis": "Ya, sering", "pernah": "Belum pernah", "apps": [], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["WhatsApp"], "bantu": "Membantu", "bersedia": "Ya, bersedia", "bayar": "Tetap gratis", "alasan": "", "saran": "", "waktu": "2026-08-04 08:05:32"}, {"id": 36, "nama": "Warung", "jenis": "Makanan & Minuman", "jenis_lain": "", "lama": "Kurang dari 1 tahun", "omzet": "", "catat": "Tidak", "cara": "Buku / Kertas", "media": [], "media_lain": "", "kendala": ["Lupa mencatat transaksi"], "kendala_lain": "", "campur": "Ya, masih bercampur", "habis": "Ya, sering", "pernah": "Belum pernah", "apps": [], "apps_lain": "", "sering": ["WhatsApp"], "ai": "Ya, sangat tertarik", "ingin": ["WhatsApp"], "bantu": "Sangat membantu", "bersedia": "Tidak yakin", "bayar": "Tetap gratis", "alasan": "", "saran": "Tidak", "waktu": "2026-08-04 11:40:08"}];
 
-/* Judul pertanyaan. Silakan sesuaikan dengan redaksi asli di form. */
 const QUESTIONS = [
   {key:'jenis',   type:'single', title:'Jenis usaha'},
   {key:'lama',    type:'single', title:'Lama usaha berjalan', order:['Kurang dari 1 tahun','1 sampai 5 tahun','Lebih dari 5 tahun']},
@@ -158,8 +155,27 @@ const QUESTIONS = [
 const PALETTE = ['#059669','#0ea5e9','#f59e0b','#8b5cf6','#ef4444','#14b8a6','#ec4899','#84cc16'];
 const PLOT_H = 240;
 const TRIVIAL = ['tidak','tidak ada','belum ada'];
+const PREFIX = 'Kuesioner-UMKM-Rumah-BUMN-BNI-Ngawi';
 const fmt = n => n.toLocaleString('id-ID',{minimumFractionDigits:1,maximumFractionDigits:1});
 const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const slug = s => String(s).replace(/[^\p{L}\p{N}\s-]/gu,'').trim().replace(/\s+/g,'-');
+const pad2 = n => String(n).padStart(2,'0');
+const saranList = () => DATA.filter(r=>r.saran && !TRIVIAL.includes(r.saran.trim().toLowerCase()));
+
+/* Nama file informatif */
+function qFile(i,ext){
+  const q = QUESTIONS[i];
+  const info = q.type==='text' ? saranList().length+'-saran-dari-'+DATA.length+'-responden' : tally(q).n+'-dari-'+DATA.length+'-responden';
+  return `${PREFIX}_Pertanyaan-${pad2(i+1)}_${slug(q.title)}_${info}.${ext}`;
+}
+const FILES = {
+  head:   `${PREFIX}_Judul-dan-Total-${DATA.length}-Responden.png`,
+  table:  `${PREFIX}_Daftar-${DATA.length}-Responden-Tabel.png`,
+  poster: `${PREFIX}_Grafik-Keseluruhan-Semua-Pertanyaan-${DATA.length}-Responden`,
+  ringkasan: `${PREFIX}_Ringkasan-Semua-Pertanyaan-Tampilan-Halaman-${DATA.length}-Responden.png`,
+  csv:    `${PREFIX}_Seluruh-Data-${DATA.length}-Responden.csv`,
+  zip:    `${PREFIX}_Semua-Gambar-Grafik-${DATA.length}-Responden.zip`
+};
 
 function tally(q){
   const m = new Map(); let n = 0;
@@ -187,43 +203,34 @@ function chartHTML(items,n){
   [25,50,75,100].forEach(t=>{ h += `<div class="grid" style="bottom:${t/100*PLOT_H}px"></div>`; });
   items.forEach((it,i)=>{
     const pct = it.c/n*100, bh = pct/100*PLOT_H;
-    const color = PALETTE[i % PALETTE.length];
     h += `<div class="col" style="left:${i/k*100}%;width:${100/k}%">
       <div class="vl" style="bottom:${bh+5}px"><b>${it.c}</b><i>${fmt(pct)}%</i></div>
-      <div class="bar" style="height:${bh}px;background:${color}"></div></div>`;
+      <div class="bar" style="height:${bh}px;background:${PALETTE[i % PALETTE.length]}"></div></div>`;
   });
   h += '</div></div>';
-  h += `<div class="xlabels" style="grid-template-columns:repeat(${k},1fr)">` +
-       items.map(it=>`<div class="xl">${esc(it.label)}</div>`).join('') + '</div>';
+  h += `<div class="xlabels" style="grid-template-columns:repeat(${k},1fr)">` + items.map(it=>`<div class="xl">${esc(it.label)}</div>`).join('') + '</div>';
   return h;
 }
 
 function build(){
   document.getElementById('total').textContent = DATA.length;
-  const host = document.getElementById('ringkasan');
   let html = '';
   QUESTIONS.forEach((q,i)=>{
-    const id = 'q'+(i+1);
-    const name = String(i+1).padStart(2,'0')+'-'+q.key;
     let body='', sub='';
     if(q.type==='text'){
-      const t = DATA.filter(r=>r.saran && !TRIVIAL.includes(r.saran.trim().toLowerCase()));
+      const t = saranList();
       sub = `${t.length} jawaban dari ${DATA.length} responden`;
       body = '<div class="sdesc">Saran dan masukan dari Kuesioner Pemetaan Kebutuhan Pencatatan Keuangan UMKM binaan Rumah BUMN BNI Ngawi, terkait aplikasi pencatatan keuangan yang dibutuhkan pelaku usaha.</div>'
            + '<div class="sgrid">'+t.map(r=>`<div class="sbox"><div class="o"><span>Pemilik</span> ${esc(r.nama)}</div><div class="t">&ldquo;${esc(r.saran)}&rdquo;</div></div>`).join('')+'</div>';
     }else{
       const t = tally(q);
       sub = `${t.n} jawaban` + (q.type==='multi' ? '. Pilihan ganda, persentase dihitung dari jumlah responden.' : '');
-      body = chartHTML(t.items,t.n);
-      body += '<div class="axisnote">Tinggi batang menunjukkan persentase responden. Angka di atas batang: jumlah responden dan persentase.</div>';
+      body = chartHTML(t.items,t.n) + '<div class="axisnote">Tinggi batang menunjukkan persentase responden. Angka di atas batang: jumlah responden dan persentase.</div>';
     }
-    html += `<div class="card" id="${id}">
-      <div class="qh"><h2>${esc(q.title)}</h2>
-      <button class="dl" data-target="${id}" data-name="${name}">Unduh gambar</button></div>
-      <p class="sub">${sub}</p>${body}</div>`;
+    html += `<div class="card" id="q${i+1}"><div class="qh"><h2>${esc(q.title)}</h2>
+      <button class="dl" data-q="${i}">Unduh gambar</button></div><p class="sub">${sub}</p>${body}</div>`;
   });
-  host.innerHTML = html;
-
+  document.getElementById('ringkasan').innerHTML = html;
   const cols=[['nama','Nama usaha'],['jenis','Jenis usaha'],['lama','Lama usaha'],['omzet','Omzet per bulan'],['catat','Mencatat keuangan'],['cara','Cara mencatat']];
   document.getElementById('tbl').innerHTML =
     '<thead><tr><th class="n">No</th>'+cols.map(c=>`<th>${c[1]}</th>`).join('')+'</tr></thead><tbody>'+
@@ -231,7 +238,6 @@ function build(){
   document.getElementById('tabel-sub').textContent = DATA.length+' responden';
 }
 
-/* tab */
 function showTab(id){
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.dataset.tab===id));
   ['ringkasan','grafik','responden'].forEach(t=>document.getElementById(t).classList.toggle('hide',t!==id));
@@ -239,72 +245,35 @@ function showTab(id){
 }
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
 
-/* gambar */
-function need(){ if(typeof html2canvas==='undefined'){ alert('Library gambar belum termuat. Pastikan koneksi internet aktif lalu muat ulang halaman.'); return false; } return true; }
-async function shot(el,scale,bg){
-  const hidden = el.closest('.hide'); if(hidden) hidden.classList.remove('hide');
-  try{
-    return await html2canvas(el,{scale:scale||3,backgroundColor:bg||'#ffffff',useCORS:true,
-      ignoreElements:n=>n.classList && n.classList.contains('dl')});
-  } finally { if(hidden) hidden.classList.add('hide'); }
-}
+/* ===== Penyimpanan file ===== */
+let toastT;
+function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.style.display='block'; clearTimeout(toastT); toastT=setTimeout(()=>t.style.display='none',4000); }
 let DL = null;
-(async()=>{
-  try{ DL = await claude.use('downloads'); }catch(e){ DL = null; }
-  if(!DL) document.querySelectorAll('.dl').forEach(b=>b.classList.add('hide'));
+const dlReady = (async()=>{
+  try{ DL = (window.claude && claude.use) ? await claude.use('downloads') : null; }catch(e){ DL = null; }
 })();
 async function save(name,data){
-  if(!DL) return;
-  try{ await DL.save({filename:name,data:data}); }
-  catch(err){ if(!err || err.code!=='declined') alert('Gagal menyimpan file: '+((err&&err.message)||'tidak diketahui')); }
+  await dlReady;
+  const blob = data instanceof Blob ? data : new Blob([data],{type:'text/plain;charset=utf-8'});
+  if(DL){
+    try{ await DL.save({filename:name,data:blob}); toast('Tersimpan: '+name); }
+    catch(err){ if(err && err.code==='declined') return; toast('Gagal menyimpan: '+((err&&err.message)||'tidak diketahui')); }
+    return;
+  }
+  /* cadangan bila dibuka di luar claude.ai */
+  try{
+    const u = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(u),4000);
+  }catch(e){ toast('Unduhan tidak tersedia di tampilan ini. Buka artifact di claude.ai.'); }
+}
+async function withBusy(btn,label,fn){
+  const old = btn.textContent; btn.disabled = true; if(label) btn.textContent = label;
+  try{ await fn(); }catch(err){ toast('Gagal: '+((err&&err.message)||err)); }
+  btn.textContent = old; btn.disabled = false;
 }
 
-document.addEventListener('click',async e=>{
-  const btn = e.target.closest('.dl[data-target]'); if(!btn || !need()) return;
-  btn.disabled = true;
-  try{ const c = await shot(document.getElementById(btn.dataset.target)); const blob = await new Promise(r=>c.toBlob(r,'image/png')); await save(btn.dataset.name+'.png',blob); }
-  catch(err){ alert('Gagal membuat gambar: '+err.message); }
-  btn.disabled = false;
-});
-
-document.getElementById('btn-zip').addEventListener('click',async e=>{
-  if(!need()) return;
-  if(typeof JSZip==='undefined'){ alert('Library ZIP belum termuat. Pastikan koneksi internet aktif lalu muat ulang halaman.'); return; }
-  const btn = e.currentTarget, label = btn.textContent; btn.disabled = true;
-  try{
-    const zip = new JSZip();
-    const items = [...document.querySelectorAll('[data-target]')].filter(b=>b.classList.contains('dl'));
-    for(let i=0;i<items.length;i++){
-      btn.textContent = `Memproses ${i+1} dari ${items.length}`;
-      const c = await shot(document.getElementById(items[i].dataset.target));
-      const blob = await new Promise(r=>c.toBlob(r,'image/png'));
-      zip.file(items[i].dataset.name+'.png',blob);
-    }
-    btn.textContent = 'Menambah grafik keseluruhan';
-    zip.file('00-grafik-keseluruhan.png', await posterPNG());
-    btn.textContent = 'Menyusun ZIP';
-    const out = await zip.generateAsync({type:'blob'});
-    await save('gambar-kuesioner-umkm.zip',out);
-  }catch(err){ alert('Gagal membuat ZIP: '+err.message); }
-  btn.textContent = label; btn.disabled = false;
-});
-
-/* CSV seluruh data */
-document.getElementById('btn-csv').addEventListener('click',()=>{
-  const cols = [
-    ['id','ID'],['nama','Nama usaha'],['jenis','Jenis usaha'],['jenis_lain','Jenis usaha (lainnya)'],['lama','Lama usaha'],['omzet','Omzet per bulan'],
-    ['catat','Mencatat keuangan'],['cara','Cara mencatat'],['media','Media digital'],['media_lain','Media digital (lainnya)'],
-    ['kendala','Kendala'],['kendala_lain','Kendala (lainnya)'],['campur','Uang bercampur'],['habis','Keuntungan habis'],
-    ['pernah','Pengalaman aplikasi'],['apps','Aplikasi digunakan'],['apps_lain','Aplikasi (lainnya)'],['sering','Platform sering digunakan'],
-    ['ai','Ketertarikan AI'],['ingin','Platform diinginkan'],['bantu','Manfaat bagi usaha'],['bersedia','Kesediaan menggunakan'],
-    ['bayar','Model pembayaran'],['alasan','Alasan bayar sekali'],['saran','Saran'],['waktu','Waktu pengisian']
-  ];
-  const cell = v => { const s = Array.isArray(v) ? v.join('; ') : (v==null?'':String(v)); return '"'+s.replace(/"/g,'""')+'"'; };
-  const csv = '\ufeff'+[cols.map(c=>cell(c[1])).join(',')].concat(DATA.map(r=>cols.map(c=>cell(r[c[0]])).join(','))).join('\r\n');
-  save('data-kuesioner-umkm.csv',csv);
-});
-
-/* ===== Grafik keseluruhan (satu gambar, vektor) ===== */
+/* ===== Gambar SVG (vektor) ===== */
 const PF = "Roboto,'Segoe UI',Arial,Helvetica,sans-serif";
 const XMLDECL = '<?xml version="1.0" encoding="UTF-8"?>\n';
 const mctx = document.createElement('canvas').getContext('2d');
@@ -318,63 +287,62 @@ function wrapText(s,size,weight,maxW){
   if(cur) lines.push(cur);
   return lines.length ? lines : [''];
 }
+const T = (x,y,txt,o={}) => `<text x="${x}" y="${y}" font-size="${o.s||16}" font-weight="${o.w||400}" fill="${o.f||'#202124'}"${o.a?` text-anchor="${o.a}"`:''}>${esc(txt)}</text>`;
+const IN = 20;
 
-let POSTER = null;
-function buildPoster(){
-  const W = 1500, PAD = 36, GAP = 18, IN = 20, COLS = 3;
-  const colW = (W - 2*PAD - (COLS-1)*GAP) / COLS, N = DATA.length;
-  const T = (x,y,txt,o={}) => `<text x="${x}" y="${y}" font-size="${o.s||16}" font-weight="${o.w||400}" fill="${o.f||'#202124'}"${o.a?` text-anchor="${o.a}"`:''}>${esc(txt)}</text>`;
-
-  /* header ringkas */
-  const tl = wrapText('Hasil Kuesioner Pemetaan Kebutuhan Aplikasi Pencatatan Keuangan UMKM Binaan Rumah BUMN BNI Ngawi',32,700,W-2*PAD);
-  let hy = 52, head = '';
-  tl.forEach((l,k)=>{ head += T(PAD,hy+k*40,l,{s:32,w:700,f:'#ffffff'}); });
-  hy += (tl.length-1)*40 + 32;
-  head += T(PAD,hy,`Ringkasan seluruh pertanyaan dari ${N} responden`,{s:17,f:'#d1fae5'});
-  const headH = hy + 26;
-
-  /* kartu grafik */
-  const cards = []; let qn = 0;
-  QUESTIONS.filter(q=>q.type!=='text').forEach((q,i)=>{
-    qn++;
-    const t = tally(q), color = PALETTE[i % PALETTE.length], barW = colW - 2*IN;
-    const tLines = wrapText(q.title,18,500,barW-32);
-    const sub = `${t.n} dari ${N} responden` + (q.type==='multi' ? ' (pilihan ganda, % dari responden)' : '');
-    const sLines = wrapText(sub,12.5,400,barW);
-    let s = '', y = 30;
-    s += `<circle cx="${IN+11}" cy="${y-6}" r="11" fill="${color}"/>` + T(IN+11,y-1.5,qn,{s:12,w:700,f:'#ffffff',a:'middle'});
-    tLines.forEach((l,k)=>{ s += T(IN+32,y+k*23,l,{s:18,w:500}); });
-    y += (tLines.length-1)*23 + 20;
-    sLines.forEach((l,k)=>{ s += T(IN,y+k*16,l,{s:12.5,f:'#5f6368'}); });
-    y += (sLines.length-1)*16 + 16;
-    t.items.forEach(it=>{
-      const pct = it.c / t.n * 100;
-      const ll = wrapText(it.label,14.5,400,barW-92);
-      ll.forEach((l,k)=>{ s += T(IN,y+13+k*18,l,{s:14.5}); });
-      s += T(IN+barW,y+13,`${it.c} \u00b7 ${fmt(pct)}%`,{s:14.5,w:700,a:'end'});
-      const by = y + 13 + (ll.length-1)*18 + 6, fw = Math.max(pct/100*barW, 4);
-      s += `<rect x="${IN}" y="${by}" width="${barW}" height="10" rx="5" fill="#e8efeb"/>`;
-      s += `<rect x="${IN}" y="${by}" width="${fw}" height="10" rx="${Math.min(5,fw/2)}" fill="${color}"/>`;
-      y = by + 10 + 11;
-    });
-    const h = y - 11 + 16;
-    cards.push({h, svg:`<rect width="${colW}" height="${h}" rx="12" fill="#ffffff" stroke="#cfe3d8" stroke-width="1.2"/>` + s});
+function wrapChars(s,size,weight,maxW){
+  const out = [];
+  wrapText(s,size,weight,maxW).forEach(line=>{
+    if(tw(line,size,weight) <= maxW){ out.push(line); return; }
+    let cur = '';
+    [...line].forEach(ch=>{ if(cur && tw(cur+ch,size,weight) > maxW){ out.push(cur); cur = ch; } else cur += ch; });
+    if(cur) out.push(cur);
   });
+  return out;
+}
 
-  /* penempatan: selalu ke kolom paling pendek (tanpa ruang kosong) */
-  const top = headH + 22, colY = Array(COLS).fill(top), colX = [...Array(COLS)].map((_,k)=>PAD + k*(colW+GAP));
-  let body = '';
-  const place = c => {
-    let k = 0; for(let j=1;j<COLS;j++) if(colY[j] < colY[k]-0.5) k = j;
-    body += `<g transform="translate(${colX[k]},${colY[k]})">${c.svg}</g>`;
-    colY[k] += c.h + GAP;
-  };
-  cards.forEach(place);
+/* grafik batang vertikal */
+function chartCard(q,i,colW){
+  const N = DATA.length, t = tally(q), color = PALETTE[i % PALETTE.length], barW = colW - 2*IN;
+  const tLines = wrapText(q.title,18,500,barW-32);
+  const sub = `${t.n} dari ${N} responden` + (q.type==='multi' ? ' (pilihan ganda, % dari responden)' : '');
+  const sLines = wrapText(sub,12.5,400,barW);
+  let s = '', y = 30;
+  s += `<circle cx="${IN+11}" cy="${y-6}" r="11" fill="${color}"/>` + T(IN+11,y-1.5,i+1,{s:12,w:700,f:'#ffffff',a:'middle'});
+  tLines.forEach((l,k)=>{ s += T(IN+32,y+k*23,l,{s:18,w:500}); });
+  y += (tLines.length-1)*23 + 20;
+  sLines.forEach((l,k)=>{ s += T(IN,y+k*16,l,{s:12.5,f:'#5f6368'}); });
+  y += (sLines.length-1)*16 + 14;
 
-  /* saran: judul jadi kartu kecil, lalu kartu saran mengisi kolom terpendek */
-  const saran = DATA.filter(r=>r.saran && !TRIVIAL.includes(r.saran.trim().toLowerCase()));
-  place({h:62, svg:`<rect width="${colW}" height="62" rx="12" fill="#047857"/>`
-    + `<circle cx="${IN+11}" cy="24" r="11" fill="#ffffff"/>` + T(IN+11,28.5,qn+1,{s:12,w:700,f:'#047857',a:'middle'})
+  const k = t.items.length, axisW = 38, plotH = 190, topPad = 38;
+  const px = IN + axisW, pw = barW - axisW, cw = pw / k;
+  const py = y + topPad, base = py + plotH;
+  [0,25,50,75,100].forEach(v=>{
+    const gy = base - v/100*plotH;
+    s += `<line x1="${px}" y1="${gy}" x2="${px+pw}" y2="${gy}" stroke="${v===0?'#9aa0a6':'#e8eaed'}" stroke-width="1"/>`;
+    s += T(px-6,gy+4,v+'%',{s:11,f:'#5f6368',a:'end'});
+  });
+  s += `<line x1="${px}" y1="${py}" x2="${px}" y2="${base}" stroke="#9aa0a6" stroke-width="1"/>`;
+  const lfs = k>5 ? 10.5 : (k>3 ? 11.5 : 12.5), lh = lfs + 3.5;
+  let maxLines = 1;
+  t.items.forEach((it,j)=>{
+    const pct = it.c / t.n * 100, bh = Math.max(pct/100*plotH, 2);
+    const bw = Math.min(cw*0.62, 72), cx = px + cw*j + cw/2;
+    s += `<rect x="${cx-bw/2}" y="${base-bh}" width="${bw}" height="${bh}" rx="3" fill="${PALETTE[j % PALETTE.length]}"/>`;
+    s += T(cx,base-bh-18,it.c,{s:13,w:700,a:'middle'});
+    s += T(cx,base-bh-5,fmt(pct)+'%',{s:11,f:'#5f6368',a:'middle'});
+    const ll = wrapChars(it.label,lfs,400,cw-6);
+    maxLines = Math.max(maxLines,ll.length);
+    ll.forEach((l,m)=>{ s += T(cx,base+16+m*lh,l,{s:lfs,a:'middle'}); });
+  });
+  const h = base + 16 + (maxLines-1)*lh + 18;
+  return {h, svg:`<rect width="${colW}" height="${h}" rx="12" fill="#ffffff" stroke="#cfe3d8" stroke-width="1.2"/>` + s};
+}
+
+function saranCards(num,colW){
+  const N = DATA.length, saran = saranList(), out = [];
+  out.push({h:62, svg:`<rect width="${colW}" height="62" rx="12" fill="#047857"/>`
+    + `<circle cx="${IN+11}" cy="24" r="11" fill="#ffffff"/>` + T(IN+11,28.5,num,{s:12,w:700,f:'#047857',a:'middle'})
     + T(IN+32,30,'Saran dan masukan',{s:18,w:500,f:'#ffffff'})
     + T(IN,50,`${saran.length} jawaban dari ${N} responden`,{s:12.5,f:'#d1fae5'})});
   saran.forEach(r=>{
@@ -384,26 +352,28 @@ function buildPoster(){
     s += `<rect width="4" height="${h-20}" x="0" y="10" fill="#059669"/>`;
     s += T(IN,28,r.nama,{s:13.5,w:700,f:'#047857'});
     lines.forEach((l,k)=>{ s += T(IN,52+k*20,l,{s:14.5}); });
-    place({h, svg:s});
+    out.push({h, svg:s});
   });
-
-  const H = Math.max(...colY) - GAP + 14;
-  const foot = T(W/2,H+16,`Sumber: respons kuesioner. Total ${N} responden.`,{s:12.5,f:'#5f6368',a:'middle'});
-  const HH = H + 30;
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${HH}" viewBox="0 0 ${W} ${HH}" font-family="${PF}">`
-    + `<defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#064e3b"/><stop offset="1" stop-color="#059669"/></linearGradient></defs>`
-    + `<rect width="${W}" height="${HH}" fill="#ecfdf5"/><rect width="${W}" height="${headH}" fill="url(#hg)"/>`
-    + head + body + foot + `</svg>`;
-  return {svg, W, H:HH};
+  return out;
 }
 
-function posterScale(w,h){
+/* satu pertanyaan jadi satu gambar */
+function questionSvg(i){
+  const q = QUESTIONS[i], W = 680, M = 24, G = 12;
+  let cards = q.type==='text' ? saranCards(i+1,W) : [chartCard(q,i,W)];
+  let y = M, g = '';
+  cards.forEach(c=>{ g += `<g transform="translate(${M},${y})">${c.svg}</g>`; y += c.h + G; });
+  const H = y - G + M, TW = W + 2*M;
+  return {W:TW,H,svg:`<svg xmlns="http://www.w3.org/2000/svg" width="${TW}" height="${H}" viewBox="0 0 ${TW} ${H}" font-family="${PF}"><rect width="${TW}" height="${H}" fill="#ecfdf5"/>${g}</svg>`};
+}
+
+function scaleFor(w,h){
   const mobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   const maxArea = mobile ? 16e6 : 100e6;
   return Math.max(1, Math.min(4, Math.sqrt(maxArea/(w*h)), 30000/h));
 }
-async function posterPNG(){
-  const {svg,W,H} = POSTER, s = posterScale(W,H);
+async function svgToPng({svg,W,H}){
+  const s = scaleFor(W,H);
   const url = URL.createObjectURL(new Blob([XMLDECL+svg],{type:'image/svg+xml;charset=utf-8'}));
   try{
     const img = new Image();
@@ -411,46 +381,111 @@ async function posterPNG(){
     const c = document.createElement('canvas'); c.width = Math.round(W*s); c.height = Math.round(H*s);
     const x = c.getContext('2d'); x.fillStyle = '#ecfdf5'; x.fillRect(0,0,c.width,c.height);
     x.imageSmoothingQuality = 'high'; x.drawImage(img,0,0,c.width,c.height);
-    return await new Promise((ok,no)=>c.toBlob(b=>b?ok(b):no(new Error('Ukuran gambar terlalu besar untuk perangkat ini. Gunakan unduhan SVG.')),'image/png'));
+    return await new Promise((ok,no)=>c.toBlob(b=>b?ok(b):no(new Error('Ukuran gambar terlalu besar. Gunakan unduhan SVG.')),'image/png'));
   } finally { URL.revokeObjectURL(url); }
+}
+
+/* ===== Poster (semua pertanyaan) ===== */
+let POSTER = null;
+function buildPoster(){
+  const W = 1500, PAD = 36, GAP = 18, COLS = 3, N = DATA.length;
+  const colW = (W - 2*PAD - (COLS-1)*GAP) / COLS;
+  const tl = wrapText('Hasil Kuesioner Pemetaan Kebutuhan Aplikasi Pencatatan Keuangan UMKM Binaan Rumah BUMN BNI Ngawi',32,700,W-2*PAD);
+  let hy = 52, head = '';
+  tl.forEach((l,k)=>{ head += T(PAD,hy+k*40,l,{s:32,w:700,f:'#ffffff'}); });
+  hy += (tl.length-1)*40 + 32;
+  head += T(PAD,hy,`Ringkasan seluruh pertanyaan dari ${N} responden`,{s:17,f:'#d1fae5'});
+  const headH = hy + 26;
+  const top = headH + 22, colY = Array(COLS).fill(top), colX = [...Array(COLS)].map((_,k)=>PAD + k*(colW+GAP));
+  let body = '';
+  const place = c => {
+    let k = 0; for(let j=1;j<COLS;j++) if(colY[j] < colY[k]-0.5) k = j;
+    body += `<g transform="translate(${colX[k]},${colY[k]})">${c.svg}</g>`;
+    colY[k] += c.h + GAP;
+  };
+  let last = 0;
+  QUESTIONS.forEach((q,i)=>{ if(q.type!=='text'){ place(chartCard(q,i,colW)); last = i+1; } });
+  saranCards(last+1,colW).forEach(place);
+  const H = Math.max(...colY) - GAP + 14;
+  const foot = T(W/2,H+16,`Sumber: respons kuesioner. Total ${N} responden.`,{s:12.5,f:'#5f6368',a:'middle'});
+  const HH = H + 30;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${HH}" viewBox="0 0 ${W} ${HH}" font-family="${PF}">`
+    + `<defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#064e3b"/><stop offset="1" stop-color="#059669"/></linearGradient></defs>`
+    + `<rect width="${W}" height="${HH}" fill="#ecfdf5"/><rect width="${W}" height="${headH}" fill="url(#hg)"/>` + head + body + foot + `</svg>`;
+  return {svg, W, H:HH};
 }
 function initPoster(){
   POSTER = buildPoster();
   document.getElementById('poster').innerHTML = POSTER.svg;
-  const s = posterScale(POSTER.W,POSTER.H);
+  const s = scaleFor(POSTER.W,POSTER.H);
   document.getElementById('poster-info').textContent = `Ukuran PNG: ${Math.round(POSTER.W*s)} x ${Math.round(POSTER.H*s)} piksel. SVG tidak punya batas resolusi.`;
 }
-document.getElementById('btn-poster-png').addEventListener('click',async e=>{
-  const btn = e.currentTarget, label = btn.textContent; btn.disabled = true; btn.textContent = 'Memproses gambar';
-  try{ await save('hasil-kuesioner-grafik-keseluruhan.png', await posterPNG()); }
-  catch(err){ alert('Gagal membuat gambar: '+err.message); }
-  btn.textContent = label; btn.disabled = false;
+
+/* ===== html2canvas (judul, tabel, tampilan ringkasan) ===== */
+async function shot(el,scale,bg){
+  if(typeof html2canvas==='undefined') throw new Error('Library gambar belum termuat. Periksa koneksi lalu muat ulang.');
+  const hidden = el.closest('.hide'); if(hidden) hidden.classList.remove('hide');
+  try{
+    const c = await html2canvas(el,{scale:scale||3,backgroundColor:bg||'#ffffff',useCORS:true,ignoreElements:n=>n.classList && n.classList.contains('dl')});
+    return await new Promise((ok,no)=>c.toBlob(b=>b?ok(b):no(new Error('Ukuran gambar terlalu besar untuk perangkat ini')),'image/png'));
+  } finally { if(hidden) hidden.classList.add('hide'); }
+}
+
+/* ===== Tombol ===== */
+document.addEventListener('click',e=>{
+  const btn = e.target.closest('.dl[data-q]'); if(!btn) return;
+  const i = +btn.dataset.q;
+  withBusy(btn,'Memproses...',async()=>{ await save(qFile(i,'png'), await svgToPng(questionSvg(i))); });
 });
-document.getElementById('btn-poster-svg').addEventListener('click',async e=>{
-  const btn = e.currentTarget; btn.disabled = true;
-  await save('hasil-kuesioner-grafik-keseluruhan.svg', new Blob([XMLDECL+POSTER.svg],{type:'image/svg+xml'}));
-  btn.disabled = false;
+document.getElementById('btn-head').addEventListener('click',e=>withBusy(e.currentTarget,'Memproses...',async()=>{
+  await save(FILES.head, await shot(document.getElementById('card-head'),3)); }));
+document.getElementById('btn-table').addEventListener('click',e=>withBusy(e.currentTarget,'Memproses...',async()=>{
+  await save(FILES.table, await shot(document.getElementById('card-tabel'),2)); }));
+
+document.getElementById('btn-zip').addEventListener('click',e=>{
+  const btn = e.currentTarget;
+  withBusy(btn,'Menyiapkan...',async()=>{
+    if(typeof JSZip==='undefined') throw new Error('Library ZIP belum termuat. Periksa koneksi lalu muat ulang.');
+    const zip = new JSZip();
+    for(let i=0;i<QUESTIONS.length;i++){
+      btn.textContent = `Memproses ${i+1} dari ${QUESTIONS.length}`;
+      zip.file(qFile(i,'png'), await svgToPng(questionSvg(i)));
+    }
+    btn.textContent = 'Menambah grafik keseluruhan';
+    zip.file(FILES.poster+'.png', await svgToPng(POSTER));
+    try{ btn.textContent = 'Menambah judul'; zip.file(FILES.head, await shot(document.getElementById('card-head'),3)); }catch(_){}
+    btn.textContent = 'Menyusun ZIP';
+    await save(FILES.zip, await zip.generateAsync({type:'blob'}));
+  });
 });
 
-/* tombol unduh PNG di tab menu: mengunduh tab yang sedang aktif */
-const TABFILE = {ringkasan:'hasil-kuesioner-ringkasan.png', grafik:'hasil-kuesioner-grafik-keseluruhan.png', responden:'hasil-kuesioner-daftar-responden.png'};
-function activeTab(){ const t = document.querySelector('.tab.on'); return t ? t.dataset.tab : 'ringkasan'; }
-document.getElementById('btn-tab-png').addEventListener('click',async e=>{
-  const btn = e.currentTarget, label = btn.textContent, tab = activeTab();
-  btn.disabled = true; btn.textContent = 'Memproses gambar';
-  try{
-    let blob;
-    if(tab==='grafik'){ blob = await posterPNG(); }
-    else{
-      if(!need()) throw new Error('library gambar belum termuat');
-      const el = document.getElementById(tab==='ringkasan' ? 'ringkasan' : 'card-tabel');
-      const sc = Math.max(1, Math.min(3, 14000/el.offsetHeight));
-      const c = await shot(el, sc, tab==='ringkasan' ? '#ecfdf5' : '#ffffff');
-      blob = await new Promise((ok,no)=>c.toBlob(b=>b?ok(b):no(new Error('Ukuran gambar terlalu besar untuk perangkat ini')),'image/png'));
-    }
-    await save(TABFILE[tab], blob);
-  }catch(err){ alert('Gagal membuat gambar: '+err.message); }
-  btn.textContent = label; btn.disabled = false;
+document.getElementById('btn-csv').addEventListener('click',()=>{
+  const cols = [
+    ['id','ID'],['nama','Nama usaha'],['jenis','Jenis usaha'],['jenis_lain','Jenis usaha (lainnya)'],['lama','Lama usaha'],['omzet','Omzet per bulan'],
+    ['catat','Mencatat keuangan'],['cara','Cara mencatat'],['media','Media digital'],['media_lain','Media digital (lainnya)'],
+    ['kendala','Kendala'],['kendala_lain','Kendala (lainnya)'],['campur','Uang bercampur'],['habis','Keuntungan habis'],
+    ['pernah','Pengalaman aplikasi'],['apps','Aplikasi digunakan'],['apps_lain','Aplikasi (lainnya)'],['sering','Platform sering digunakan'],
+    ['ai','Ketertarikan AI'],['ingin','Platform diinginkan'],['bantu','Manfaat bagi usaha'],['bersedia','Kesediaan menggunakan'],
+    ['bayar','Model pembayaran'],['alasan','Alasan bayar sekali'],['saran','Saran'],['waktu','Waktu pengisian']
+  ];
+  const cell = v => { const s = Array.isArray(v) ? v.join('; ') : (v==null?'':String(v)); return '"'+s.replace(/"/g,'""')+'"'; };
+  const csv = '\ufeff'+[cols.map(c=>cell(c[1])).join(',')].concat(DATA.map(r=>cols.map(c=>cell(r[c[0]])).join(','))).join('\r\n');
+  save(FILES.csv, new Blob([csv],{type:'text/csv;charset=utf-8'}));
+});
+
+document.getElementById('btn-poster-png').addEventListener('click',e=>withBusy(e.currentTarget,'Memproses gambar',async()=>{
+  await save(FILES.poster+'.png', await svgToPng(POSTER)); }));
+document.getElementById('btn-poster-svg').addEventListener('click',e=>withBusy(e.currentTarget,null,async()=>{
+  await save(FILES.poster+'.svg', new Blob([XMLDECL+POSTER.svg],{type:'image/svg+xml'})); }));
+
+document.getElementById('btn-tab-png').addEventListener('click',e=>{
+  const tab = (document.querySelector('.tab.on')||{dataset:{tab:'ringkasan'}}).dataset.tab;
+  withBusy(e.currentTarget,'Memproses gambar',async()=>{
+    if(tab==='grafik') return save(FILES.poster+'.png', await svgToPng(POSTER));
+    const el = document.getElementById(tab==='ringkasan' ? 'ringkasan' : 'card-tabel');
+    const sc = Math.max(1, Math.min(3, 14000/el.offsetHeight));
+    await save(tab==='ringkasan' ? FILES.ringkasan : FILES.table, await shot(el,sc,tab==='ringkasan' ? '#ecfdf5' : '#ffffff'));
+  });
 });
 
 build();
